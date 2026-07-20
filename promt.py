@@ -322,15 +322,19 @@ def process_one(path, label="unknown", force=False, source_id=None):
     return source_id
 
 
-def process_batch(dir_path, label):
+def process_batch(dir_path, label, max_files=None):
     dir_path = Path(dir_path)
     if not dir_path.is_dir():
         print(f"Error: directory not found: {dir_path}")
         return
     files = sorted(dir_path.glob("*.npy")) + sorted(dir_path.glob("*.csv"))
+    # Filter out synth_flux_* files
+    files = [f for f in files if not f.stem.startswith("synth_flux_")]
     if not files:
         print(f"No npy/csv files found in {dir_path}")
         return
+    if max_files:
+        files = files[:max_files]
     print(f"Processing {len(files)} files from {dir_path} (label={label})")
     done = 0
     for f in files:
@@ -384,6 +388,7 @@ def main():
     parser.add_argument("--source-id")
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--batch")
+    parser.add_argument("--max", type=int, help="max files in batch mode")
     parser.add_argument("--stats", action="store_true")
     parser.add_argument("--list")
     parser.add_argument("--relabel", nargs=2, metavar=("ID", "LABEL"))
@@ -395,7 +400,7 @@ def main():
     elif args.relabel:
         cmd_relabel(args.relabel[0], args.relabel[1])
     elif args.batch:
-        process_batch(args.batch, args.label)
+        process_batch(args.batch, args.label, max_files=args.max)
     elif args.path:
         process_one(args.path, label=args.label, force=args.force, source_id=args.source_id)
     else:

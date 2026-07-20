@@ -77,21 +77,56 @@ def sample_few_shot(idx, n_per_class=None, exclude=None):
     return selected
 
 
+def _make_system_prompt():
+    """Build system prompt dynamically from config.CLASSES."""
+    classes_str = "|".join(config.CLASSES)
+    class_list = ", ".join(config.CLASSES)
+
+    return (
+        f"You are an astronomical transient classifier specializing in ZTF light curves. "
+        f"Classify each source as one of: {class_list}.\n\n"
+        "## Physical Discriminators (check in priority order)\n\n"
+        "### 1. Color Evolution (g − r) — STRONGEST signal\n"
+        "- delta_g-r > 10 uJy (strong red→blue evolution): STRONG TDE indicator\n"
+        "- delta_g-r < 5 uJy (flat/mild evolution): typical SN\n"
+        "- Color staying RED throughout: favors steady sources, flag as uncertain\n\n"
+        "### 2. Timescale\n"
+        "- Rise time < 60 days: favors TDE\n"
+        "- Rise time 30−200 days: favors SN\n"
+        "- Total time span < 200 days: favors TDE\n"
+        "- Total time span > 1000 days: unusual — flag as uncertain\n\n"
+        "### 3. Decline Shape\n"
+        "- Steep power-law decline (>1 uJy/d sustained): favors TDE\n"
+        "- Plateau or very slow decline (<0.1 uJy/d): favors SN\n\n"
+        "### 4. Data Quality\n"
+        "- Total points < 10: inherently LOW confidence\n"
+        "- Single-band only: no color information, be cautious\n"
+        "- If quality is poor and signals are ambiguous, prefer medium/low confidence\n\n"
+        "## Decision Logic\n"
+        "1. Check color evolution FIRST. If delta_g-r > 10 → TDE (unless rise >200d).\n"
+        "2. If color is ambiguous, use timescale + decline as tiebreakers.\n"
+        "3. IGNORE the auto-generated hints in Section 3 when they contradict "
+        "these physical rules — those hints can be wrong.\n"
+        "4. If conflicting signals: flag as medium confidence and explain why.\n\n"
+        "## Response Format\n"
+        "Output ONLY a JSON object (no markdown, no thinking process):\n"
+        f'{{"classification":{{"label":"{classes_str}","confidence":"high|medium|low","score":0.0-1.0}},'
+        f'"reasoning":{{"primary_signal":"...","indicators":[{{'
+        f'"name":"...","value":"...","weight":0.0-1.0,"direction":"{classes_str}"}}]}},'
+        '"quality":{"flags":[]}}'
+    )
+
+
 def build_prompt(target_id, few_shot, mode="text"):
     """Build the API prompt. Returns messages list."""
-    system_text = (
-        "You are an astronomical transient classifier. "
-        "Classify light curves as TDE, SN, Others, or AGN. "
-        "Output ONLY the JSON object. No thinking process, no markdown, no text outside the JSON."
-    )
+    system_text = _make_system_prompt()
 
     user_content = []
 
-    # System instruction
-    user_content.append({"type": "text", "text": system_text + "\n\n"
+    # Few-shot header
+    user_content.append({"type": "text", "text":
                          "## Few-Shot Examples\n"
-                         "Below are labeled examples. Study them to understand "
-                         "the classification patterns.\n"})
+                         "Study these labeled examples using the physical rules above.\n"})
 
     # Few-shot examples
     for fs_id, fs_label in few_shot:

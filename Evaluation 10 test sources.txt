@@ -1,0 +1,39 @@
+Evaluation: 10 test sources (2 classes), 2-shot, mode=text
+Few-shot pool: 97 sources (test set excluded)
+
+[1/10] ZTF18acaqdaa_difference_photometry (true=TDE) ... pred=SN conf=medium [WRONG]
+[2/10] ZTF21abaxaqq_difference_photometry (true=TDE) ... pred=TDE conf=high [OK]
+[3/10] ZTF18abxftqm_difference_photometry (true=TDE) ... pred=TDE conf=medium [OK]
+[4/10] ZTF21aanxhjv_difference_photometry (true=TDE) ... pred=TDE conf=medium [OK]
+[5/10] ZTF19abzrhgq_difference_photometry (true=TDE) ... pred=SN conf=medium [WRONG]
+[6/10] ZTF19aaeuhgo_difference_photometry (true=SN) ... pred=SN conf=high [OK]
+[7/10] ZTF19aabyheu_difference_photometry (true=SN) ... pred=SN conf=high [OK]
+[8/10] ZTF18acsjrbc_difference_photometry (true=SN) ... pred=SN conf=high [OK]
+[9/10] ZTF18abjrbza_difference_photometry (true=SN) ... pred=SN conf=medium [OK]
+[10/10] ZTF18aarlpzd_difference_photometry (true=SN) ... pred=SN conf=high [OK]
+
+============================================================
+  EVALUATION RESULTS
+============================================================
+
+  Confusion Matrix:
+                   SN       TDE
+        SN           5         0
+       TDE           2         3
+
+  Per-Class Metrics:
+       Class   Precision      Recall          F1     Support
+  ----------  ----------  ----------  ----------  ----------
+          SN       0.714       1.000       0.833           5
+         TDE       1.000       0.600       0.750           5
+
+  Accuracy:  0.800 (8/10)
+  Macro F1:  0.792
+
+  Errors (2):
+    ZTF19abzrhgq_difference_photometry  true=TDE  pred=SN  score=0.70  conf=medium
+    ZTF18acaqdaa_difference_photometry  true=TDE  pred=SN  score=0.60  conf=medium
+
+  Total tokens: 70573 (~7057/source)
+
+  Report saved: /home/cyan/AppData/VScode/TDeck/ZTF_prompt/eval_report.json

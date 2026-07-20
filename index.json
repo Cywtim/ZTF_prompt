@@ -598,5 +598,475 @@
       "u": 0
     },
     "span_days": 2145.0
+  },
+  "ZTF18aahuujv_difference_photometry": {
+    "label": "SN",
+    "n_points": 29,
+    "bands": {
+      "g": 16,
+      "r": 13,
+      "u": 0
+    },
+    "span_days": 416.0
+  },
+  "ZTF18aakkrjm_difference_photometry": {
+    "label": "SN",
+    "n_points": 29,
+    "bands": {
+      "g": 14,
+      "r": 15,
+      "u": 0
+    },
+    "span_days": 63.0
+  },
+  "ZTF18aakuewf_difference_photometry": {
+    "label": "SN",
+    "n_points": 373,
+    "bands": {
+      "g": 373,
+      "r": 0,
+      "u": 0
+    },
+    "span_days": 2288.9
+  },
+  "ZTF18aarlpzd_difference_photometry": {
+    "label": "SN",
+    "n_points": 40,
+    "bands": {
+      "g": 11,
+      "r": 29,
+      "u": 0
+    },
+    "span_days": 81.0
+  },
+  "ZTF18aatzymw_difference_photometry": {
+    "label": "SN",
+    "n_points": 647,
+    "bands": {
+      "g": 162,
+      "r": 485,
+      "u": 0
+    },
+    "span_days": 2303.9
+  },
+  "ZTF18aaygwqd_difference_photometry": {
+    "label": "SN",
+    "n_points": 463,
+    "bands": {
+      "g": 423,
+      "r": 40,
+      "u": 0
+    },
+    "span_days": 2300.8
+  },
+  "ZTF18aazhklh_difference_photometry": {
+    "label": "SN",
+    "n_points": 261,
+    "bands": {
+      "g": 251,
+      "r": 10,
+      "u": 0
+    },
+    "span_days": 2250.9
+  },
+  "ZTF18abecbks_difference_photometry": {
+    "label": "SN",
+    "n_points": 21,
+    "bands": {
+      "g": 6,
+      "r": 15,
+      "u": 0
+    },
+    "span_days": 64.0
+  },
+  "ZTF18abjrbza_difference_photometry": {
+    "label": "SN",
+    "n_points": 965,
+    "bands": {
+      "g": 448,
+      "r": 517,
+      "u": 0
+    },
+    "span_days": 2276.8
+  },
+  "ZTF18abktmfz_difference_photometry": {
+    "label": "SN",
+    "n_points": 91,
+    "bands": {
+      "g": 33,
+      "r": 58,
+      "u": 0
+    },
+    "span_days": 2243.0
+  },
+  "ZTF18abnyqmj_difference_photometry": {
+    "label": "SN",
+    "n_points": 509,
+    "bands": {
+      "g": 262,
+      "r": 247,
+      "u": 0
+    },
+    "span_days": 2226.0
+  },
+  "ZTF18absoocp_difference_photometry": {
+    "label": "SN",
+    "n_points": 817,
+    "bands": {
+      "g": 367,
+      "r": 450,
+      "u": 0
+    },
+    "span_days": 2245.0
+  },
+  "ZTF18abugeuq_difference_photometry": {
+    "label": "SN",
+    "n_points": 278,
+    "bands": {
+      "g": 164,
+      "r": 114,
+      "u": 0
+    },
+    "span_days": 2233.9
+  },
+  "ZTF18aceckot_difference_photometry": {
+    "label": "SN",
+    "n_points": 351,
+    "bands": {
+      "g": 168,
+      "r": 183,
+      "u": 0
+    },
+    "span_days": 2180.0
+  },
+  "ZTF18aceqrrs_difference_photometry": {
+    "label": "SN",
+    "n_points": 72,
+    "bands": {
+      "g": 58,
+      "r": 14,
+      "u": 0
+    },
+    "span_days": 1624.6
+  },
+  "ZTF18acsjrbc_difference_photometry": {
+    "label": "SN",
+    "n_points": 21,
+    "bands": {
+      "g": 4,
+      "r": 17,
+      "u": 0
+    },
+    "span_days": 38.0
+  },
+  "ZTF18acwvcbz_difference_photometry": {
+    "label": "SN",
+    "n_points": 429,
+    "bands": {
+      "g": 223,
+      "r": 206,
+      "u": 0
+    },
+    "span_days": 2141.1
+  },
+  "ZTF18adiqtyv_difference_photometry": {
+    "label": "SN",
+    "n_points": 183,
+    "bands": {
+      "g": 183,
+      "r": 0,
+      "u": 0
+    },
+    "span_days": 930.7
+  },
+  "ZTF18adllqhd_difference_photometry": {
+    "label": "SN",
+    "n_points": 438,
+    "bands": {
+      "g": 204,
+      "r": 234,
+      "u": 0
+    },
+    "span_days": 938.7
+  },
+  "ZTF18admqhac_difference_photometry": {
+    "label": "SN",
+    "n_points": 286,
+    "bands": {
+      "g": 151,
+      "r": 135,
+      "u": 0
+    },
+    "span_days": 870.8
+  },
+  "ZTF18adonnxl_difference_photometry": {
+    "label": "SN",
+    "n_points": 208,
+    "bands": {
+      "g": 98,
+      "r": 110,
+      "u": 0
+    },
+    "span_days": 802.0
+  },
+  "ZTF19aaagfme_difference_photometry": {
+    "label": "SN",
+    "n_points": 57,
+    "bands": {
+      "g": 26,
+      "r": 31,
+      "u": 0
+    },
+    "span_days": 1360.2
+  },
+  "ZTF19aaairqh_difference_photometry": {
+    "label": "SN",
+    "n_points": 30,
+    "bands": {
+      "g": 10,
+      "r": 20,
+      "u": 0
+    },
+    "span_days": 75.0
+  },
+  "ZTF19aaapnxn_difference_photometry": {
+    "label": "SN",
+    "n_points": 444,
+    "bands": {
+      "g": 208,
+      "r": 236,
+      "u": 0
+    },
+    "span_days": 2327.7
+  },
+  "ZTF19aabyheu_difference_photometry": {
+    "label": "SN",
+    "n_points": 46,
+    "bands": {
+      "g": 22,
+      "r": 24,
+      "u": 0
+    },
+    "span_days": 120.7
+  },
+  "ZTF19aabyppp_difference_photometry": {
+    "label": "SN",
+    "n_points": 44,
+    "bands": {
+      "g": 22,
+      "r": 22,
+      "u": 0
+    },
+    "span_days": 120.7
+  },
+  "ZTF19aacypbw_difference_photometry": {
+    "label": "SN",
+    "n_points": 30,
+    "bands": {
+      "g": 4,
+      "r": 26,
+      "u": 0
+    },
+    "span_days": 1967.8
+  },
+  "ZTF19aadnxat_difference_photometry": {
+    "label": "SN",
+    "n_points": 48,
+    "bands": {
+      "g": 27,
+      "r": 21,
+      "u": 0
+    },
+    "span_days": 165.7
+  },
+  "ZTF19aadolpe_difference_photometry": {
+    "label": "SN",
+    "n_points": 34,
+    "bands": {
+      "g": 13,
+      "r": 21,
+      "u": 0
+    },
+    "span_days": 94.7
+  },
+  "ZTF19aadooun_difference_photometry": {
+    "label": "SN",
+    "n_points": 37,
+    "bands": {
+      "g": 14,
+      "r": 23,
+      "u": 0
+    },
+    "span_days": 99.7
+  },
+  "ZTF19aaeoqkk_difference_photometry": {
+    "label": "SN",
+    "n_points": 28,
+    "bands": {
+      "g": 10,
+      "r": 18,
+      "u": 0
+    },
+    "span_days": 54.9
+  },
+  "ZTF19aaeuhgo_difference_photometry": {
+    "label": "SN",
+    "n_points": 151,
+    "bands": {
+      "g": 69,
+      "r": 82,
+      "u": 0
+    },
+    "span_days": 610.2
+  },
+  "ZTF19aafmyow_difference_photometry": {
+    "label": "SN",
+    "n_points": 89,
+    "bands": {
+      "g": 35,
+      "r": 54,
+      "u": 0
+    },
+    "span_days": 232.6
+  },
+  "ZTF19aagmsrr_difference_photometry": {
+    "label": "SN",
+    "n_points": 58,
+    "bands": {
+      "g": 28,
+      "r": 30,
+      "u": 0
+    },
+    "span_days": 150.8
+  },
+  "ZTF19aailcgs_difference_photometry": {
+    "label": "SN",
+    "n_points": 34,
+    "bands": {
+      "g": 14,
+      "r": 20,
+      "u": 0
+    },
+    "span_days": 93.8
+  },
+  "ZTF19aailepg_difference_photometry": {
+    "label": "SN",
+    "n_points": 66,
+    "bands": {
+      "g": 30,
+      "r": 36,
+      "u": 0
+    },
+    "span_days": 146.7
+  },
+  "ZTF19aaileug_difference_photometry": {
+    "label": "SN",
+    "n_points": 29,
+    "bands": {
+      "g": 14,
+      "r": 15,
+      "u": 0
+    },
+    "span_days": 74.8
+  },
+  "ZTF19aaillan_difference_photometry": {
+    "label": "SN",
+    "n_points": 35,
+    "bands": {
+      "g": 15,
+      "r": 20,
+      "u": 0
+    },
+    "span_days": 89.8
+  },
+  "ZTF19aailltc_difference_photometry": {
+    "label": "SN",
+    "n_points": 67,
+    "bands": {
+      "g": 33,
+      "r": 34,
+      "u": 0
+    },
+    "span_days": 110.8
+  },
+  "ZTF19aailqli_difference_photometry": {
+    "label": "SN",
+    "n_points": 23,
+    "bands": {
+      "g": 10,
+      "r": 13,
+      "u": 0
+    },
+    "span_days": 78.8
+  },
+  "ZTF19aailsge_difference_photometry": {
+    "label": "SN",
+    "n_points": 21,
+    "bands": {
+      "g": 7,
+      "r": 14,
+      "u": 0
+    },
+    "span_days": 129.8
+  },
+  "ZTF19aajxhwa_difference_photometry": {
+    "label": "SN",
+    "n_points": 22,
+    "bands": {
+      "g": 11,
+      "r": 11,
+      "u": 0
+    },
+    "span_days": 62.9
+  },
+  "ZTF19aajxwnz_difference_photometry": {
+    "label": "SN",
+    "n_points": 77,
+    "bands": {
+      "g": 52,
+      "r": 25,
+      "u": 0
+    },
+    "span_days": 240.3
+  },
+  "ZTF19aakirwj_difference_photometry": {
+    "label": "SN",
+    "n_points": 30,
+    "bands": {
+      "g": 14,
+      "r": 16,
+      "u": 0
+    },
+    "span_days": 110.8
+  },
+  "ZTF19aakiwxx_difference_photometry": {
+    "label": "SN",
+    "n_points": 34,
+    "bands": {
+      "g": 15,
+      "r": 19,
+      "u": 0
+    },
+    "span_days": 59.8
+  },
+  "ZTF19aakiyed_difference_photometry": {
+    "label": "SN",
+    "n_points": 40,
+    "bands": {
+      "g": 17,
+      "r": 23,
+      "u": 0
+    },
+    "span_days": 85.9
+  },
+  "ZTF19aakjesi_difference_photometry": {
+    "label": "SN",
+    "n_points": 34,
+    "bands": {
+      "g": 17,
+      "r": 17,
+      "u": 0
+    },
+    "span_days": 114.9
   }
 }

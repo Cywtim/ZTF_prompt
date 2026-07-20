@@ -35,7 +35,7 @@ ZTF_FLUX_DIR = ZTF_DATA_DIR / "TS" / "Flux"
 ZTF_EARLY_DIR = ZTF_DATA_DIR / "TS"
 
 # Classification
-CLASSES = ["TDE", "SN", "Others", "AGN"]
+CLASSES = ["TDE", "SN"]#, "Others", "AGN"]
 N_SHOT_TEXT = 3
 N_SHOT_MULTIMODAL = 1
 
