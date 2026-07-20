@@ -1,0 +1,16 @@
+# API key - never commit
+.env
+
+# Generated files (large, can regenerate)
+sources/
+results/
+
+# Python
+__pycache__/
+*.pyc
+
+# Eval reports
+eval_report.json
+
+# System
+.DS_Store
