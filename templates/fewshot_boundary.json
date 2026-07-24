@@ -1,0 +1,13 @@
+{
+  "_comment": "Boundary few-shot exemplars — sources near the TDE/SN decision boundary.",
+  "_usage": "Use with: python classify.py --exemplar-set boundary",
+  "_strategy": "Each exemplar is labeled as one class but shows conflicting physical signals. This forces the LLM to weigh indicators rather than pattern-match to textbook examples.",
+
+  "TDE": ["wmx_TDE_2022arb"],
+  "SN": ["ZTF19aagmsrr_difference_photometry"],
+
+  "_rationale": {
+    "wmx_TDE_2022arb": "Labeled TDE. Δ(g-r)=0.0 — FLAT color, NO Red→Blue at all. Rise=140d, decline=-1.020 uJy/d. Boundary value: teaches that TDE classification can rely on rise morphology + decline shape even when the #1 signal (color) is absent.",
+    "ZTF19aagmsrr_difference_photometry": "Labeled SN. Δ(g-r)=-176.1 — EXTREME Red→Blue (looks 100% TDE by color). Rise=15d (SN shock-cooling timescale), decline=-11.935 uJy/d. Peak=1663 uJy. Boundary value: teaches that even textbook TDE color can be SN — the fast rise (<30d) overrides the color signal."
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "_comment": "Text-mode few-shot exemplars (n_shot=3 per class).",
+  "_usage": "Use with: python classify.py --mode text --exemplar-set text",
+  "_selection": "TDE: 2024lhc (strong color), 2024pvu (extreme color, fast decline), 2021uvz (clear early rise). SN: 19aaapnxn (Blue→Red, slow decay), 18aagrdcs (strong Blue→Red), 19aajxwnz (extreme Blue→Red, fast transient).",
+  "_note": "For text mode, cutout is not required — selects for clear numerical/physical signals.",
+
+  "TDE": [
+    "wmx_TDE_2024lhc",
+    "wmx_TDE_2024pvu",
+    "wmx_TDE_2021uvz"
+  ],
+  "SN": [
+    "ZTF19aaapnxn_difference_photometry",
+    "ZTF18aagrdcs_difference_photometry",
+    "ZTF19aajxwnz_difference_photometry"
+  ]
+}

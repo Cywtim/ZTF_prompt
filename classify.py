@@ -68,12 +68,51 @@ def _peak_flux(source_id):
     m = re.search(r"Peak flux \| ([\d.]+) uJy", text)
     return float(m.group(1)) if m else None
 
-def sample_few_shot(idx, n_per_class=None, exclude=None):
-    """Sample few-shot examples from labeled sources, excluding certain IDs."""
-    if n_per_class is None:
-        n_per_class = config.N_SHOT_TEXT
+def _load_fewshot_json(exemplar_set=None):
+    """Load curated few-shot exemplars from templates/fewshot{_set}.json.
+    Returns dict {class_name: [source_id, ...]} or None if file not found.
+    """
+    if exemplar_set:
+        path = config.TEMPLATES_DIR / f"fewshot_{exemplar_set}.json"
+    else:
+        path = config.TEMPLATES_DIR / "fewshot.json"
+    if path.exists():
+        return json.loads(path.read_text())
+    return None
+
+
+def sample_few_shot(idx, n_per_class=None, exclude=None, exemplar_set=None):
+    """Sample few-shot examples from labeled sources, excluding certain IDs.
+
+    Priority:
+      1. templates/fewshot.json (or fewshot_{exemplar_set}.json) — curated, reproducible
+      2. Fall back to random sampling from index.json
+    """
     if exclude is None:
         exclude = set()
+
+    # Try curated fewshot.json first
+    fs = _load_fewshot_json(exemplar_set)
+    if fs:
+        selected = []
+        for cls_name in config.CLASSES:
+            for sid in fs.get(cls_name, []):
+                if sid in exclude:
+                    continue
+                if sid not in idx:
+                    print(f"  [warn] fewshot exemplar '{sid}' not in index.json, skipping")
+                    continue
+                selected.append((sid, cls_name))
+        if selected:
+            print(f"  [fewshot] using {len(selected)} curated exemplars from "
+                  f"fewshot{'_' + exemplar_set if exemplar_set else ''}.json")
+            return selected
+        print(f"  [warn] fewshot{'_' + exemplar_set if exemplar_set else ''}.json "
+              f"exists but no valid exemplars, falling back to random")
+
+    # Fallback: random sampling
+    if n_per_class is None:
+        n_per_class = config.N_SHOT_TEXT
     selected = []
     for cls_name in config.CLASSES:
         pool = [sid for sid, info in idx.items()
@@ -430,11 +469,14 @@ def save_result(source_id, parsed, raw_response, usage, mode, model, few_shot, c
 # Classify one source
 # ═══════════════════════════════════════════════════
 
-def classify_one(source_id, mode="text", n_shot=None, model=None, force=False, cot=False):
+def classify_one(source_id, mode="text", n_shot=None, model=None, force=False, cot=False,
+                exemplar_set=None):
     """Classify a single source.
     
     Args:
         cot: if True, enable Chain-of-Thought reasoning.
+        exemplar_set: name of curated exemplar set (e.g. "boundary", "textbook").
+                      Loads templates/fewshot_{exemplar_set}.json.
     """
     # Check if already done
     result_path = config.RESULTS_DIR / f"{source_id}.json"
@@ -455,7 +497,8 @@ def classify_one(source_id, mode="text", n_shot=None, model=None, force=False, c
     if n_shot is None:
         n_shot = config.N_SHOT_MULTIMODAL if mode == "multimodal" else config.N_SHOT_TEXT
 
-    few_shot = sample_few_shot(idx, n_per_class=n_shot, exclude={source_id})
+    few_shot = sample_few_shot(idx, n_per_class=n_shot, exclude={source_id},
+                               exemplar_set=exemplar_set)
     if n_shot > 0 and not few_shot:
         print(f"  [error] {source_id} -- no labeled examples available in index.json")
         return None
@@ -488,7 +531,8 @@ def classify_one(source_id, mode="text", n_shot=None, model=None, force=False, c
     return result
 
 
-def classify_all_unlabeled(mode="text", n_shot=None, model=None, force=False, cot=False):
+def classify_all_unlabeled(mode="text", n_shot=None, model=None, force=False, cot=False,
+                          exemplar_set=None):
     """Classify all sources labeled 'unknown' in index.json."""
     idx = promt_load_index()
     unlabeled = [sid for sid, info in idx.items() if info["label"] == "unknown"]
@@ -498,7 +542,8 @@ def classify_all_unlabeled(mode="text", n_shot=None, model=None, force=False, co
     print(f"Classifying {len(unlabeled)} unlabeled sources...")
     done = 0
     for sid in sorted(unlabeled):
-        result = classify_one(sid, mode=mode, n_shot=n_shot, model=model, force=force, cot=cot)
+        result = classify_one(sid, mode=mode, n_shot=n_shot, model=model, force=force, cot=cot,
+                              exemplar_set=exemplar_set)
         if result:
             done += 1
     print(f"\nDone: {done}/{len(unlabeled)} classified")
@@ -555,16 +600,19 @@ def main():
     parser.add_argument("--results", action="store_true", help="show saved results")
     parser.add_argument("--force", action="store_true", help="reclassify even if result exists")
     parser.add_argument("--cot", action="store_true", help="enable Chain-of-Thought reasoning")
+    parser.add_argument("--exemplar-set", help="curated exemplar set name (loads templates/fewshot_NAME.json)")
     args = parser.parse_args()
 
     if args.all_unlabeled:
         classify_all_unlabeled(mode=args.mode, n_shot=args.n_shot, model=args.model,
-                               force=args.force, cot=args.cot)
+                               force=args.force, cot=args.cot,
+                               exemplar_set=args.exemplar_set)
     elif args.results and args.source_id:
         show_result(args.source_id)
     elif args.source_id:
         classify_one(args.source_id, mode=args.mode, n_shot=args.n_shot, model=args.model,
-                     force=args.force, cot=args.cot)
+                     force=args.force, cot=args.cot,
+                     exemplar_set=args.exemplar_set)
     else:
         parser.print_help()
 

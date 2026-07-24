@@ -19,9 +19,14 @@ ZTF_prompt/
 ├── sources/             ← 生成文件（每个源一个子目录）
 │   └── {id}/
 │       ├── analysis.md      ← 结构化分析报告
-│       └── lightcurve.png   ← 光变曲线图（u=蓝, g=绿, r=红）
+│       ├── lightcurve.png   ← 光变曲线图（u=蓝, g=绿, r=红）
+│       └── cutout.png       ← SDSS 宿主星系 cutout（可选）
 ├── index.json           ← 所有源的标签索引
-└── results/             ← 分类结果 JSON
+├── results/             ← 分类结果 JSON
+└── templates/           ← Few-shot exemplar 配置文件
+    ├── fewshot.json          ← 默认 exemplar（TDE+SN 各 1 个）
+    ├── fewshot_text.json     ← text mode 3-shot（TDE+SN 各 3 个）
+    └── fewshot_boundary.json ← 边界样本（冲突信号，锚定决策边界）
 ```
 
 ---
@@ -74,6 +79,48 @@ python plot.py --all
 
 ---
 
+## Few-Shot Exemplar 管理
+
+分类时使用的 few-shot 示例可通过 `templates/fewshot*.json` 精确控制，替代默认的随机采样。
+
+### 三种预设
+
+| 文件 | 用途 | TDE 示例 | SN 示例 |
+|------|------|---------|---------|
+| `fewshot.json` | **默认** multimodal (1-shot) | `wmx_TDE_2024lhc`<br>Δ=-8.7, 432pts, 强 TDE | `ZTF19aaapnxn`<br>Δ=+6.2, 444pts, 教科书 SN |
+| `fewshot_text.json` | text mode (3-shot) | 3 个：lhc / pvu / uvz | 3 个：aaapnxn / aagrdcs / aajxwnz |
+| `fewshot_boundary.json` | 边界样本 | `wmx_TDE_2022arb`<br>Δ=**0.0 Flat**（无颜色信号） | `ZTF19aagmsrr`<br>Δ=**-176 Red→Blue**（颜色像 TDE） |
+
+### 原理
+
+- **教科书 exemplar**（default/text）：信号全覆盖，教会模型"长什么样"
+- **Boundary exemplar**：信号冲突——2022arb 的 TDE 没有颜色演化，aagmsrr 的 SN 却有极端 Red→Blue。迫使模型做**信号权重推理**而非简单模式匹配，锚定决策边界
+
+### 加载逻辑
+
+```
+--exemplar-set boundary  →  templates/fewshot_boundary.json
+--exemplar-set text      →  templates/fewshot_text.json
+(无 flag)                →  templates/fewshot.json
+(文件不存在/空)           →  回退随机采样（旧行为）
+```
+
+### 自定义
+
+```bash
+# 编辑 exemplar 列表（增删改 ID 即可，列表长度即 n_shot）
+vim templates/fewshot.json
+
+# 创建新 set
+cp templates/fewshot.json templates/fewshot_my_custom.json
+python classify.py WFST_J101658 --exemplar-set my_custom
+
+# 回退随机采样
+mv templates/fewshot.json templates/fewshot.json.bak
+```
+
+---
+
 ## 第四步：分类
 
 ```bash
@@ -101,6 +148,10 @@ python classify.py WFST_J101658 --cot --n-shot 2
 
 # 换模型
 python classify.py WFST_J101658 --model qwen3.6-reasoner
+
+# 切换 exemplar set
+python classify.py WFST_J101658 --exemplar-set boundary    # 边界样本
+python classify.py WFST_J101658 --exemplar-set text        # text 3-shot
 ```
 
 ---
@@ -229,6 +280,7 @@ python classify.py --results my_new_source
 | `results/{id}.json` | 分类结果（含置信度和推理链） |
 | `eval_report.json` | 评估报告（运行 `eval.py` 后生成） |
 | `index.json` | 所有源的标签和元信息索引 |
+| `templates/fewshot*.json` | Few-shot exemplar 配置文件 |
 
 ---
 
