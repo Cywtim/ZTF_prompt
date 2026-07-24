@@ -13,7 +13,9 @@ ZTF_prompt/
 ├── promt.py             ← 数据 → MD 分析报告
 ├── plot.py              ← 数据 → 光变曲线 PNG（用于多模态分类）
 ├── classify.py          ← MD → LLM → 分类结果
-├── eval.py              ← 评估准确率
+├── eval.py              ← 评估准确率（主动跑 API）
+├── summary.py           ← 汇总已有结果 + 出图（零 API 成本）
+├── run.sh               ← 一键全流程脚本
 ├── diag.py              ← 网络诊断工具
 │
 ├── sources/             ← 生成文件（每个源一个子目录）
@@ -27,6 +29,7 @@ ZTF_prompt/
     ├── fewshot.json          ← 默认 exemplar（TDE+SN 各 1 个）
     ├── fewshot_text.json     ← text mode 3-shot（TDE+SN 各 3 个）
     └── fewshot_boundary.json ← 边界样本（冲突信号，锚定决策边界）
+    summary/                  ← 汇总 JSON + 混淆矩阵/分布图 PNG
 ```
 
 ---
@@ -218,6 +221,66 @@ python eval.py --verbose
 
 ---
 
+## 结果汇总
+
+`summary.py` 直接读取 `results/*.json`，**不调 API**，零 token 成本。
+
+```bash
+# 完整汇总（已知准确率 + 未知分布）
+python summary.py
+
+# 只看未知源分布
+python summary.py --unknown-only
+
+# 只看已知源准确率
+python summary.py --known-only
+
+# 详细列出每条
+python summary.py --verbose
+
+# 只看低置信度结果
+python summary.py --min-conf low
+```
+
+输出包含三部分：
+- **Overview**：总数、类别分布、置信度分布
+- **Known Sources**：混淆矩阵、Precision/Recall/F1、Unsure 率、错误案例
+- **Unknown Sources**：TDE/SN/Unsure 分布（带柱状图）、置信度分层
+
+加 `--plot` 自动生成两张图：
+- `{name}.png` — Known 混淆矩阵热力图（蓝阶，学术白底）
+- `{name}_unknown.png` — Unknown 分类分布柱状图（按置信度分层）
+```bash
+python summary.py --plot                # 出图
+python summary.py --exemplar-set boundary --plot  # boundary set 的图
+```
+
+---
+
+## 一键全流程
+
+```bash
+# 默认：multimodal，default exemplar set
+bash run.sh
+
+# 换 exemplar set
+bash run.sh --set boundary
+bash run.sh --set text --mode text
+
+# 只汇总已有结果（不跑分类）
+bash run.sh --summary-only
+
+# 跳过出图
+bash run.sh --skip-plot
+```
+
+等价于手动执行：
+1. `python plot.py --all`
+2. `python classify.py --all-unlabeled --mode multimodal --model qwen3.6-chat`
+3. `python summary.py --plot`
+
+---
+
 ## 管理标签
 
 ```bash
@@ -281,6 +344,9 @@ python classify.py --results my_new_source
 | `eval_report.json` | 评估报告（运行 `eval.py` 后生成） |
 | `index.json` | 所有源的标签和元信息索引 |
 | `templates/fewshot*.json` | Few-shot exemplar 配置文件 |
+| `summary/*.json` | 汇总数据（Overview + Known + Unknown） |
+| `summary/*.png` | 混淆矩阵热力图 + 未知源分布图 |
+| `run.sh` | 一键全流程脚本 |
 
 ---
 

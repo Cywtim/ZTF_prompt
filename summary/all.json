@@ -1,0 +1,114 @@
+{
+  "overview": {
+    "total": 14,
+    "known": 13,
+    "unknown": 1,
+    "classes": {
+      "TDE": 6,
+      "SN": 5,
+      "Unsure": 2
+    },
+    "confidence": {
+      "high": 10,
+      "medium": 3,
+      "low": 0
+    }
+  },
+  "known": {
+    "total": 13,
+    "accuracy": 0.692,
+    "confusion_matrix": {
+      "TDE": {
+        "TDE": 6,
+        "?": 1,
+        "Unsure": 1,
+        "SN": 2
+      },
+      "SN": {
+        "SN": 3
+      },
+      "Unsure": {}
+    },
+    "per_class": {
+      "SN": {
+        "precision": 0.6,
+        "recall": 1.0,
+        "f1": 0.75,
+        "support": 3
+      },
+      "TDE": {
+        "precision": 1.0,
+        "recall": 0.6,
+        "f1": 0.75,
+        "support": 10
+      },
+      "Unsure": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      }
+    },
+    "unsure_rate": 0.077,
+    "unsure_count": 1,
+    "error_count": 3,
+    "high_confidence_errors": 1,
+    "errors": [
+      {
+        "source_id": "ZTF19aakiwze_difference_photometry",
+        "true": "TDE",
+        "pred": "?",
+        "confidence": "?",
+        "score": 0,
+        "unsure_preference": null,
+        "correct": false
+      },
+      {
+        "source_id": "ZTF21abhrchb_difference_photometry",
+        "true": "TDE",
+        "pred": "SN",
+        "confidence": "medium",
+        "score": 0.7,
+        "unsure_preference": null,
+        "correct": false
+      },
+      {
+        "source_id": "ZTF21abjrysr_difference_photometry",
+        "true": "TDE",
+        "pred": "SN",
+        "confidence": "high",
+        "score": 0.85,
+        "unsure_preference": null,
+        "correct": false
+      }
+    ]
+  },
+  "unknown": {
+    "total": 1,
+    "distribution": {
+      "TDE": 0,
+      "SN": 0,
+      "Unsure": 1
+    },
+    "confidence": {
+      "high": 0,
+      "medium": 1,
+      "low": 0
+    },
+    "unsure_count": 1,
+    "items": [
+      {
+        "source_id": "WFST_J101658",
+        "label": "Unsure",
+        "confidence": "medium",
+        "score": 0.5,
+        "unsure_preference": "TDE"
+      }
+    ]
+  },
+  "_meta": {
+    "timestamp": "2026-07-24T14:32:50.482267+00:00",
+    "exemplar_set": null,
+    "mode": null
+  }
+}
