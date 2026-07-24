@@ -1,0 +1,116 @@
+{
+  "source_id": "WFST_10644045650985559",
+  "timestamp": "2026-07-22T12:54:57.431176+00:00",
+  "model": "qwen3.6-chat",
+  "mode": "text",
+  "tokens": {
+    "prompt": 7174,
+    "completion": 567,
+    "total": 7741
+  },
+  "classification": {
+    "label": "TDE",
+    "confidence": "high",
+    "score": 0.92,
+    "unsure_preference": null
+  },
+  "reasoning": {
+    "primary_signal": "Strong Red-to-Blue color evolution (delta_g-r = -1316.2 uJy) combined with steep power-law decline and typical TDE rise duration.",
+    "indicators": [
+      {
+        "name": "Color Evolution (g-r)",
+        "value": "delta = -1316.2 uJy",
+        "weight": 0.9,
+        "direction": "TDE",
+        "note": "Strong red-to-blue evolution. Using relative threshold for bright source (5% of peak = 501 uJy), this delta is >2.5x the threshold. This is the strongest TDE indicator."
+      },
+      {
+        "name": "Rise Duration",
+        "value": "89 days",
+        "weight": 0.7,
+        "direction": "TDE",
+        "note": "Rise time is in the 10-60+ day range typical for TDE fallback accretion. While slightly long, it is far too slow for typical shock-cooling SNe (usually <10-15 days)."
+      },
+      {
+        "name": "Decline Rate",
+        "value": "-25.9 uJy/d",
+        "weight": 0.8,
+        "direction": "TDE",
+        "note": "Steep decline. Using relative threshold (0.5%/d of peak = 50 uJy/d), this is significant. It is not a slow Ni-56 tail plateau typical of SNe."
+      },
+      {
+        "name": "Total Span",
+        "value": "350 days",
+        "weight": 0.6,
+        "direction": "TDE",
+        "note": "Span is < 1000 days, consistent with TDE decay timescales. SNe with such long spans usually show distinct plateau or very slow decline tails."
+      }
+    ]
+  },
+  "quality": {
+    "flags": [
+      "Low cadence in early rise (3 pts in 10% window)",
+      "Missing mid-phase color pairs (0 pairs in 30-70%)"
+    ]
+  },
+  "few_shot": [
+    {
+      "id": "ZTF20abgwfek_difference_photometry",
+      "label": "TDE"
+    },
+    {
+      "id": "ZTF21abxngcz_difference_photometry",
+      "label": "TDE"
+    },
+    {
+      "id": "ZTF18aaygwqd_difference_photometry",
+      "label": "SN"
+    },
+    {
+      "id": "ZTF18acwvcbz_difference_photometry",
+      "label": "SN"
+    }
+  ],
+  "cot": false,
+  "cot_reasoning": "```json",
+  "_raw_response": "```json\n{\n  \"classification\": {\n    \"label\": \"TDE\",\n    \"confidence\": \"high\",\n    \"score\": 0.92,\n    \"unsure_preference\": null\n  },\n  \"reasoning\": {\n    \"primary_signal\": \"Strong Red-to-Blue color evolution (delta_g-r = -1316.2 uJy) combined with steep power-law decline and typical TDE rise duration.\",\n    \"indicators\": [\n      {\n        \"name\": \"Color Evolution (g-r)\",\n        \"value\": \"delta = -1316.2 uJy\",\n        \"weight\": 0.9,\n        \"direction\": \"TDE\",\n        \"note\": \"Strong red-to-blue evolution. Using relative threshold for bright source (5% of peak = 501 uJy), this delta is >2.5x the threshold. This is the strongest TDE indicator.\"\n      },\n      {\n        \"name\": \"Rise Duration\",\n        \"value\": \"89 days\",\n        \"weight\": 0.7,\n        \"direction\": \"TDE\",\n        \"note\": \"Rise time is in the 10-60+ day range typical for TDE fallback accretion. While slightly long, it is far too slow for typical shock-cooling SNe (usually <10-15 days).\"\n      },\n      {\n        \"name\": \"Decline Rate\",\n        \"value\": \"-25.9 uJy/d\",\n        \"weight\": 0.8,\n        \"direction\": \"TDE\",\n        \"note\": \"Steep decline. Using relative threshold (0.5%/d of peak = 50 uJy/d), this is significant. It is not a slow Ni-56 tail plateau typical of SNe.\"\n      },\n      {\n        \"name\": \"Total Span\",\n        \"value\": \"350 days\",\n        \"weight\": 0.6,\n        \"direction\": \"TDE\",\n        \"note\": \"Span is < 1000 days, consistent with TDE decay timescales. SNe with such long spans usually show distinct plateau or very slow decline tails.\"\n      }\n    ]\n  },\n  \"quality\": {\n    \"flags\": [\n      \"Low cadence in early rise (3 pts in 10% window)\",\n      \"Missing mid-phase color pairs (0 pairs in 30-70%)\"\n    ]\n  }\n}\n```",
+  "physical_context": [
+    {
+      "indicator": "Rise Duration",
+      "value": "89 days",
+      "direction": "TDE",
+      "weight": 0.7,
+      "phenomenon": "回落时标 (Fallback Timescale)",
+      "mechanism": "最束缚碎片返回近心点的时间 t_fb ~ 10–60 天。质量越大、轨道越束缚的碎片先返回，形成快速初始上升",
+      "wiki_ref": "concepts/fallback-rate.md §基本形式",
+      "expected": "10–60 天",
+      "caveat": "部分 TDE 和重复部分瓦解可偏离此范围"
+    },
+    {
+      "indicator": "Decline Rate",
+      "value": "-25.9 uJy/d",
+      "direction": "TDE",
+      "weight": 0.8,
+      "phenomenon": "t⁻⁵⸍³ 衰减律",
+      "mechanism": "回落率 Ṁ ∝ t^(-5/3) (Rees 1988)。光变曲线按幂律衰减，无晚期平台。陡衰减 (>1 μJy/d) 是 TDE 强指示",
+      "wiki_ref": "concepts/fallback-rate.md §基本形式",
+      "expected": "> 1 μJy/d 持续衰减",
+      "caveat": "部分 TDE 显示平台或再增亮（可能为吸积盘不稳定性或重复部分瓦解）"
+    },
+    {
+      "indicator": "Total Span",
+      "value": "350 days",
+      "direction": "TDE",
+      "weight": 0.6,
+      "mechanism": "TDE 光变持续数月～年。t^(-5/3) 衰减在数月内降至不可探测。总跨度 < 200 天是典型特征",
+      "expected": "< 200 天",
+      "caveat": "极亮 TDE (如 ASASSN-15oi) 可探测超过 1000 天"
+    },
+    {
+      "indicator": "Spectral Follow-up",
+      "mechanism": "TDE subtypes: 仅 Balmer 线 (Hα, Hβ)。典型源: ASASSN-14li, 仅 He II 4686Å。典型源: AT2019qiz, iPTF16fnl, 同时有 H 和 He 线。典型源: AT2019dsg. Key lines at host z: He II 4686, Hα 6563, N III 4640 (Bowen fluorescence), Fe II 多个",
+      "wiki_ref": "concepts/tde-overview.md §分类"
+    }
+  ],
+  "physical_summary": "## 物理诊断：TDE 候选体 (置信度: high, score=0.92)\n\n**Rise Duration**→TDE：89 days。 回落时标 (Fallback Timescale)——最束缚碎片返回近心点的时间 t_fb ~ 10–60 天。质量越大、轨道越束缚的碎片先返回，形成快速初始上升 预期范围：10–60 天。 ⚠️ 部分 TDE 和重复部分瓦解可偏离此范围 (concepts/fallback-rate.md §基本形式)\n\n**Decline Rate**→TDE：-25.9 uJy/d。 t⁻⁵⸍³ 衰减律——回落率 Ṁ ∝ t^(-5/3) (Rees 1988)。光变曲线按幂律衰减，无晚期平台。陡衰减 (>1 μJy/d) 是 TDE 强指示 预期范围：> 1 μJy/d 持续衰减。 ⚠️ 部分 TDE 显示平台或再增亮（可能为吸积盘不稳定性或重复部分瓦解） (concepts/fallback-rate.md §基本形式)\n\n**Total Span**→TDE：350 days。 TDE 光变持续数月～年。t^(-5/3) 衰减在数月内降至不可探测。总跨度 < 200 天是典型特征 预期范围：< 200 天。 ⚠️ 极亮 TDE (如 ASASSN-15oi) 可探测超过 1000 天\n\n**综合判断**：\n\n**光谱建议**：TDE subtypes: 仅 Balmer 线 (Hα, Hβ)。典型源: ASASSN-14li, 仅 He II 4686Å。典型源: AT2019qiz, iPTF16fnl, 同时有 H 和 He 线。典型源: AT2019dsg. Key lines at host z: He II 4686, Hα 6563, N III 4640 (Bowen fluorescence), Fe II 多个\n\n**相似已知源**：陡衰减与 ASASSN-14li 的早期光变类似，需核实是否有 IR echo。"
+}

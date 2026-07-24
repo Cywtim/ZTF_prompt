@@ -35,9 +35,23 @@ ZTF_FLUX_DIR = ZTF_DATA_DIR / "TS" / "Flux"
 ZTF_EARLY_DIR = ZTF_DATA_DIR / "TS"
 
 # Classification
-CLASSES = ["TDE", "SN"]#, "Others", "AGN"]
+CLASSES = ["TDE", "SN", "Unsure"]
 N_SHOT_TEXT = 3
 N_SHOT_MULTIMODAL = 1
+
+# Multimodal images (checked in order; nonexistent files silently skipped)
+MULTIMODAL_IMAGES = [
+    "lightcurve.png",
+    "cutout.png",
+    # "cutout_g.png",
+    # "cutout_r.png",
+    # "cutout_u.png",
+]
+
+# Cutout settings (used by cutout.py)
+CUTOUT_SURVEY = "SDSS"    # SDSS | DSS
+CUTOUT_SIZE = 300          # pixel
+CUTOUT_SCALE = 0.4         # arcsec/pixel
 
 # Feature computation
 MAX_LEN = 100

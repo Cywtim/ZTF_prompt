@@ -1,0 +1,37 @@
+{
+  "source_id": "ZTF19aakiwze_difference_photometry",
+  "timestamp": "2026-07-22T14:19:29.617129+00:00",
+  "model": "qwen3.6-chat",
+  "mode": "text",
+  "tokens": {
+    "prompt": 52459,
+    "completion": 559,
+    "total": 53018
+  },
+  "classification": {},
+  "reasoning": {},
+  "quality": {},
+  "few_shot": [
+    {
+      "id": "ZTF18acnbpmd_difference_photometry",
+      "label": "TDE"
+    },
+    {
+      "id": "wmx_2019cho",
+      "label": "TDE"
+    },
+    {
+      "id": "ZTF18aazhklh_difference_photometry",
+      "label": "SN"
+    },
+    {
+      "id": "ZTF18adllqhd_difference_photometry",
+      "label": "SN"
+    }
+  ],
+  "cot": false,
+  "cot_reasoning": "",
+  "_raw_response": "{\n\"classification\": {\n\"label\": \"TDE\",\n\"confidence\": \"medium\",\n\"score\": 0.65,\n\"unsure_preference\": \"TDE\"\n},\n\"reasoning\": {\n\"primary_signal\": \"Rise morphology and timescale strongly favor TDE, despite ambiguous color evolution.\",\n\"indicators\": [\n{\n\"name\": \"Rise Morphology\",\n\"value\": \"Concave (decelerating)\",\n\"weight\": 0.9,\n\"direction\": \"TDE\",\n\"note\": \"Flux increases rapidly early (e.g., 20->94 uJy in 12 days) then slows significantly (94->496 uJy over 28 days). This decelerating rise is characteristic of fallback accretion.\"\n},\n{\n\"name\": \"Rise Duration\",\n\"value\": \"60 days\",\n\"weight\": 0.8,\n\"direction\": \"TDE\",\n\"note\": \"A 60-day rise is typical for TDEs (fallback timescale) and too long for standard shock-cooling SNe.\"\n},\n{\n\"name\": \"Decline Rate\",\n\"value\": \"-6.0 uJy/d\",\n\"weight\": 0.7,\n\"direction\": \"TDE\",\n\"note\": \"Steep decline consistent with power-law decay of TDEs, rather than the slow Ni-56 tail of SNe.\"\n},\n{\n\"name\": \"Color Evolution\",\n\"value\": \"Delta +18.3 uJy (Blue to Red)\",\n\"weight\": 0.6,\n\"direction\": \"SN\",\n\"note\": \"The derived feature suggests a blue-to-red trend, which is SN-like. However, the data is noisy (high sigma) and the source is very blue at peak (g-r = -258 uJy), which is a strong TDE indicator (hot accretion disk). The 'red' late phase is likely due to low flux/noise.\"\n},\n{\n\"name\": \"Peak Color\",\n\"value\": \"Very Blue (-258 uJy)\",\n\"weight\": 0.8,\n\"direction\": \"TDE\",\n\"note\": \"Extremely blue color at peak is a hallmark of TDEs, contrasting with the typically redder or neutral colors of SNe at peak.\"\n}\n]\n},\n\"quality\": {\n\"flags\": [\n\"Noisy color measurements\",\n\"Low point count in early rise\"\n]\n}\n}\n```",
+  "physical_context": [],
+  "physical_summary": "## 物理诊断：? (置信度: ?, score=0.00)\n\n**综合判断**：\n"
+}

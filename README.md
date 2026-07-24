@@ -11,10 +11,15 @@ ZTF_prompt/
 ├── .env                 ← API 密钥配置
 ├── config.py            ← 全局配置
 ├── promt.py             ← 数据 → MD 分析报告
+├── plot.py              ← 数据 → 光变曲线 PNG（用于多模态分类）
 ├── classify.py          ← MD → LLM → 分类结果
 ├── eval.py              ← 评估准确率
+├── diag.py              ← 网络诊断工具
 │
-├── sources/             ← 生成的 MD 文件（每个源一个目录）
+├── sources/             ← 生成文件（每个源一个子目录）
+│   └── {id}/
+│       ├── analysis.md      ← 结构化分析报告
+│       └── lightcurve.png   ← 光变曲线图（u=蓝, g=绿, r=红）
 ├── index.json           ← 所有源的标签索引
 └── results/             ← 分类结果 JSON
 ```
@@ -50,26 +55,33 @@ python promt.py --batch /home/cyan/AppData/VScode/TDeck/ZTF_TDE/data/TS/Flux/SN/
 
 ---
 
-## 第三步：生成待分类源
+## 第三步：生成光变曲线图（多模态模式）
 
 ```bash
-# 单个文件
-python promt.py data/WFST_J101658.csv --label unknown
+# 单个源
+python plot.py /path/to/source_flux.npy --source-id WFST_J101658
 
-# 指定 source_id（用于后续引用）
-python promt.py data/WFST_J143207.csv --label unknown --source-id WFST_J143207
+# 批量处理
+python plot.py --batch /home/.../Flux/TDE/ --max 50
 
-# 强制覆盖已有文件
-python promt.py data/xxx.npy --label unknown --force
+# 为 index.json 中所有源生成
+python plot.py --all
 ```
+
+输出 `sources/{id}/lightcurve.png`：u 波段蓝色、g 波段绿色、r 波段红色，带误差棒和峰值标注。
+
+> 多模态分类需要 PNG 文件。`classify.py --mode multimodal` 会自动读取，无 PNG 时降级为 text。
 
 ---
 
 ## 第四步：分类
 
 ```bash
-# 分类单个源
+# 分类单个源（默认：3-shot，no CoT，text 模式）
 python classify.py WFST_J101658
+
+# 多模态模式（需要 lightcurve.png）
+python classify.py WFST_J101658 --mode multimodal --model qwen3.6-chat
 
 # 分类所有 unknown 源
 python classify.py --all-unlabeled
@@ -77,8 +89,15 @@ python classify.py --all-unlabeled
 # 强制重新分类（覆盖已有结果）
 python classify.py WFST_J101658 --force
 
-# 调整 few-shot 数量（每类示例数）
-python classify.py WFST_J101658 --n-shot 3
+# 调整 few-shot 数量
+python classify.py WFST_J101658 --n-shot 2          # 2-shot
+python classify.py WFST_J101658 --n-shot 0           # zero-shot
+
+# 启用 Chain-of-Thought（逐步推理）
+python classify.py WFST_J101658 --cot
+
+# CoT + few-shot 组合
+python classify.py WFST_J101658 --cot --n-shot 2
 
 # 换模型
 python classify.py WFST_J101658 --model qwen3.6-reasoner
@@ -108,16 +127,20 @@ cat results/WFST_J101658.json
   "reasoning": {
     "summary": "...",
     "indicators": [
-      {"name": "Color evolution", "weight": 0.4, "direction": "SN", "note": "..."},
+      {"name": "Color evolution", "weight": 0.4, "direction": "SN"},
       {"name": "Rise time", "weight": 0.2, "direction": "SN"}
     ]
   },
   "quality": {
     "overall": "medium",
     "flags": ["Rise phase sparsely sampled"]
-  }
+  },
+  "cot": false,
+  "cot_reasoning": ""
 }
 ```
+
+> CoT 模式下，`cot_reasoning` 字段会保存 LLM 的逐步推理原文（Step 1-4）。
 
 ---
 
@@ -127,8 +150,14 @@ cat results/WFST_J101658.json
 # 默认：每类抽 30 条测试，3-shot
 python eval.py
 
-# 自定义
-python eval.py --test-size 50 --n-shot 3 --classes TDE,SN
+# 自定义参数
+python eval.py --test-size 10 --n-shot 2 --classes TDE,SN
+
+# 四种 Few-Shot × CoT 组合
+python eval.py --n-shot 0                   --test-size 10 --classes TDE,SN   # 纯物理规则
+python eval.py --n-shot 2                   --test-size 10 --classes TDE,SN   # 物理 + 范例
+python eval.py --n-shot 0  --cot            --test-size 10 --classes TDE,SN   # 物理 + CoT
+python eval.py --n-shot 2  --cot            --test-size 10 --classes TDE,SN   # 物理 + 范例 + CoT
 
 # 详细输出（显示每条源的预测）
 python eval.py --verbose
@@ -177,17 +206,17 @@ python classify.py --results my_new_source
 
 ## MD 分析报告结构
 
-每个源生成的分析报告包含 5 个部分：
+每个源生成的分析报告包含 4 个部分：
 
 | 章节 | 内容 |
 |------|------|
 | §1 Source Metadata | 基本信息（点数、波段、峰值等） |
 | §2 Derived Features | 计算特征（形态、颜色演化、分阶段统计、数据质量） |
-| §3 Predictive Features | TDE vs SN 对比表 |
+
 | §4 Raw Light Curve | 完整原始数据表 |
 | §5 Classification Protocol | 给 LLM 的分类指令 |
 
-> 注意：调用 API 时默认去掉 §4（原始数据表）以节省 token。
+> 注意：调用 API 时默认去掉 §3（原始数据表）以节省 token。System Prompt 以**颜色演化**和**上升形态**（凹形= TDE, 凸形= SN）为主要判据，上升时长和总跨度作为辅助参考。
 
 ---
 
@@ -196,6 +225,7 @@ python classify.py --results my_new_source
 | 文件 | 内容 |
 |------|------|
 | `sources/{id}/analysis.md` | 完整分析报告 |
+| `sources/{id}/lightcurve.png` | 光变曲线图（多模态用） |
 | `results/{id}.json` | 分类结果（含置信度和推理链） |
 | `eval_report.json` | 评估报告（运行 `eval.py` 后生成） |
 | `index.json` | 所有源的标签和元信息索引 |
@@ -207,4 +237,6 @@ python classify.py --results my_new_source
 1. **API 调用较慢**：USTC 代理每次约 25-60 秒，分类一条源约 1 分钟。
 2. **不要用后台模式**：`classify.py` 必须前台运行（后台进程 SSL 连接有问题）。
 3. **mock 源不参与 few-shot**：`synth_flux_*` 是合成数据，已从 `index.json` 移除。
-4. **多模态模式**：`--mode multimodal` 需要 `sources/{id}/lightcurve.png` 存在，否则自动降级为 text。
+4. **多模态模式**：需要 `sources/{id}/lightcurve.png`（用 `plot.py` 生成）。USTC 代理的 deepseek 模型不支持视觉，需指定 `--model qwen3.6-chat`。
+5. **System Prompt 物理判据**：① 颜色演化 (g−r) → ② 上升形态 (凹/凸) → ③ 衰减形状 → ④ 数据质量。TDE 凹形上升（回落驱动），SN 凸形上升（激波冷却）。
+6. **图层颜色**：u=蓝 ▲、g=绿 ●、r=红 ■。

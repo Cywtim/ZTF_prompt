@@ -1,0 +1,144 @@
+{
+  "source_id": "ZTF20abgwfek_difference_photometry",
+  "timestamp": "2026-07-22T14:23:59.201031+00:00",
+  "model": "qwen3.6-chat",
+  "mode": "text",
+  "tokens": {
+    "prompt": 26634,
+    "completion": 375,
+    "total": 27009
+  },
+  "classification": {
+    "label": "TDE",
+    "confidence": "high",
+    "score": 0.85,
+    "unsure_preference": null
+  },
+  "reasoning": {
+    "primary_signal": "Strong red-to-blue color evolution (delta_g-r = -26.3 uJy) combined with a steep power-law decline and typical TDE rise duration.",
+    "indicators": [
+      {
+        "name": "Color Evolution",
+        "value": "delta_g-r = -26.3 uJy",
+        "weight": 0.9,
+        "direction": "TDE",
+        "note": "Strong red-to-blue evolution is the strongest TDE indicator. Early phase is blue/neutral, mid-phase becomes red, late phase turns blue again, consistent with TDE cooling/heating dynamics."
+      },
+      {
+        "name": "Rise Duration",
+        "value": "39 days",
+        "weight": 0.6,
+        "direction": "TDE",
+        "note": "Rise time of ~40 days falls squarely in the typical TDE fallback timescale (10-60 days)."
+      },
+      {
+        "name": "Decline Rate",
+        "value": "-5.65 uJy/d",
+        "weight": 0.7,
+        "direction": "TDE",
+        "note": "Steep decline rate favors TDE power-law decay over SN plateau or slow Ni-tail."
+      },
+      {
+        "name": "Total Span",
+        "value": "73 days",
+        "weight": 0.5,
+        "direction": "TDE",
+        "note": "Short total span is consistent with TDEs which often fade below detection within months, unlike SNe which can persist for years."
+      },
+      {
+        "name": "Rise Morphology",
+        "value": "Concave/Decelerating",
+        "weight": 0.6,
+        "direction": "TDE",
+        "note": "Flux increases rapidly in early rise (e.g., day 29-32 jump) and flattens near peak, consistent with fallback accretion."
+      }
+    ]
+  },
+  "quality": {
+    "flags": [
+      "Low point count in early rise phase"
+    ]
+  },
+  "few_shot": [
+    {
+      "id": "ZTF18acaqdaa_difference_photometry",
+      "label": "TDE"
+    },
+    {
+      "id": "ZTF19aapreis_difference_photometry",
+      "label": "TDE"
+    },
+    {
+      "id": "ZTF19aabyheu_difference_photometry",
+      "label": "SN"
+    },
+    {
+      "id": "ZTF19aacypbw_difference_photometry",
+      "label": "SN"
+    }
+  ],
+  "cot": false,
+  "cot_reasoning": "",
+  "_raw_response": "{\"classification\":{\"label\":\"TDE\",\"confidence\":\"high\",\"score\":0.85,\"unsure_preference\":null},\"reasoning\":{\"primary_signal\":\"Strong red-to-blue color evolution (delta_g-r = -26.3 uJy) combined with a steep power-law decline and typical TDE rise duration.\",\"indicators\":[{\"name\":\"Color Evolution\",\"value\":\"delta_g-r = -26.3 uJy\",\"weight\":0.9,\"direction\":\"TDE\",\"note\":\"Strong red-to-blue evolution is the strongest TDE indicator. Early phase is blue/neutral, mid-phase becomes red, late phase turns blue again, consistent with TDE cooling/heating dynamics.\"},{\"name\":\"Rise Duration\",\"value\":\"39 days\",\"weight\":0.6,\"direction\":\"TDE\",\"note\":\"Rise time of ~40 days falls squarely in the typical TDE fallback timescale (10-60 days).\"},{\"name\":\"Decline Rate\",\"value\":\"-5.65 uJy/d\",\"weight\":0.7,\"direction\":\"TDE\",\"note\":\"Steep decline rate favors TDE power-law decay over SN plateau or slow Ni-tail.\"},{\"name\":\"Total Span\",\"value\":\"73 days\",\"weight\":0.5,\"direction\":\"TDE\",\"note\":\"Short total span is consistent with TDEs which often fade below detection within months, unlike SNe which can persist for years.\"},{\"name\":\"Rise Morphology\",\"value\":\"Concave/Decelerating\",\"weight\":0.6,\"direction\":\"TDE\",\"note\":\"Flux increases rapidly in early rise (e.g., day 29-32 jump) and flattens near peak, consistent with fallback accretion.\"}]},\"quality\":{\"flags\":[\"Low point count in early rise phase\"]}}",
+  "physical_context": [
+    {
+      "indicator": "Color Evolution",
+      "value": "delta_g-r = -26.3 uJy",
+      "direction": "TDE",
+      "weight": 0.9,
+      "phenomenon": "光球层后退 (Photosphere Recession)",
+      "mechanism": "回落吸积使光球层向更热内区后退，辐射峰值从光学向紫外/软X射线偏移，观测到的 g−r 随时间减小（红→蓝）",
+      "wiki_ref": "concepts/tde-overview.md §物理过程",
+      "expected": "δ(g-r) > 峰值流量的5%，方向为红→蓝",
+      "caveat": "SN IIb/IIn/SLSN-I 早期也可显示类似颜色演化，但通常伴随凸上升形态"
+    },
+    {
+      "indicator": "Rise Duration",
+      "value": "39 days",
+      "direction": "TDE",
+      "weight": 0.6,
+      "phenomenon": "回落时标 (Fallback Timescale)",
+      "mechanism": "最束缚碎片返回近心点的时间 t_fb ~ 10–60 天。质量越大、轨道越束缚的碎片先返回，形成快速初始上升",
+      "wiki_ref": "concepts/fallback-rate.md §基本形式",
+      "expected": "10–60 天",
+      "caveat": "部分 TDE 和重复部分瓦解可偏离此范围"
+    },
+    {
+      "indicator": "Decline Rate",
+      "value": "-5.65 uJy/d",
+      "direction": "TDE",
+      "weight": 0.7,
+      "phenomenon": "t⁻⁵⸍³ 衰减律",
+      "mechanism": "回落率 Ṁ ∝ t^(-5/3) (Rees 1988)。光变曲线按幂律衰减，无晚期平台。陡衰减 (>1 μJy/d) 是 TDE 强指示",
+      "wiki_ref": "concepts/fallback-rate.md §基本形式",
+      "expected": "> 1 μJy/d 持续衰减",
+      "caveat": "部分 TDE 显示平台或再增亮（可能为吸积盘不稳定性或重复部分瓦解）"
+    },
+    {
+      "indicator": "Total Span",
+      "value": "73 days",
+      "direction": "TDE",
+      "weight": 0.5,
+      "mechanism": "TDE 光变持续数月～年。t^(-5/3) 衰减在数月内降至不可探测。总跨度 < 200 天是典型特征",
+      "expected": "< 200 天",
+      "caveat": "极亮 TDE (如 ASASSN-15oi) 可探测超过 1000 天"
+    },
+    {
+      "indicator": "Rise Morphology",
+      "value": "Concave/Decelerating",
+      "direction": "TDE",
+      "weight": 0.6,
+      "phenomenon": "回落吸积 (Fallback Accretion)",
+      "mechanism": "d²F/dt² < 0，即凹形 (concave)。大部分束缚碎片在早期返回——初期斜率最陡，随后逐渐平缓",
+      "wiki_ref": "concepts/fallback-rate.md §基本形式; concepts/tde-early-evolution.md §关键时标",
+      "expected": "凹形 (concave, d²F/dt² < 0)",
+      "caveat": "部分 TDE 有早期 bump (如 ASASSN-18ap)，可能与碎片流自交叉有关"
+    },
+    {
+      "indicator": "Spectral Follow-up",
+      "mechanism": "TDE subtypes: 仅 Balmer 线 (Hα, Hβ)。典型源: ASASSN-14li, 仅 He II 4686Å。典型源: AT2019qiz, iPTF16fnl, 同时有 H 和 He 线。典型源: AT2019dsg. Key lines at host z: He II 4686, Hα 6563, N III 4640 (Bowen fluorescence), Fe II 多个",
+      "wiki_ref": "concepts/tde-overview.md §分类"
+    }
+  ],
+  "physical_summary": "## 物理诊断：TDE 候选体 (置信度: high, score=0.85)\n\n**Color Evolution**→TDE：delta_g-r = -26.3 uJy。 光球层后退 (Photosphere Recession)——回落吸积使光球层向更热内区后退，辐射峰值从光学向紫外/软X射线偏移，观测到的 g−r 随时间减小（红→蓝） 预期范围：δ(g-r) > 峰值流量的5%，方向为红→蓝。 ⚠️ SN IIb/IIn/SLSN-I 早期也可显示类似颜色演化，但通常伴随凸上升形态 (concepts/tde-overview.md §物理过程)\n\n**Rise Duration**→TDE：39 days。 回落时标 (Fallback Timescale)——最束缚碎片返回近心点的时间 t_fb ~ 10–60 天。质量越大、轨道越束缚的碎片先返回，形成快速初始上升 预期范围：10–60 天。 ⚠️ 部分 TDE 和重复部分瓦解可偏离此范围 (concepts/fallback-rate.md §基本形式)\n\n**Decline Rate**→TDE：-5.65 uJy/d。 t⁻⁵⸍³ 衰减律——回落率 Ṁ ∝ t^(-5/3) (Rees 1988)。光变曲线按幂律衰减，无晚期平台。陡衰减 (>1 μJy/d) 是 TDE 强指示 预期范围：> 1 μJy/d 持续衰减。 ⚠️ 部分 TDE 显示平台或再增亮（可能为吸积盘不稳定性或重复部分瓦解） (concepts/fallback-rate.md §基本形式)\n\n**Total Span**→TDE：73 days。 TDE 光变持续数月～年。t^(-5/3) 衰减在数月内降至不可探测。总跨度 < 200 天是典型特征 预期范围：< 200 天。 ⚠️ 极亮 TDE (如 ASASSN-15oi) 可探测超过 1000 天\n\n**Rise Morphology**→TDE：Concave/Decelerating。 回落吸积 (Fallback Accretion)——d²F/dt² < 0，即凹形 (concave)。大部分束缚碎片在早期返回——初期斜率最陡，随后逐渐平缓 预期范围：凹形 (concave, d²F/dt² < 0)。 ⚠️ 部分 TDE 有早期 bump (如 ASASSN-18ap)，可能与碎片流自交叉有关 (concepts/fallback-rate.md §基本形式; concepts/tde-early-evolution.md §关键时标)\n\n**综合判断**：\n\n**光谱建议**：TDE subtypes: 仅 Balmer 线 (Hα, Hβ)。典型源: ASASSN-14li, 仅 He II 4686Å。典型源: AT2019qiz, iPTF16fnl, 同时有 H 和 He 线。典型源: AT2019dsg. Key lines at host z: He II 4686, Hα 6563, N III 4640 (Bowen fluorescence), Fe II 多个\n\n**相似已知源**：该源同时具备强颜色演化和陡衰减，类似于 AT2019qiz (TDE-He 原型) 和 ASASSN-14li 的光变特征。若光谱确认 He II 4686Å 发射线 → TDE-He 亚型。"
+}

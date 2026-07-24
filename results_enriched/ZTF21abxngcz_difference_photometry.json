@@ -1,0 +1,101 @@
+{
+  "source_id": "ZTF21abxngcz_difference_photometry",
+  "timestamp": "2026-07-22T12:42:34.388922+00:00",
+  "model": "qwen3.6-chat",
+  "mode": "text",
+  "tokens": {
+    "prompt": 6976,
+    "completion": 367,
+    "total": 7343
+  },
+  "classification": {
+    "label": "TDE",
+    "confidence": "high",
+    "score": 0.85,
+    "unsure_preference": null
+  },
+  "reasoning": {
+    "primary_signal": "Strong red-to-blue color evolution (delta_g-r = -27.8 uJy) combined with steep power-law decline.",
+    "indicators": [
+      {
+        "name": "Color Evolution (g-r)",
+        "value": "delta = -27.8 uJy (Red to Blue)",
+        "weight": 0.9,
+        "direction": "TDE"
+      },
+      {
+        "name": "Decline Rate",
+        "value": "-1.835 uJy/d",
+        "weight": 0.7,
+        "direction": "TDE"
+      },
+      {
+        "name": "Rise Time",
+        "value": "18 days",
+        "weight": 0.4,
+        "direction": "SN"
+      },
+      {
+        "name": "Total Span",
+        "value": "202 days",
+        "weight": 0.5,
+        "direction": "TDE"
+      }
+    ]
+  },
+  "quality": {
+    "flags": [
+      "R-band dominated sampling (66 r vs 27 g)",
+      "Rise time (18d) is shorter than typical TDE fallback but consistent with fast TDEs"
+    ]
+  },
+  "few_shot": [
+    {
+      "id": "ZTF22aadesap_difference_photometry",
+      "label": "TDE"
+    },
+    {
+      "id": "ZTF23aadcbay_difference_photometry",
+      "label": "TDE"
+    },
+    {
+      "id": "ZTF19aadolpe_difference_photometry",
+      "label": "SN"
+    },
+    {
+      "id": "ZTF19aaillan_difference_photometry",
+      "label": "SN"
+    }
+  ],
+  "cot": false,
+  "cot_reasoning": "```json",
+  "_raw_response": "```json\n{\n  \"classification\": {\n    \"label\": \"TDE\",\n    \"confidence\": \"high\",\n    \"score\": 0.85,\n    \"unsure_preference\": null\n  },\n  \"reasoning\": {\n    \"primary_signal\": \"Strong red-to-blue color evolution (delta_g-r = -27.8 uJy) combined with steep power-law decline.\",\n    \"indicators\": [\n      {\n        \"name\": \"Color Evolution (g-r)\",\n        \"value\": \"delta = -27.8 uJy (Red to Blue)\",\n        \"weight\": 0.9,\n        \"direction\": \"TDE\"\n      },\n      {\n        \"name\": \"Decline Rate\",\n        \"value\": \"-1.835 uJy/d\",\n        \"weight\": 0.7,\n        \"direction\": \"TDE\"\n      },\n      {\n        \"name\": \"Rise Time\",\n        \"value\": \"18 days\",\n        \"weight\": 0.4,\n        \"direction\": \"SN\"\n      },\n      {\n        \"name\": \"Total Span\",\n        \"value\": \"202 days\",\n        \"weight\": 0.5,\n        \"direction\": \"TDE\"\n      }\n    ]\n  },\n  \"quality\": {\n    \"flags\": [\n      \"R-band dominated sampling (66 r vs 27 g)\",\n      \"Rise time (18d) is shorter than typical TDE fallback but consistent with fast TDEs\"\n    ]\n  }\n}\n```",
+  "physical_context": [
+    {
+      "indicator": "Decline Rate",
+      "value": "-1.835 uJy/d",
+      "direction": "TDE",
+      "weight": 0.7,
+      "phenomenon": "t⁻⁵⸍³ 衰减律",
+      "mechanism": "回落率 Ṁ ∝ t^(-5/3) (Rees 1988)。光变曲线按幂律衰减，无晚期平台。陡衰减 (>1 μJy/d) 是 TDE 强指示",
+      "wiki_ref": "concepts/fallback-rate.md §基本形式",
+      "expected": "> 1 μJy/d 持续衰减",
+      "caveat": "部分 TDE 显示平台或再增亮（可能为吸积盘不稳定性或重复部分瓦解）"
+    },
+    {
+      "indicator": "Total Span",
+      "value": "202 days",
+      "direction": "TDE",
+      "weight": 0.5,
+      "mechanism": "TDE 光变持续数月～年。t^(-5/3) 衰减在数月内降至不可探测。总跨度 < 200 天是典型特征",
+      "expected": "< 200 天",
+      "caveat": "极亮 TDE (如 ASASSN-15oi) 可探测超过 1000 天"
+    },
+    {
+      "indicator": "Spectral Follow-up",
+      "mechanism": "TDE subtypes: 仅 Balmer 线 (Hα, Hβ)。典型源: ASASSN-14li, 仅 He II 4686Å。典型源: AT2019qiz, iPTF16fnl, 同时有 H 和 He 线。典型源: AT2019dsg. Key lines at host z: He II 4686, Hα 6563, N III 4640 (Bowen fluorescence), Fe II 多个",
+      "wiki_ref": "concepts/tde-overview.md §分类"
+    }
+  ],
+  "physical_summary": "## 物理诊断：TDE 候选体 (置信度: high, score=0.85)\n\n**Decline Rate**→TDE：-1.835 uJy/d。 t⁻⁵⸍³ 衰减律——回落率 Ṁ ∝ t^(-5/3) (Rees 1988)。光变曲线按幂律衰减，无晚期平台。陡衰减 (>1 μJy/d) 是 TDE 强指示 预期范围：> 1 μJy/d 持续衰减。 ⚠️ 部分 TDE 显示平台或再增亮（可能为吸积盘不稳定性或重复部分瓦解） (concepts/fallback-rate.md §基本形式)\n\n**Total Span**→TDE：202 days。 TDE 光变持续数月～年。t^(-5/3) 衰减在数月内降至不可探测。总跨度 < 200 天是典型特征 预期范围：< 200 天。 ⚠️ 极亮 TDE (如 ASASSN-15oi) 可探测超过 1000 天\n\n**综合判断**：\n\n**光谱建议**：TDE subtypes: 仅 Balmer 线 (Hα, Hβ)。典型源: ASASSN-14li, 仅 He II 4686Å。典型源: AT2019qiz, iPTF16fnl, 同时有 H 和 He 线。典型源: AT2019dsg. Key lines at host z: He II 4686, Hα 6563, N III 4640 (Bowen fluorescence), Fe II 多个\n\n**相似已知源**：陡衰减与 ASASSN-14li 的早期光变类似，需核实是否有 IR echo。"
+}

@@ -1,0 +1,114 @@
+{
+  "source_id": "ZTF19aajxwnz_difference_photometry",
+  "timestamp": "2026-07-22T12:41:55.910447+00:00",
+  "model": "qwen3.6-chat",
+  "mode": "text",
+  "tokens": {
+    "prompt": 7141,
+    "completion": 385,
+    "total": 7526
+  },
+  "classification": {
+    "label": "SN",
+    "confidence": "high",
+    "score": 0.9,
+    "unsure_preference": null
+  },
+  "reasoning": {
+    "primary_signal": "Strong Blue-to-Red color evolution (delta_g-r = +320.5 uJy) is the dominant discriminator, strongly favoring SN over TDE.",
+    "indicators": [
+      {
+        "name": "Color Evolution",
+        "value": "delta_g-r = +320.5 uJy (Blue to Red)",
+        "weight": 0.9,
+        "direction": "SN"
+      },
+      {
+        "name": "Rise Morphology",
+        "value": "21 days, fast rise rate (+136 uJy/d)",
+        "weight": 0.6,
+        "direction": "SN"
+      },
+      {
+        "name": "Decline Rate",
+        "value": "-13.158 uJy/d",
+        "weight": 0.5,
+        "direction": "TDE"
+      },
+      {
+        "name": "Total Span",
+        "value": "240 days",
+        "weight": 0.4,
+        "direction": "TDE"
+      }
+    ]
+  },
+  "quality": {
+    "flags": [
+      "Bright source (peak > 2000 uJy), relative thresholds applied",
+      "Decline rate is steep (TDE-like) but color evolution is definitive for SN"
+    ]
+  },
+  "few_shot": [
+    {
+      "id": "ZTF19aaniqrr_difference_photometry",
+      "label": "TDE"
+    },
+    {
+      "id": "ZTF19acspeuw_difference_photometry",
+      "label": "TDE"
+    },
+    {
+      "id": "ZTF18aagrdcs_difference_photometry",
+      "label": "SN"
+    },
+    {
+      "id": "ZTF19aaeuhgo_difference_photometry",
+      "label": "SN"
+    }
+  ],
+  "cot": false,
+  "cot_reasoning": "```json",
+  "_raw_response": "```json\n{\n  \"classification\": {\n    \"label\": \"SN\",\n    \"confidence\": \"high\",\n    \"score\": 0.9,\n    \"unsure_preference\": null\n  },\n  \"reasoning\": {\n    \"primary_signal\": \"Strong Blue-to-Red color evolution (delta_g-r = +320.5 uJy) is the dominant discriminator, strongly favoring SN over TDE.\",\n    \"indicators\": [\n      {\n        \"name\": \"Color Evolution\",\n        \"value\": \"delta_g-r = +320.5 uJy (Blue to Red)\",\n        \"weight\": 0.9,\n        \"direction\": \"SN\"\n      },\n      {\n        \"name\": \"Rise Morphology\",\n        \"value\": \"21 days, fast rise rate (+136 uJy/d)\",\n        \"weight\": 0.6,\n        \"direction\": \"SN\"\n      },\n      {\n        \"name\": \"Decline Rate\",\n        \"value\": \"-13.158 uJy/d\",\n        \"weight\": 0.5,\n        \"direction\": \"TDE\"\n      },\n      {\n        \"name\": \"Total Span\",\n        \"value\": \"240 days\",\n        \"weight\": 0.4,\n        \"direction\": \"TDE\"\n      }\n    ]\n  },\n  \"quality\": {\n    \"flags\": [\n      \"Bright source (peak > 2000 uJy), relative thresholds applied\",\n      \"Decline rate is steep (TDE-like) but color evolution is definitive for SN\"\n    ]\n  }\n}\n```",
+  "physical_context": [
+    {
+      "indicator": "Color Evolution",
+      "value": "delta_g-r = +320.5 uJy (Blue to Red)",
+      "direction": "SN",
+      "weight": 0.9,
+      "phenomenon": "激波冷却 (Shock Cooling)",
+      "mechanism": "激波 breakout 后包层膨胀冷却，辐射峰值从紫外向光学偏移，g−r 增加（蓝→红），与 TDE 方向相反",
+      "wiki_ref": "concepts/tde-early-evolution.md §与SN早期演化对比"
+    },
+    {
+      "indicator": "Rise Morphology",
+      "value": "21 days, fast rise rate (+136 uJy/d)",
+      "direction": "SN",
+      "weight": 0.6,
+      "phenomenon": "激波冷却 (Shock Cooling)",
+      "mechanism": "d²F/dt² > 0，即凸形 (convex)。包层膨胀时温度下降进入光学波段，初期暗、随后加速到峰值",
+      "expected": "凸形 (convex, d²F/dt² > 0)"
+    },
+    {
+      "indicator": "Decline Rate",
+      "value": "-13.158 uJy/d",
+      "direction": "TDE",
+      "weight": 0.5,
+      "phenomenon": "t⁻⁵⸍³ 衰减律",
+      "mechanism": "回落率 Ṁ ∝ t^(-5/3) (Rees 1988)。光变曲线按幂律衰减，无晚期平台。陡衰减 (>1 μJy/d) 是 TDE 强指示",
+      "wiki_ref": "concepts/fallback-rate.md §基本形式",
+      "expected": "> 1 μJy/d 持续衰减",
+      "caveat": "部分 TDE 显示平台或再增亮（可能为吸积盘不稳定性或重复部分瓦解）"
+    },
+    {
+      "indicator": "Total Span",
+      "value": "240 days",
+      "direction": "TDE",
+      "weight": 0.4,
+      "mechanism": "TDE 光变持续数月～年。t^(-5/3) 衰减在数月内降至不可探测。总跨度 < 200 天是典型特征",
+      "expected": "< 200 天",
+      "caveat": "极亮 TDE (如 ASASSN-15oi) 可探测超过 1000 天"
+    }
+  ],
+  "physical_summary": "## 物理诊断：SN (置信度: high, score=0.90)\n\n**Color Evolution**→SN：delta_g-r = +320.5 uJy (Blue to Red)。 激波冷却 (Shock Cooling)——激波 breakout 后包层膨胀冷却，辐射峰值从紫外向光学偏移，g−r 增加（蓝→红），与 TDE 方向相反 (concepts/tde-early-evolution.md §与SN早期演化对比)\n\n**Rise Morphology**→SN：21 days, fast rise rate (+136 uJy/d)。 激波冷却 (Shock Cooling)——d²F/dt² > 0，即凸形 (convex)。包层膨胀时温度下降进入光学波段，初期暗、随后加速到峰值 预期范围：凸形 (convex, d²F/dt² > 0)。\n\n**Decline Rate**→TDE：-13.158 uJy/d。 t⁻⁵⸍³ 衰减律——回落率 Ṁ ∝ t^(-5/3) (Rees 1988)。光变曲线按幂律衰减，无晚期平台。陡衰减 (>1 μJy/d) 是 TDE 强指示 预期范围：> 1 μJy/d 持续衰减。 ⚠️ 部分 TDE 显示平台或再增亮（可能为吸积盘不稳定性或重复部分瓦解） (concepts/fallback-rate.md §基本形式)\n\n**Total Span**→TDE：240 days。 TDE 光变持续数月～年。t^(-5/3) 衰减在数月内降至不可探测。总跨度 < 200 天是典型特征 预期范围：< 200 天。 ⚠️ 极亮 TDE (如 ASASSN-15oi) 可探测超过 1000 天\n\n**综合判断**：\n\n**注意**：该源有 2 个 TDE 方向指标 (Decline Rate, Total Span)，但综合判断为 SN。可能为 IIb/IIn/SLSN-I 等显示 TDE-like 颜色演化的 SN 亚型。建议核实光谱分类。"
+}

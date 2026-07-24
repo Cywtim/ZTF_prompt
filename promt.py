@@ -219,23 +219,8 @@ def generate_md(source_id, arr, f, label="unknown"):
     L.append(f"| Decline | {clevel(len(post))} | {len(post)} post-peak pts |")
     L.append("")
 
-    L.append("## Section 3: Predictive Features\n")
-    L.append("| Signal | Value | TDE? | SN? |")
-    L.append("|--------|-------|:----:|:---:|")
-    r1 = "yes" if 20 <= rise_t <= 60 else "atypical"
-    s1 = "possible" if rise_t < 50 else "most SN slower"
-    L.append(f"| Rise time | {rise_t:.0f} d | {r1} | {s1} |")
-    if len(ec) and len(lc):
-        dc = np.mean(lc) - np.mean(ec)
-        r2 = "yes" if dc < -2 else ("weak" if dc < 0 else "no")
-        s2 = "no" if dc < -2 else "ok"
-        L.append(f"| Red to Blue | delta = {dc:+.1f} | {r2} | {s2} |")
-    plateau = "yes" if abs(drate) > 0.05 else "no"
-    L.append(f"| No plateau | {plateau} | {'yes' if plateau == 'yes' else '?'} | {'SLSNe have' if plateau == 'no' else 'ok'} |")
-    L.append(f"| g-dominated | {'yes' if gn > rn else 'no'} | blue (TDE) | young SN too |")
-    L.append("")
 
-    L.append("## Section 4: Raw Light Curve\n")
+    L.append("## Section 3: Raw Light Curve\n")
     L.append(f"> Flux in uJy. Day = MJD - {t0:.1f}. Phase: -1=rising, +1=falling. g-r: positive=red.\n")
     L.append("| Num | Day | B | Flux | Err | Phase | g-r |")
     L.append("|-----|-----|---|:----:|:---:|:-----:|:---:|")
@@ -244,7 +229,7 @@ def generate_md(source_id, arr, f, label="unknown"):
         L.append(f"| {i + 1} | {arr[i, 0]:.1f} | {bs} | {arr[i, 2]:.1f} | {arr[i, 3]:.2f} | {f['phase'][i]:+.3f} | {f['color'][i]:+.1f} |")
     L.append("")
 
-    L.append("## Section 5: Classification Protocol\n")
+    L.append("## Section 4: Classification Protocol\n")
     L.append("### System Instruction")
     L.append("Classify this transient light curve as **TDE / SN / Others / AGN**.\n")
     L.append("### Knowledge Base")

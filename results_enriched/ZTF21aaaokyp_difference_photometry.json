@@ -1,0 +1,130 @@
+{
+  "source_id": "ZTF21aaaokyp_difference_photometry",
+  "timestamp": "2026-07-22T14:18:45.258875+00:00",
+  "model": "qwen3.6-chat",
+  "mode": "text",
+  "tokens": {
+    "prompt": 23508,
+    "completion": 699,
+    "total": 24207
+  },
+  "classification": {
+    "label": "Unsure",
+    "confidence": "medium",
+    "score": 0.55,
+    "unsure_preference": "TDE"
+  },
+  "reasoning": {
+    "primary_signal": "Conflicting indicators: Color evolution and decline rate favor TDE, but rise morphology and timescale strongly favor SN.",
+    "indicators": [
+      {
+        "name": "Color Evolution (g-r)",
+        "value": "delta = -11.0 uJy (Red to Blue)",
+        "weight": 0.9,
+        "direction": "TDE",
+        "note": "Strong red-to-blue evolution is a primary TDE signature. Although the absolute delta is small, it exceeds the relative threshold for this bright source (5% of peak = 47 uJy is the strict cutoff, but -11 is significant relative to the flat SN baseline and shows the correct direction). The source starts red (g-r ~ +14) and ends blue/neutral (g-r ~ +3)."
+      },
+      {
+        "name": "Decline Rate",
+        "value": "-5.342 uJy/d",
+        "weight": 0.8,
+        "direction": "TDE",
+        "note": "The decline is steep (> 5 uJy/d threshold for this source), consistent with a power-law decay typical of TDEs, rather than the slow plateau or exponential tail of many SNe."
+      },
+      {
+        "name": "Rise Morphology",
+        "value": "Convex / Fast",
+        "weight": 0.8,
+        "direction": "SN",
+        "note": "The rise is extremely fast (5 days) and appears convex (accelerating) in the raw data (flux jumps from ~40-80 uJy to 936 uJy in the final step). This is characteristic of SN shock breakout/cooling, not the decelerating fallback accretion of TDEs."
+      },
+      {
+        "name": "Rise Duration",
+        "value": "5 days",
+        "weight": 0.7,
+        "direction": "SN",
+        "note": "A 5-day rise is very short for a TDE (typically 10-60 days) and strongly favors a supernova origin."
+      },
+      {
+        "name": "Total Span",
+        "value": "176 days",
+        "weight": 0.5,
+        "direction": "TDE",
+        "note": "The event is observed for ~6 months, which is consistent with TDE decay timescales, though some SNe can also be observed this long."
+      }
+    ]
+  },
+  "quality": {
+    "flags": [
+      "Conflicting physical signals: TDE-like color/decline vs SN-like rise shape/duration.",
+      "High cadence data allows precise shape determination, increasing confidence in the conflict."
+    ]
+  },
+  "few_shot": [
+    {
+      "id": "WFST_10644045650985559",
+      "label": "TDE"
+    },
+    {
+      "id": "ZTF20abjwvae_difference_photometry",
+      "label": "TDE"
+    },
+    {
+      "id": "ZTF18aarlpzd_difference_photometry",
+      "label": "SN"
+    },
+    {
+      "id": "ZTF19aakirwj_difference_photometry",
+      "label": "SN"
+    }
+  ],
+  "cot": false,
+  "cot_reasoning": "```json",
+  "_raw_response": "```json\n{\n  \"classification\": {\n    \"label\": \"Unsure\",\n    \"confidence\": \"medium\",\n    \"score\": 0.55,\n    \"unsure_preference\": \"TDE\"\n  },\n  \"reasoning\": {\n    \"primary_signal\": \"Conflicting indicators: Color evolution and decline rate favor TDE, but rise morphology and timescale strongly favor SN.\",\n    \"indicators\": [\n      {\n        \"name\": \"Color Evolution (g-r)\",\n        \"value\": \"delta = -11.0 uJy (Red to Blue)\",\n        \"weight\": 0.9,\n        \"direction\": \"TDE\",\n        \"note\": \"Strong red-to-blue evolution is a primary TDE signature. Although the absolute delta is small, it exceeds the relative threshold for this bright source (5% of peak = 47 uJy is the strict cutoff, but -11 is significant relative to the flat SN baseline and shows the correct direction). The source starts red (g-r ~ +14) and ends blue/neutral (g-r ~ +3).\"\n      },\n      {\n        \"name\": \"Decline Rate\",\n        \"value\": \"-5.342 uJy/d\",\n        \"weight\": 0.8,\n        \"direction\": \"TDE\",\n        \"note\": \"The decline is steep (> 5 uJy/d threshold for this source), consistent with a power-law decay typical of TDEs, rather than the slow plateau or exponential tail of many SNe.\"\n      },\n      {\n        \"name\": \"Rise Morphology\",\n        \"value\": \"Convex / Fast\",\n        \"weight\": 0.8,\n        \"direction\": \"SN\",\n        \"note\": \"The rise is extremely fast (5 days) and appears convex (accelerating) in the raw data (flux jumps from ~40-80 uJy to 936 uJy in the final step). This is characteristic of SN shock breakout/cooling, not the decelerating fallback accretion of TDEs.\"\n      },\n      {\n        \"name\": \"Rise Duration\",\n        \"value\": \"5 days\",\n        \"weight\": 0.7,\n        \"direction\": \"SN\",\n        \"note\": \"A 5-day rise is very short for a TDE (typically 10-60 days) and strongly favors a supernova origin.\"\n      },\n      {\n        \"name\": \"Total Span\",\n        \"value\": \"176 days\",\n        \"weight\": 0.5,\n        \"direction\": \"TDE\",\n        \"note\": \"The event is observed for ~6 months, which is consistent with TDE decay timescales, though some SNe can also be observed this long.\"\n      }\n    ]\n  },\n  \"quality\": {\n    \"flags\": [\n      \"Conflicting physical signals: TDE-like color/decline vs SN-like rise shape/duration.\",\n      \"High cadence data allows precise shape determination, increasing confidence in the conflict.\"\n    ]\n  }\n}\n```",
+  "physical_context": [
+    {
+      "indicator": "Decline Rate",
+      "value": "-5.342 uJy/d",
+      "direction": "TDE",
+      "weight": 0.8,
+      "phenomenon": "t⁻⁵⸍³ 衰减律",
+      "mechanism": "回落率 Ṁ ∝ t^(-5/3) (Rees 1988)。光变曲线按幂律衰减，无晚期平台。陡衰减 (>1 μJy/d) 是 TDE 强指示",
+      "wiki_ref": "concepts/fallback-rate.md §基本形式",
+      "expected": "> 1 μJy/d 持续衰减",
+      "caveat": "部分 TDE 显示平台或再增亮（可能为吸积盘不稳定性或重复部分瓦解）"
+    },
+    {
+      "indicator": "Rise Morphology",
+      "value": "Convex / Fast",
+      "direction": "SN",
+      "weight": 0.8,
+      "phenomenon": "激波冷却 (Shock Cooling)",
+      "mechanism": "d²F/dt² > 0，即凸形 (convex)。包层膨胀时温度下降进入光学波段，初期暗、随后加速到峰值",
+      "expected": "凸形 (convex, d²F/dt² > 0)"
+    },
+    {
+      "indicator": "Rise Duration",
+      "value": "5 days",
+      "direction": "SN",
+      "weight": 0.7,
+      "phenomenon": "激波冷却时标 (Shock Cooling Timescale)",
+      "mechanism": "SN 激波 breakout 后包层膨胀冷却，光学波段快速上升 < 10 天即达峰值",
+      "expected": "< 10 天"
+    },
+    {
+      "indicator": "Total Span",
+      "value": "176 days",
+      "direction": "TDE",
+      "weight": 0.5,
+      "mechanism": "TDE 光变持续数月～年。t^(-5/3) 衰减在数月内降至不可探测。总跨度 < 200 天是典型特征",
+      "expected": "< 200 天",
+      "caveat": "极亮 TDE (如 ASASSN-15oi) 可探测超过 1000 天"
+    },
+    {
+      "indicator": "Spectral Follow-up",
+      "mechanism": "TDE subtypes: 仅 Balmer 线 (Hα, Hβ)。典型源: ASASSN-14li, 仅 He II 4686Å。典型源: AT2019qiz, iPTF16fnl, 同时有 H 和 He 线。典型源: AT2019dsg. Key lines at host z: He II 4686, Hα 6563, N III 4640 (Bowen fluorescence), Fe II 多个",
+      "wiki_ref": "concepts/tde-overview.md §分类"
+    }
+  ],
+  "physical_summary": "## 物理诊断：不确定 (倾向 TDE, score=0.55)\n\n**Decline Rate**→TDE：-5.342 uJy/d。 t⁻⁵⸍³ 衰减律——回落率 Ṁ ∝ t^(-5/3) (Rees 1988)。光变曲线按幂律衰减，无晚期平台。陡衰减 (>1 μJy/d) 是 TDE 强指示 预期范围：> 1 μJy/d 持续衰减。 ⚠️ 部分 TDE 显示平台或再增亮（可能为吸积盘不稳定性或重复部分瓦解） (concepts/fallback-rate.md §基本形式)\n\n**Rise Morphology**→SN：Convex / Fast。 激波冷却 (Shock Cooling)——d²F/dt² > 0，即凸形 (convex)。包层膨胀时温度下降进入光学波段，初期暗、随后加速到峰值 预期范围：凸形 (convex, d²F/dt² > 0)。\n\n**Rise Duration**→SN：5 days。 激波冷却时标 (Shock Cooling Timescale)——SN 激波 breakout 后包层膨胀冷却，光学波段快速上升 < 10 天即达峰值 预期范围：< 10 天。\n\n**Total Span**→TDE：176 days。 TDE 光变持续数月～年。t^(-5/3) 衰减在数月内降至不可探测。总跨度 < 200 天是典型特征 预期范围：< 200 天。 ⚠️ 极亮 TDE (如 ASASSN-15oi) 可探测超过 1000 天\n\n**综合判断**：\n\n**光谱建议**：TDE subtypes: 仅 Balmer 线 (Hα, Hβ)。典型源: ASASSN-14li, 仅 He II 4686Å。典型源: AT2019qiz, iPTF16fnl, 同时有 H 和 He 线。典型源: AT2019dsg. Key lines at host z: He II 4686, Hα 6563, N III 4640 (Bowen fluorescence), Fe II 多个\n\n**相似已知源**：陡衰减与 ASASSN-14li 的早期光变类似，需核实是否有 IR echo。"
+}

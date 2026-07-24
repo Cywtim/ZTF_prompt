@@ -17,8 +17,12 @@ import config
 from classify import classify_one, promt_load_index, parse_response
 
 
-def evaluate(test_size=30, n_shot=3, classes=None, mode="text", model=None, verbose=False):
-    """Run evaluation on labeled sources."""
+def evaluate(test_size=30, n_shot=3, classes=None, mode="text", model=None, verbose=False, cot=False):
+    """Run evaluation on labeled sources.
+    
+    Args:
+        cot: if True, enable Chain-of-Thought reasoning.
+    """
     if classes is None:
         classes = config.CLASSES
 
@@ -44,8 +48,11 @@ def evaluate(test_size=30, n_shot=3, classes=None, mode="text", model=None, verb
         print("No test sources available.")
         return
 
+    mode_str = f"{n_shot}-shot, mode={mode}"
+    if cot:
+        mode_str += ", CoT"
     print(f"Evaluation: {len(test_ids)} test sources ({len(classes)} classes), "
-          f"{n_shot}-shot, mode={mode}")
+          f"{mode_str}")
     print(f"Few-shot pool: {len(idx) - len(test_set)} sources "
           f"(test set excluded)\n")
 
@@ -62,11 +69,11 @@ def evaluate(test_size=30, n_shot=3, classes=None, mode="text", model=None, verb
 
         from classify import sample_few_shot, build_prompt, call_api
         few_shot = sample_few_shot(idx, n_per_class=n_shot, exclude=exclude)
-        if not few_shot:
+        if n_shot > 0 and not few_shot:
             print("FAIL (no few-shot available)")
             continue
 
-        messages = build_prompt(sid, few_shot, mode)
+        messages = build_prompt(sid, few_shot, mode, cot=cot)
         try:
             raw_text, usage = call_api(messages, model=model)
             parsed = parse_response(raw_text)
@@ -78,9 +85,12 @@ def evaluate(test_size=30, n_shot=3, classes=None, mode="text", model=None, verb
         pred_label = parsed.get("classification", {}).get("label", "?")
         conf = parsed.get("classification", {}).get("confidence", "?")
         score = parsed.get("classification", {}).get("score", 0)
+        unsure_pref = parsed.get("classification", {}).get("unsure_preference")
 
         is_correct = (pred_label == true_label)
-        if is_correct:
+        if pred_label == "Unsure":
+            status = f"UNSURE→{unsure_pref}" if unsure_pref else "UNSURE"
+        elif is_correct:
             correct += 1
             status = "OK"
         else:
@@ -94,6 +104,7 @@ def evaluate(test_size=30, n_shot=3, classes=None, mode="text", model=None, verb
             "pred": pred_label,
             "confidence": conf,
             "score": score,
+            "unsure_preference": unsure_pref,
             "correct": is_correct,
             "tokens": usage.total_tokens if usage else 0,
         })
@@ -151,8 +162,28 @@ def evaluate(test_size=30, n_shot=3, classes=None, mode="text", model=None, verb
     if macro_f1:
         print(f"  Macro F1:  {sum(macro_f1)/len(macro_f1):.3f}")
 
+    # Unsure analysis
+    unsure = [r for r in results if r["pred"] == "Unsure"]
+    unsure_by_true = Counter()
+    unsure_by_pref = Counter()
+    if unsure:
+        for r in unsure:
+            key = f"true={r['true']}"
+            if r.get("unsure_preference"):
+                key += f"→{r['unsure_preference']}"
+            unsure_by_true[key] += 1
+            unsure_by_pref[r.get("unsure_preference", "none")] += 1
+        print(f"\n  Unsure rate: {len(unsure)}/{len(results)} ({100*len(unsure)/len(results):.0f}%)")
+        for k, v in sorted(unsure_by_true.items()):
+            print(f"    {v:>3d}x {k}")
+        # Show preference distribution
+        prefs = [(k, v) for k, v in unsure_by_pref.items() if k != "none"]
+        if prefs:
+            pref_str = ", ".join(f"{k}: {v}" for k, v in sorted(prefs))
+            print(f"    Preference: {pref_str}")
+
     # Error analysis
-    wrong = [r for r in results if not r["correct"]]
+    wrong = [r for r in results if not r["correct"] and r["pred"] != "Unsure"]
     if wrong:
         print(f"\n  Errors ({len(wrong)}):")
         for r in sorted(wrong, key=lambda x: x["score"], reverse=True):
@@ -199,6 +230,13 @@ def evaluate(test_size=30, n_shot=3, classes=None, mode="text", model=None, verb
             if (tp := cm[cls_name][cls_name]) >= 0
         },
         "errors": wrong,
+        "unsure": {
+            "count": len(unsure),
+            "rate": len(unsure) / len(results) if results else 0,
+            "by_true": dict(unsure_by_true) if unsure else {},
+            "preference": dict(unsure_by_pref) if unsure else {},
+            "items": unsure,
+        },
         "low_confidence": low_conf,
         "total_tokens": total_tokens,
     }
@@ -220,6 +258,7 @@ def main():
     parser.add_argument("--mode", choices=["text", "multimodal"], default="text")
     parser.add_argument("--model", help="model override")
     parser.add_argument("--verbose", action="store_true", help="show detailed per-source results")
+    parser.add_argument("--cot", action="store_true", help="enable Chain-of-Thought reasoning")
     args = parser.parse_args()
 
     classes = [c.strip() for c in args.classes.split(",")]
@@ -230,6 +269,7 @@ def main():
         mode=args.mode,
         model=args.model,
         verbose=args.verbose,
+        cot=args.cot,
     )
 
 

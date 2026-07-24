@@ -1,0 +1,74 @@
+{
+  "source_id": "ZTF21abjrysr_difference_photometry",
+  "timestamp": "2026-07-20T17:51:09.064911+00:00",
+  "model": "deepseek-v4-flash",
+  "mode": "text",
+  "tokens": {
+    "prompt": 5829,
+    "completion": 774,
+    "total": 6603
+  },
+  "classification": {
+    "label": "SN",
+    "confidence": "high",
+    "score": 0.85
+  },
+  "reasoning": {
+    "primary_signal": "Color evolution: blue to red (delta_g-r = +87.1 uJy) strongly favors SN over TDE",
+    "indicators": [
+      {
+        "name": "Color evolution (g-r)",
+        "value": "+87.1 uJy (blue to red)",
+        "weight": 0.5,
+        "direction": "SN",
+        "note": "Strongest discriminator; TDEs show red to blue (negative delta)"
+      },
+      {
+        "name": "Rise time",
+        "value": "3 days",
+        "weight": 0.2,
+        "direction": "TDE",
+        "note": "Very fast rise, possible for SN IIn but overridden by color"
+      },
+      {
+        "name": "Decline rate",
+        "value": "-13.538 uJy/d (steep)",
+        "weight": 0.2,
+        "direction": "TDE",
+        "note": "Steep decline typical of TDE, but color is decisive"
+      },
+      {
+        "name": "Plateau",
+        "value": "No plateau",
+        "weight": 0.1,
+        "direction": "TDE",
+        "note": "Absence of plateau is consistent with both, but color rules"
+      }
+    ]
+  },
+  "quality": {
+    "overall": "high",
+    "flags": []
+  },
+  "few_shot": [
+    {
+      "id": "ZTF19aapreis_difference_photometry",
+      "label": "TDE"
+    },
+    {
+      "id": "ZTF20abgwfek_difference_photometry",
+      "label": "TDE"
+    },
+    {
+      "id": "ZTF18aagrdcs_difference_photometry",
+      "label": "SN"
+    },
+    {
+      "id": "ZTF19aailepg_difference_photometry",
+      "label": "SN"
+    }
+  ],
+  "_raw_response": "{\n  \"classification\": {\n    \"label\": \"SN\",\n    \"confidence\": \"high\",\n    \"score\": 0.85\n  },\n  \"reasoning\": {\n    \"primary_signal\": \"Color evolution: blue to red (delta_g-r = +87.1 uJy) strongly favors SN over TDE\",\n    \"indicators\": [\n      {\n        \"name\": \"Color evolution (g-r)\",\n        \"value\": \"+87.1 uJy (blue to red)\",\n        \"weight\": 0.5,\n        \"direction\": \"SN\",\n        \"note\": \"Strongest discriminator; TDEs show red to blue (negative delta)\"\n      },\n      {\n        \"name\": \"Rise time\",\n        \"value\": \"3 days\",\n        \"weight\": 0.2,\n        \"direction\": \"TDE\",\n        \"note\": \"Very fast rise, possible for SN IIn but overridden by color\"\n      },\n      {\n        \"name\": \"Decline rate\",\n        \"value\": \"-13.538 uJy/d (steep)\",\n        \"weight\": 0.2,\n        \"direction\": \"TDE\",\n        \"note\": \"Steep decline typical of TDE, but color is decisive\"\n      },\n      {\n        \"name\": \"Plateau\",\n        \"value\": \"No plateau\",\n        \"weight\": 0.1,\n        \"direction\": \"TDE\",\n        \"note\": \"Absence of plateau is consistent with both, but color rules\"\n      }\n    ]\n  },\n  \"quality\": {\n    \"overall\": \"high\",\n    \"flags\": []\n  }\n}",
+  "physical_context": [],
+  "physical_summary": "## 物理诊断：SN (置信度: high, score=0.85)\n\n**综合判断**：\n"
+}

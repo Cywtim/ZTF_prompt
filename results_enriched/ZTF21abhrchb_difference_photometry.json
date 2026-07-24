@@ -1,0 +1,102 @@
+{
+  "source_id": "ZTF21abhrchb_difference_photometry",
+  "timestamp": "2026-07-22T14:23:22.000139+00:00",
+  "model": "qwen3.6-chat",
+  "mode": "text",
+  "tokens": {
+    "prompt": 30658,
+    "completion": 2643,
+    "total": 33301
+  },
+  "classification": {
+    "label": "SN",
+    "confidence": "medium",
+    "score": 0.7,
+    "unsure_preference": null
+  },
+  "reasoning": {
+    "primary_signal": "Color evolution and rise morphology strongly favor SN.",
+    "indicators": [
+      {
+        "name": "Color Evolution",
+        "value": "Delta g-r = +268.0 uJy (Blue to Red)",
+        "weight": 0.9,
+        "direction": "SN",
+        "note": "Strong Blue-to-Red evolution is characteristic of SN shock cooling. TDEs typically show Red-to-Blue."
+      },
+      {
+        "name": "Rise Morphology",
+        "value": "Convex, 12 days",
+        "weight": 0.8,
+        "direction": "SN",
+        "note": "Rapid, convex rise with flux staying low until the final days is typical of SNe. TDEs usually show concave, decelerating rises."
+      },
+      {
+        "name": "Decline Rate",
+        "value": "-25.8 uJy/d",
+        "weight": 0.5,
+        "direction": "TDE",
+        "note": "Steep decline favors TDE, but fast-declining SNe also exist. This is a weaker discriminator compared to color and rise shape."
+      }
+    ]
+  },
+  "quality": {
+    "flags": [
+      "Metadata label (TDE) contradicts physical indicators (SN).",
+      "Early color phase dominated by peak flux outlier."
+    ]
+  },
+  "few_shot": [
+    {
+      "id": "ZTF20aabqihu_difference_photometry",
+      "label": "TDE"
+    },
+    {
+      "id": "ZTF25ablxhsq_difference_photometry",
+      "label": "TDE"
+    },
+    {
+      "id": "ZTF18aahmxqa_difference_photometry",
+      "label": "SN"
+    },
+    {
+      "id": "ZTF19aaairqh_difference_photometry",
+      "label": "SN"
+    }
+  ],
+  "cot": false,
+  "cot_reasoning": "To classify the source **ZTF21abhrchb_difference_photometry**, I will apply the physical discriminators provided in the system instructions.\n\n### 1. Color Evolution (g − r)\n*   **Data:**\n    *   Early (0-30%): g-r = -274.4 uJy (Blue)\n    *   Mid (30-70%): g-r = -10.2 uJy (Neutral/Blue)\n    *   Late (70-100%): g-r = -6.4 uJy (Neutral/Blue)\n    *   **Delta:** +268.0 uJy.\n*   **Thresholds:** The prompt specifies relative thresholds for this bright source (Peak ~2134 uJy). Significant evolution is > 107 uJy.\n*   **Analysis:** The delta is +268.0 uJy, which is well above the 107 uJy threshold. The evolution is from **Blue to Red** (negative to less negative/positive).\n*   **Rule:** \"delta_g-r > 10 uJy (strong red→blue evolution): STRONG TDE indicator\". Conversely, Blue-to-Red is typical for SNe (shock cooling).\n*   **Indicator:** **SN** (Strong signal).\n\n### 2. Rise Morphology\n*   **Data:**\n    *   Rise time: 12 days.\n    *   Peak flux: 2134.2 uJy at Day 12.0.\n    *   Early points: Day 0 (g=34, r=40), Day 6 (r=90), Day 8 (g=29), Day 10 (g=32, r=30).\n    *   The flux jumps from ~30-40 uJy at Day 10 to 2134 uJy at Day 12.\n*   **Shape:** The rise is extremely rapid in the final days. The early points (Day 0-10) show very low flux compared to the peak. This suggests a **convex** rise (accelerating), where the flux stays low and then shoots up. A concave rise (TDE) would show significant flux early on, decelerating towards the peak. Here, the flux is negligible until the very end.\n*   **Duration:** 12 days.\n    *   Rule: \"< 10 days → favors SN\". 12 days is borderline but close to the SN regime.\n    *   Rule: \"10–60 days → typical TDE\".\n*   **Indicator:** **SN** (Convex shape, short rise).\n\n### 3. Decline Shape\n*   **Data:**\n    *   Decline rate: -25.784 uJy/d.\n    *   Total span: 93 days.\n    *   Post-peak behavior: Drops from 2134 to ~40-80 uJy over ~80 days.\n*   **Analysis:** The decline is steep.\n    *   Rule: \"Steep power-law decline (>1 uJy/d sustained): favors TDE\".\n    *   However, SNe can also have steep declines initially. The key is the *shape*. The light curve drops rapidly and then seems to plateau or fluctuate at low levels (40-160 uJy) from Day 30 onwards.\n    *   The \"steep\" decline here is consistent with a fast-declining SN (like a Type Ia or II-P early phase) or a TDE.\n*   **Indicator:** **TDE** (Steep decline), but ambiguous without longer tail.\n\n### 4. Data Quality & Conflicts\n*   **Points:** 58 total (Good).\n*   **Conflict:**\n    *   **Color:** Strong Blue-to-Red evolution (SN-like).\n    *   **Rise:** Convex, fast (SN-like).\n    *   **Decline:** Steep (TDE-like).\n    *   **Label in Metadata:** The input metadata says \"Label | TDE\". However, the instructions say: \"IGNORE the auto-generated hints in Section 3 when they contradict these physical rules\". The metadata label is likely the ground truth or a hint, but I must follow the physical rules.\n    *   **Physical Rules Check:**\n        *   Color: Blue -> Red is the hallmark of SN shock cooling. TDEs are Red -> Blue. This is a **strong** discriminator.\n        *   Rise: Convex is SN. Concave is TDE. This is a **strong** discriminator.\n        *   Both Color and Rise point to **SN**.\n        *   Only the steep decline points to TDE, but steep declines are not exclusive to TDEs (e.g., SN Iax, fast SNe).\n\n### Decision\nThe strongest signals (Color Evolution and Rise Morphology) both point to **SN**. The color evolution is massive (+268 uJy) and in the SN direction (Blue to Red). The rise is convex and fast. The \"TDE\" label in the metadata might be incorrect or refer to a specific subclass, but based on the provided physical discriminators, this behaves like a Supernova.\n\nHowever, let's re-read the TDE color rule carefully: \"delta_g-r > 10 uJy (strong red→blue evolution): STRONG TDE indicator\".\nMy source has delta = +268 uJy.\nEarly: -274 (Blue). Late: -6 (Neutral).\nChange: -274 -> -6. This is an increase in g-r.\nIs it Red->Blue or Blue->Red?\ng-r positive = Red. g-r negative = Blue.\nStart: -274 (Very Blue). End: -6 (Less Blue/Neutral).\nThe source is getting **Redder** (or less Blue).\nTDEs go Red -> Blue (g-r decreases, e.g., +10 -> -10).\nSNe go Blue -> Red (g-r increases, e.g., -10 -> +10).\nThis source goes -274 -> -6. This is an **increase** in g-r. This is **Blue -> Red**.\nTherefore, it is **SN-like**.\n\nWait, let's look at the \"Example: TDE (ZTF25ablxhsq...)\" in the prompt.\nIt had delta = +37.3.\nEarly: +69.6 (Red). Late: +106.9 (Redder).\nTrend: \"Blue to Red (SN-like)\".\nBut the label was TDE.\nWhy?\nLet's look at the first example: ZTF20aabqihu (TDE).\nEarly: +12.4 (Red). Late: -3.0 (Blue).\nDelta: -15.4.\nTrend: \"Red to Blue (TDE-like)\".\n\nSo:\nRed -> Blue (Delta < 0) = TDE.\nBlue -> Red (Delta > 0) = SN.\n\nMy source:\nEarly: -274.4. Late: -6.4.\nDelta: +268.0.\nTrend: Blue -> Red.\nClassification: **SN**.\n\nWhy is the metadata label TDE?\nPerhaps the \"Early\" phase is contaminated or the physics is different?\nLet's look at the raw data.\nDay 0: g=34, r=40. g-r = -6.\nDay 6: r=90.\nDay 8: g=29.\nDay 10: g=32, r=30. g-r = +2.\nDay 12: g=273, r=2134. g-r = -1860.\nDay 14: g=33, r=40. g-r = -7.\n\nThe \"Early\" phase in the derived features (0-30%) includes the peak?\nPeak is at Day 12. Span is 93 days.\n30% of 93 is ~28 days.\nSo Early phase includes Day 0 to Day 28.\nThe peak (Day 12) is in the Early phase.\nAt the peak, g-r is -1860 (Extremely Blue).\nBefore the peak (Day 0-10), g-r is small (-6 to +2).\nAfter the peak (Day 14+), g-r is small (-7 to -20).\nSo the source is Neutral -> Extremely Blue -> Neutral.\nThe \"Early\" average is dominated by the peak's extreme blueness (-1860).\nThe \"Late\" phase (70-100%) is Day 65-93. g-r is around -10 to -20.\nSo the evolution is:\nEarly (includes peak): Very Blue (-274 avg).\nLate: Neutral/Blue (-6 avg).\nThis is actually **Blue -> Red** (getting less blue).\nWait, -274 is bluer than -6.\nSo it goes from Very Blue to Less Blue.\nThis is a \"Redding\" trend.\nSNe: Blue -> Red.\nTDEs: Red -> Blue.\n\nThis source is Blue -> Red.\nTherefore: **SN**.\n\nThe rise is convex (fast jump at end).\nTherefore: **SN**.\n\nThe decline is steep.\nTherefore: **TDE** (weakly).\n\nTwo strong indicators (Color, Rise) say SN. One weak indicator (Decline) says TDE.\nI will classify as **SN**.\n\nConfidence: Medium (due to the conflicting decline rate and the metadata label, but the physical rules are clear on Color and Rise).\n\nOne check: Is it possible the \"Early\" phase is misinterpreted?\nIf the source was a TDE, it should be Red early, Blue late.\nHere it is Blue early (due to peak), Neutral late.\nThis is the opposite of TDE.\n\nFinal Decision: SN.\n\n```json",
+  "_raw_response": "To classify the source **ZTF21abhrchb_difference_photometry**, I will apply the physical discriminators provided in the system instructions.\n\n### 1. Color Evolution (g − r)\n*   **Data:**\n    *   Early (0-30%): g-r = -274.4 uJy (Blue)\n    *   Mid (30-70%): g-r = -10.2 uJy (Neutral/Blue)\n    *   Late (70-100%): g-r = -6.4 uJy (Neutral/Blue)\n    *   **Delta:** +268.0 uJy.\n*   **Thresholds:** The prompt specifies relative thresholds for this bright source (Peak ~2134 uJy). Significant evolution is > 107 uJy.\n*   **Analysis:** The delta is +268.0 uJy, which is well above the 107 uJy threshold. The evolution is from **Blue to Red** (negative to less negative/positive).\n*   **Rule:** \"delta_g-r > 10 uJy (strong red→blue evolution): STRONG TDE indicator\". Conversely, Blue-to-Red is typical for SNe (shock cooling).\n*   **Indicator:** **SN** (Strong signal).\n\n### 2. Rise Morphology\n*   **Data:**\n    *   Rise time: 12 days.\n    *   Peak flux: 2134.2 uJy at Day 12.0.\n    *   Early points: Day 0 (g=34, r=40), Day 6 (r=90), Day 8 (g=29), Day 10 (g=32, r=30).\n    *   The flux jumps from ~30-40 uJy at Day 10 to 2134 uJy at Day 12.\n*   **Shape:** The rise is extremely rapid in the final days. The early points (Day 0-10) show very low flux compared to the peak. This suggests a **convex** rise (accelerating), where the flux stays low and then shoots up. A concave rise (TDE) would show significant flux early on, decelerating towards the peak. Here, the flux is negligible until the very end.\n*   **Duration:** 12 days.\n    *   Rule: \"< 10 days → favors SN\". 12 days is borderline but close to the SN regime.\n    *   Rule: \"10–60 days → typical TDE\".\n*   **Indicator:** **SN** (Convex shape, short rise).\n\n### 3. Decline Shape\n*   **Data:**\n    *   Decline rate: -25.784 uJy/d.\n    *   Total span: 93 days.\n    *   Post-peak behavior: Drops from 2134 to ~40-80 uJy over ~80 days.\n*   **Analysis:** The decline is steep.\n    *   Rule: \"Steep power-law decline (>1 uJy/d sustained): favors TDE\".\n    *   However, SNe can also have steep declines initially. The key is the *shape*. The light curve drops rapidly and then seems to plateau or fluctuate at low levels (40-160 uJy) from Day 30 onwards.\n    *   The \"steep\" decline here is consistent with a fast-declining SN (like a Type Ia or II-P early phase) or a TDE.\n*   **Indicator:** **TDE** (Steep decline), but ambiguous without longer tail.\n\n### 4. Data Quality & Conflicts\n*   **Points:** 58 total (Good).\n*   **Conflict:**\n    *   **Color:** Strong Blue-to-Red evolution (SN-like).\n    *   **Rise:** Convex, fast (SN-like).\n    *   **Decline:** Steep (TDE-like).\n    *   **Label in Metadata:** The input metadata says \"Label | TDE\". However, the instructions say: \"IGNORE the auto-generated hints in Section 3 when they contradict these physical rules\". The metadata label is likely the ground truth or a hint, but I must follow the physical rules.\n    *   **Physical Rules Check:**\n        *   Color: Blue -> Red is the hallmark of SN shock cooling. TDEs are Red -> Blue. This is a **strong** discriminator.\n        *   Rise: Convex is SN. Concave is TDE. This is a **strong** discriminator.\n        *   Both Color and Rise point to **SN**.\n        *   Only the steep decline points to TDE, but steep declines are not exclusive to TDEs (e.g., SN Iax, fast SNe).\n\n### Decision\nThe strongest signals (Color Evolution and Rise Morphology) both point to **SN**. The color evolution is massive (+268 uJy) and in the SN direction (Blue to Red). The rise is convex and fast. The \"TDE\" label in the metadata might be incorrect or refer to a specific subclass, but based on the provided physical discriminators, this behaves like a Supernova.\n\nHowever, let's re-read the TDE color rule carefully: \"delta_g-r > 10 uJy (strong red→blue evolution): STRONG TDE indicator\".\nMy source has delta = +268 uJy.\nEarly: -274 (Blue). Late: -6 (Neutral).\nChange: -274 -> -6. This is an increase in g-r.\nIs it Red->Blue or Blue->Red?\ng-r positive = Red. g-r negative = Blue.\nStart: -274 (Very Blue). End: -6 (Less Blue/Neutral).\nThe source is getting **Redder** (or less Blue).\nTDEs go Red -> Blue (g-r decreases, e.g., +10 -> -10).\nSNe go Blue -> Red (g-r increases, e.g., -10 -> +10).\nThis source goes -274 -> -6. This is an **increase** in g-r. This is **Blue -> Red**.\nTherefore, it is **SN-like**.\n\nWait, let's look at the \"Example: TDE (ZTF25ablxhsq...)\" in the prompt.\nIt had delta = +37.3.\nEarly: +69.6 (Red). Late: +106.9 (Redder).\nTrend: \"Blue to Red (SN-like)\".\nBut the label was TDE.\nWhy?\nLet's look at the first example: ZTF20aabqihu (TDE).\nEarly: +12.4 (Red). Late: -3.0 (Blue).\nDelta: -15.4.\nTrend: \"Red to Blue (TDE-like)\".\n\nSo:\nRed -> Blue (Delta < 0) = TDE.\nBlue -> Red (Delta > 0) = SN.\n\nMy source:\nEarly: -274.4. Late: -6.4.\nDelta: +268.0.\nTrend: Blue -> Red.\nClassification: **SN**.\n\nWhy is the metadata label TDE?\nPerhaps the \"Early\" phase is contaminated or the physics is different?\nLet's look at the raw data.\nDay 0: g=34, r=40. g-r = -6.\nDay 6: r=90.\nDay 8: g=29.\nDay 10: g=32, r=30. g-r = +2.\nDay 12: g=273, r=2134. g-r = -1860.\nDay 14: g=33, r=40. g-r = -7.\n\nThe \"Early\" phase in the derived features (0-30%) includes the peak?\nPeak is at Day 12. Span is 93 days.\n30% of 93 is ~28 days.\nSo Early phase includes Day 0 to Day 28.\nThe peak (Day 12) is in the Early phase.\nAt the peak, g-r is -1860 (Extremely Blue).\nBefore the peak (Day 0-10), g-r is small (-6 to +2).\nAfter the peak (Day 14+), g-r is small (-7 to -20).\nSo the source is Neutral -> Extremely Blue -> Neutral.\nThe \"Early\" average is dominated by the peak's extreme blueness (-1860).\nThe \"Late\" phase (70-100%) is Day 65-93. g-r is around -10 to -20.\nSo the evolution is:\nEarly (includes peak): Very Blue (-274 avg).\nLate: Neutral/Blue (-6 avg).\nThis is actually **Blue -> Red** (getting less blue).\nWait, -274 is bluer than -6.\nSo it goes from Very Blue to Less Blue.\nThis is a \"Redding\" trend.\nSNe: Blue -> Red.\nTDEs: Red -> Blue.\n\nThis source is Blue -> Red.\nTherefore: **SN**.\n\nThe rise is convex (fast jump at end).\nTherefore: **SN**.\n\nThe decline is steep.\nTherefore: **TDE** (weakly).\n\nTwo strong indicators (Color, Rise) say SN. One weak indicator (Decline) says TDE.\nI will classify as **SN**.\n\nConfidence: Medium (due to the conflicting decline rate and the metadata label, but the physical rules are clear on Color and Rise).\n\nOne check: Is it possible the \"Early\" phase is misinterpreted?\nIf the source was a TDE, it should be Red early, Blue late.\nHere it is Blue early (due to peak), Neutral late.\nThis is the opposite of TDE.\n\nFinal Decision: SN.\n\n```json\n{\n  \"classification\": {\n    \"label\": \"SN\",\n    \"confidence\": \"medium\",\n    \"score\": 0.7,\n    \"unsure_preference\": null\n  },\n  \"reasoning\": {\n    \"primary_signal\": \"Color evolution and rise morphology strongly favor SN.\",\n    \"indicators\": [\n      {\n        \"name\": \"Color Evolution\",\n        \"value\": \"Delta g-r = +268.0 uJy (Blue to Red)\",\n        \"weight\": 0.9,\n        \"direction\": \"SN\",\n        \"note\": \"Strong Blue-to-Red evolution is characteristic of SN shock cooling. TDEs typically show Red-to-Blue.\"\n      },\n      {\n        \"name\": \"Rise Morphology\",\n        \"value\": \"Convex, 12 days\",\n        \"weight\": 0.8,\n        \"direction\": \"SN\",\n        \"note\": \"Rapid, convex rise with flux staying low until the final days is typical of SNe. TDEs usually show concave, decelerating rises.\"\n      },\n      {\n        \"name\": \"Decline Rate\",\n        \"value\": \"-25.8 uJy/d\",\n        \"weight\": 0.5,\n        \"direction\": \"TDE\",\n        \"note\": \"Steep decline favors TDE, but fast-declining SNe also exist. This is a weaker discriminator compared to color and rise shape.\"\n      }\n    ]\n  },\n  \"quality\": {\n    \"flags\": [\n      \"Metadata label (TDE) contradicts physical indicators (SN).\",\n      \"Early color phase dominated by peak flux outlier.\"\n    ]\n  }\n}\n```",
+  "physical_context": [
+    {
+      "indicator": "Color Evolution",
+      "value": "Delta g-r = +268.0 uJy (Blue to Red)",
+      "direction": "SN",
+      "weight": 0.9,
+      "phenomenon": "激波冷却 (Shock Cooling)",
+      "mechanism": "激波 breakout 后包层膨胀冷却，辐射峰值从紫外向光学偏移，g−r 增加（蓝→红），与 TDE 方向相反",
+      "wiki_ref": "concepts/tde-early-evolution.md §与SN早期演化对比"
+    },
+    {
+      "indicator": "Rise Morphology",
+      "value": "Convex, 12 days",
+      "direction": "SN",
+      "weight": 0.8,
+      "phenomenon": "激波冷却 (Shock Cooling)",
+      "mechanism": "d²F/dt² > 0，即凸形 (convex)。包层膨胀时温度下降进入光学波段，初期暗、随后加速到峰值",
+      "expected": "凸形 (convex, d²F/dt² > 0)"
+    },
+    {
+      "indicator": "Decline Rate",
+      "value": "-25.8 uJy/d",
+      "direction": "TDE",
+      "weight": 0.5,
+      "phenomenon": "t⁻⁵⸍³ 衰减律",
+      "mechanism": "回落率 Ṁ ∝ t^(-5/3) (Rees 1988)。光变曲线按幂律衰减，无晚期平台。陡衰减 (>1 μJy/d) 是 TDE 强指示",
+      "wiki_ref": "concepts/fallback-rate.md §基本形式",
+      "expected": "> 1 μJy/d 持续衰减",
+      "caveat": "部分 TDE 显示平台或再增亮（可能为吸积盘不稳定性或重复部分瓦解）"
+    }
+  ],
+  "physical_summary": "## 物理诊断：SN (置信度: medium, score=0.70)\n\n**Color Evolution**→SN：Delta g-r = +268.0 uJy (Blue to Red)。 激波冷却 (Shock Cooling)——激波 breakout 后包层膨胀冷却，辐射峰值从紫外向光学偏移，g−r 增加（蓝→红），与 TDE 方向相反 (concepts/tde-early-evolution.md §与SN早期演化对比)\n\n**Rise Morphology**→SN：Convex, 12 days。 激波冷却 (Shock Cooling)——d²F/dt² > 0，即凸形 (convex)。包层膨胀时温度下降进入光学波段，初期暗、随后加速到峰值 预期范围：凸形 (convex, d²F/dt² > 0)。\n\n**Decline Rate**→TDE：-25.8 uJy/d。 t⁻⁵⸍³ 衰减律——回落率 Ṁ ∝ t^(-5/3) (Rees 1988)。光变曲线按幂律衰减，无晚期平台。陡衰减 (>1 μJy/d) 是 TDE 强指示 预期范围：> 1 μJy/d 持续衰减。 ⚠️ 部分 TDE 显示平台或再增亮（可能为吸积盘不稳定性或重复部分瓦解） (concepts/fallback-rate.md §基本形式)\n\n**综合判断**：\n\n**注意**：该源有 1 个 TDE 方向指标 (Decline Rate)，但综合判断为 SN。可能为 IIb/IIn/SLSN-I 等显示 TDE-like 颜色演化的 SN 亚型。建议核实光谱分类。"
+}

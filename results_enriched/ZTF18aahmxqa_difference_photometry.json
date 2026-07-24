@@ -1,0 +1,108 @@
+{
+  "source_id": "ZTF18aahmxqa_difference_photometry",
+  "timestamp": "2026-07-22T12:44:12.668327+00:00",
+  "model": "qwen3.6-chat",
+  "mode": "text",
+  "tokens": {
+    "prompt": 6999,
+    "completion": 301,
+    "total": 7300
+  },
+  "classification": {
+    "label": "SN",
+    "confidence": "high",
+    "score": 0.9,
+    "unsure_preference": null
+  },
+  "reasoning": {
+    "primary_signal": "Color evolution is flat/mild (delta_g-r = +5.2 uJy), which is typical for SN. The source is extremely red throughout (g-r ~ +25-30 uJy), favoring a steady or slowly evolving source like a SN tail or AGN, but the transient nature and lack of strong TDE color reversal point to SN. The rise time is extremely long (1609 days), which is atypical for both, but the flat color and redness strongly disfavor TDE.",
+    "indicators": [
+      {
+        "name": "Color Evolution",
+        "value": "delta_g-r = +5.2 uJy",
+        "weight": 0.9,
+        "direction": "SN"
+      },
+      {
+        "name": "Color Value",
+        "value": "g-r ~ +25-30 uJy (Red)",
+        "weight": 0.8,
+        "direction": "SN"
+      },
+      {
+        "name": "Rise Time",
+        "value": "1609 days",
+        "weight": 0.5,
+        "direction": "SN"
+      },
+      {
+        "name": "Decline Rate",
+        "value": "-0.025 uJy/d (very slow)",
+        "weight": 0.6,
+        "direction": "SN"
+      },
+      {
+        "name": "Total Span",
+        "value": "2328 days",
+        "weight": 0.7,
+        "direction": "SN"
+      }
+    ]
+  },
+  "quality": {
+    "flags": [
+      "single-band-dominant",
+      "extreme-rise-time"
+    ]
+  },
+  "few_shot": [
+    {
+      "id": "ZTF21abjrysr_difference_photometry",
+      "label": "TDE"
+    },
+    {
+      "id": "ZTF25ablxhsq_difference_photometry",
+      "label": "TDE"
+    },
+    {
+      "id": "ZTF18acwvcbz_difference_photometry",
+      "label": "SN"
+    },
+    {
+      "id": "ZTF19aakiyed_difference_photometry",
+      "label": "SN"
+    }
+  ],
+  "cot": false,
+  "cot_reasoning": "",
+  "_raw_response": "{\"classification\":{\"label\":\"SN\",\"confidence\":\"high\",\"score\":0.9,\"unsure_preference\":null},\"reasoning\":{\"primary_signal\":\"Color evolution is flat/mild (delta_g-r = +5.2 uJy), which is typical for SN. The source is extremely red throughout (g-r ~ +25-30 uJy), favoring a steady or slowly evolving source like a SN tail or AGN, but the transient nature and lack of strong TDE color reversal point to SN. The rise time is extremely long (1609 days), which is atypical for both, but the flat color and redness strongly disfavor TDE.\",\"indicators\":[{\"name\":\"Color Evolution\",\"value\":\"delta_g-r = +5.2 uJy\",\"weight\":0.9,\"direction\":\"SN\"},{\"name\":\"Color Value\",\"value\":\"g-r ~ +25-30 uJy (Red)\",\"weight\":0.8,\"direction\":\"SN\"},{\"name\":\"Rise Time\",\"value\":\"1609 days\",\"weight\":0.5,\"direction\":\"SN\"},{\"name\":\"Decline Rate\",\"value\":\"-0.025 uJy/d (very slow)\",\"weight\":0.6,\"direction\":\"SN\"},{\"name\":\"Total Span\",\"value\":\"2328 days\",\"weight\":0.7,\"direction\":\"SN\"}]},\"quality\":{\"flags\":[\"single-band-dominant\",\"extreme-rise-time\"]}}",
+  "physical_context": [
+    {
+      "indicator": "Color Evolution",
+      "value": "delta_g-r = +5.2 uJy",
+      "direction": "SN",
+      "weight": 0.9,
+      "phenomenon": "激波冷却 (Shock Cooling)",
+      "mechanism": "激波 breakout 后包层膨胀冷却，辐射峰值从紫外向光学偏移，g−r 增加（蓝→红），与 TDE 方向相反",
+      "wiki_ref": "concepts/tde-early-evolution.md §与SN早期演化对比"
+    },
+    {
+      "indicator": "Decline Rate",
+      "value": "-0.025 uJy/d (very slow)",
+      "direction": "SN",
+      "weight": 0.6,
+      "phenomenon": "Ni⁵⁶ 衰变尾",
+      "mechanism": "放射性 Ni⁵⁶→Co⁵⁶→Fe⁵⁶ 衰变供能，衰减极慢 (<0.1 μJy/d)，可持续数年",
+      "expected": "< 0.1 μJy/d 或出现平台"
+    },
+    {
+      "indicator": "Total Span",
+      "value": "2328 days",
+      "direction": "SN",
+      "weight": 0.7,
+      "mechanism": "Ni 衰变尾可维持可见光度数年，总跨度 > 1000 天在 ZTF 巡天中常见",
+      "expected": "> 1000 天"
+    }
+  ],
+  "physical_summary": "## 物理诊断：SN (置信度: high, score=0.90)\n\n**Color Evolution**→SN：delta_g-r = +5.2 uJy。 激波冷却 (Shock Cooling)——激波 breakout 后包层膨胀冷却，辐射峰值从紫外向光学偏移，g−r 增加（蓝→红），与 TDE 方向相反 (concepts/tde-early-evolution.md §与SN早期演化对比)\n\n**Decline Rate**→SN：-0.025 uJy/d (very slow)。 Ni⁵⁶ 衰变尾——放射性 Ni⁵⁶→Co⁵⁶→Fe⁵⁶ 衰变供能，衰减极慢 (<0.1 μJy/d)，可持续数年 预期范围：< 0.1 μJy/d 或出现平台。\n\n**Total Span**→SN：2328 days。 Ni 衰变尾可维持可见光度数年，总跨度 > 1000 天在 ZTF 巡天中常见 预期范围：> 1000 天。\n\n**综合判断**：\n"
+}

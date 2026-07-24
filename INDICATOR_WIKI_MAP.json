@@ -1,0 +1,105 @@
+{
+  "_description": "Indicator → TDE physics explanation mapping. Each indicator key is matched to reasoning.indicator 'name' field in result JSON.",
+  "indicators": {
+    "Color Evolution": {
+      "TDE": {
+        "phenomenon": "光球层后退 (Photosphere Recession)",
+        "mechanism": "回落吸积使光球层向更热内区后退，辐射峰值从光学向紫外/软X射线偏移，观测到的 g−r 随时间减小（红→蓝）",
+        "wiki_ref": "concepts/tde-overview.md §物理过程",
+        "expected": "δ(g-r) > 峰值流量的5%，方向为红→蓝",
+        "caveat": "SN IIb/IIn/SLSN-I 早期也可显示类似颜色演化，但通常伴随凸上升形态"
+      },
+      "SN": {
+        "phenomenon": "激波冷却 (Shock Cooling)",
+        "mechanism": "激波 breakout 后包层膨胀冷却，辐射峰值从紫外向光学偏移，g−r 增加（蓝→红），与 TDE 方向相反",
+        "wiki_ref": "concepts/tde-early-evolution.md §与SN早期演化对比"
+      }
+    },
+    "Rise Duration": {
+      "TDE": {
+        "phenomenon": "回落时标 (Fallback Timescale)",
+        "mechanism": "最束缚碎片返回近心点的时间 t_fb ~ 10–60 天。质量越大、轨道越束缚的碎片先返回，形成快速初始上升",
+        "wiki_ref": "concepts/fallback-rate.md §基本形式",
+        "expected": "10–60 天",
+        "caveat": "部分 TDE 和重复部分瓦解可偏离此范围"
+      },
+      "SN": {
+        "phenomenon": "激波冷却时标 (Shock Cooling Timescale)",
+        "mechanism": "SN 激波 breakout 后包层膨胀冷却，光学波段快速上升 < 10 天即达峰值",
+        "expected": "< 10 天"
+      }
+    },
+    "Rise Morphology": {
+      "TDE": {
+        "phenomenon": "回落吸积 (Fallback Accretion)",
+        "mechanism": "d²F/dt² < 0，即凹形 (concave)。大部分束缚碎片在早期返回——初期斜率最陡，随后逐渐平缓",
+        "wiki_ref": "concepts/fallback-rate.md §基本形式; concepts/tde-early-evolution.md §关键时标",
+        "expected": "凹形 (concave, d²F/dt² < 0)",
+        "caveat": "部分 TDE 有早期 bump (如 ASASSN-18ap)，可能与碎片流自交叉有关"
+      },
+      "SN": {
+        "phenomenon": "激波冷却 (Shock Cooling)",
+        "mechanism": "d²F/dt² > 0，即凸形 (convex)。包层膨胀时温度下降进入光学波段，初期暗、随后加速到峰值",
+        "expected": "凸形 (convex, d²F/dt² > 0)"
+      }
+    },
+    "Decline Rate": {
+      "TDE": {
+        "phenomenon": "t⁻⁵⸍³ 衰减律",
+        "mechanism": "回落率 Ṁ ∝ t^(-5/3) (Rees 1988)。光变曲线按幂律衰减，无晚期平台。陡衰减 (>1 μJy/d) 是 TDE 强指示",
+        "wiki_ref": "concepts/fallback-rate.md §基本形式",
+        "expected": "> 1 μJy/d 持续衰减",
+        "caveat": "部分 TDE 显示平台或再增亮（可能为吸积盘不稳定性或重复部分瓦解）"
+      },
+      "SN": {
+        "phenomenon": "Ni⁵⁶ 衰变尾",
+        "mechanism": "放射性 Ni⁵⁶→Co⁵⁶→Fe⁵⁶ 衰变供能，衰减极慢 (<0.1 μJy/d)，可持续数年",
+        "expected": "< 0.1 μJy/d 或出现平台"
+      }
+    },
+    "Total Span": {
+      "TDE": {
+        "mechanism": "TDE 光变持续数月～年。t^(-5/3) 衰减在数月内降至不可探测。总跨度 < 200 天是典型特征",
+        "expected": "< 200 天",
+        "caveat": "极亮 TDE (如 ASASSN-15oi) 可探测超过 1000 天"
+      },
+      "SN": {
+        "mechanism": "Ni 衰变尾可维持可见光度数年，总跨度 > 1000 天在 ZTF 巡天中常见",
+        "expected": "> 1000 天"
+      }
+    },
+    "Host Galaxy": {
+      "TDE": {
+        "phenomenon": "宁静星系偏好 (Quiescent Host Preference)",
+        "mechanism": "TDE 优先发生在 E+A (post-starburst) 和早型星系中。这些星系中心 SMBH 周围缺乏气体，吸积盘处于低态，TDE 耀发更容易被探测",
+        "wiki_ref": "concepts/tde-overview.md §观测现状; entities/assassn-14li",
+        "expected": "红色、平滑椭圆星系，源位于核心"
+      },
+      "SN": {
+        "mechanism": "SN 追踪恒星形成——优先在蓝色、旋涡星系盘/悬臂中",
+        "expected": "蓝色旋涡星系，源位于盘面"
+      }
+    },
+    "Data Quality": {
+      "general": {
+        "mechanism": "采样点 < 10 或单波段 → 颜色/形态约束不足 → 固有低置信度",
+        "caution": "WFST 稠密节奏 vs ZTF 稀疏节奏会影响指标可靠性。WFST 源即使点数少，形态约束可能反而更好"
+      }
+    }
+  },
+  "spectral_guidance": {
+    "TDE-H": "仅 Balmer 线 (Hα, Hβ)。典型源: ASASSN-14li",
+    "TDE-He": "仅 He II 4686Å。典型源: AT2019qiz, iPTF16fnl",
+    "TDE-H+He": "同时有 H 和 He 线。典型源: AT2019dsg",
+    "key_lines": "He II 4686, Hα 6563, N III 4640 (Bowen fluorescence), Fe II 多个",
+    "host_lines_narrow": "窄 Hα, [O III] 5007, [N II] 6583 — 若有 → 检查是否 AGN contamination",
+    "wiki_ref": "concepts/tde-overview.md §分类"
+  },
+  "key_entities": {
+    "ASASSN-14li": "最经典光学 TDE，z=0.0206，有 IR echo，entities/assassn-14li",
+    "AT2019qiz": "TDE-He 原型，z=0.0151，有 outflow，entities/at2019qiz",
+    "AT2019dsg": "射电明亮 TDE，z=0.051，有 outflow，entities/at2019dsg",
+    "Swift J1644+57": "jetted TDE (relativistic)，X 射线主导，z=0.354",
+    "ASASSN-18ap": "薄尘 TDE，有早期 bump，可能与碎片流自交叉有关"
+  }
+}

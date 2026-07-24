@@ -1068,5 +1068,1955 @@
       "u": 0
     },
     "span_days": 114.9
+  },
+  "wmx_2018gn": {
+    "label": "TDE",
+    "n_points": 279,
+    "bands": {
+      "g": 118,
+      "r": 161,
+      "u": 0
+    },
+    "span_days": 387.0
+  },
+  "wmx_2019eve": {
+    "label": "TDE",
+    "n_points": 111,
+    "bands": {
+      "g": 41,
+      "r": 70,
+      "u": 0
+    },
+    "span_days": 300.2
+  },
+  "wmx_2019fdr": {
+    "label": "TDE",
+    "n_points": 479,
+    "bands": {
+      "g": 261,
+      "r": 218,
+      "u": 0
+    },
+    "span_days": 494.8
+  },
+  "wmx_2019meg": {
+    "label": "TDE",
+    "n_points": 388,
+    "bands": {
+      "g": 212,
+      "r": 176,
+      "u": 0
+    },
+    "span_days": 154.8
+  },
+  "wmx_2019mha": {
+    "label": "TDE",
+    "n_points": 257,
+    "bands": {
+      "g": 148,
+      "r": 109,
+      "u": 0
+    },
+    "span_days": 117.8
+  },
+  "wmx_2020abri": {
+    "label": "TDE",
+    "n_points": 219,
+    "bands": {
+      "g": 87,
+      "r": 132,
+      "u": 0
+    },
+    "span_days": 287.0
+  },
+  "wmx_2020ddv": {
+    "label": "TDE",
+    "n_points": 284,
+    "bands": {
+      "g": 125,
+      "r": 159,
+      "u": 0
+    },
+    "span_days": 176.8
+  },
+  "wmx_2020mbq": {
+    "label": "TDE",
+    "n_points": 195,
+    "bands": {
+      "g": 94,
+      "r": 101,
+      "u": 0
+    },
+    "span_days": 123.8
+  },
+  "wmx_2020ocn": {
+    "label": "TDE",
+    "n_points": 354,
+    "bands": {
+      "g": 192,
+      "r": 162,
+      "u": 0
+    },
+    "span_days": 145.0
+  },
+  "wmx_2020opy": {
+    "label": "TDE",
+    "n_points": 174,
+    "bands": {
+      "g": 73,
+      "r": 101,
+      "u": 0
+    },
+    "span_days": 228.3
+  },
+  "wmx_2020ysg": {
+    "label": "TDE",
+    "n_points": 295,
+    "bands": {
+      "g": 124,
+      "r": 171,
+      "u": 0
+    },
+    "span_days": 378.0
+  },
+  "wmx_2021zlg": {
+    "label": "TDE",
+    "n_points": 21,
+    "bands": {
+      "g": 0,
+      "r": 21,
+      "u": 0
+    },
+    "span_days": 687.1
+  },
+  "wmx_2022cmc": {
+    "label": "TDE",
+    "n_points": 160,
+    "bands": {
+      "g": 86,
+      "r": 74,
+      "u": 0
+    },
+    "span_days": 197.6
+  },
+  "wmx_ARP_299-B_AT1": {
+    "label": "TDE",
+    "n_points": 119,
+    "bands": {
+      "g": 88,
+      "r": 31,
+      "u": 0
+    },
+    "span_days": 597.2
+  },
+  "wmx_ASASSN-14ae": {
+    "label": "TDE",
+    "n_points": 154,
+    "bands": {
+      "g": 75,
+      "r": 79,
+      "u": 0
+    },
+    "span_days": 253.7
+  },
+  "wmx_ASASSN-14li": {
+    "label": "TDE",
+    "n_points": 82,
+    "bands": {
+      "g": 35,
+      "r": 47,
+      "u": 0
+    },
+    "span_days": 271.2
+  },
+  "wmx_AT2016ezh": {
+    "label": "TDE",
+    "n_points": 103,
+    "bands": {
+      "g": 46,
+      "r": 57,
+      "u": 0
+    },
+    "span_days": 107.9
+  },
+  "wmx_CNSS_J0019+00": {
+    "label": "TDE",
+    "n_points": 59,
+    "bands": {
+      "g": 26,
+      "r": 33,
+      "u": 0
+    },
+    "span_days": 294.2
+  },
+  "wmx_CSS100217": {
+    "label": "TDE",
+    "n_points": 25,
+    "bands": {
+      "g": 1,
+      "r": 24,
+      "u": 0
+    },
+    "span_days": 91.3
+  },
+  "wmx_D23H-1": {
+    "label": "TDE",
+    "n_points": 65,
+    "bands": {
+      "g": 24,
+      "r": 41,
+      "u": 0
+    },
+    "span_days": 296.2
+  },
+  "wmx_D3-13": {
+    "label": "TDE",
+    "n_points": 154,
+    "bands": {
+      "g": 89,
+      "r": 65,
+      "u": 0
+    },
+    "span_days": 238.7
+  },
+  "wmx_Dougie": {
+    "label": "TDE",
+    "n_points": 352,
+    "bands": {
+      "g": 152,
+      "r": 200,
+      "u": 0
+    },
+    "span_days": 299.2
+  },
+  "wmx_Gaia_16aka": {
+    "label": "TDE",
+    "n_points": 258,
+    "bands": {
+      "g": 129,
+      "r": 129,
+      "u": 0
+    },
+    "span_days": 262.2
+  },
+  "wmx_J094608": {
+    "label": "TDE",
+    "n_points": 9,
+    "bands": {
+      "g": 0,
+      "r": 9,
+      "u": 0
+    },
+    "span_days": 4.0
+  },
+  "wmx_J100933": {
+    "label": "TDE",
+    "n_points": 229,
+    "bands": {
+      "g": 98,
+      "r": 131,
+      "u": 0
+    },
+    "span_days": 280.7
+  },
+  "wmx_J113527": {
+    "label": "TDE",
+    "n_points": 196,
+    "bands": {
+      "g": 99,
+      "r": 97,
+      "u": 0
+    },
+    "span_days": 211.7
+  },
+  "wmx_J130819": {
+    "label": "TDE",
+    "n_points": 322,
+    "bands": {
+      "g": 161,
+      "r": 161,
+      "u": 0
+    },
+    "span_days": 297.2
+  },
+  "wmx_J133737": {
+    "label": "TDE",
+    "n_points": 334,
+    "bands": {
+      "g": 144,
+      "r": 190,
+      "u": 0
+    },
+    "span_days": 262.6
+  },
+  "wmx_J133837": {
+    "label": "TDE",
+    "n_points": 338,
+    "bands": {
+      "g": 168,
+      "r": 170,
+      "u": 0
+    },
+    "span_days": 292.6
+  },
+  "wmx_J141036": {
+    "label": "TDE",
+    "n_points": 137,
+    "bands": {
+      "g": 41,
+      "r": 96,
+      "u": 0
+    },
+    "span_days": 298.1
+  },
+  "wmx_J142401": {
+    "label": "TDE",
+    "n_points": 149,
+    "bands": {
+      "g": 63,
+      "r": 86,
+      "u": 0
+    },
+    "span_days": 299.1
+  },
+  "wmx_J145851": {
+    "label": "TDE",
+    "n_points": 43,
+    "bands": {
+      "g": 12,
+      "r": 31,
+      "u": 0
+    },
+    "span_days": 146.4
+  },
+  "wmx_J155223": {
+    "label": "TDE",
+    "n_points": 316,
+    "bands": {
+      "g": 167,
+      "r": 149,
+      "u": 0
+    },
+    "span_days": 97.9
+  },
+  "wmx_J233454": {
+    "label": "TDE",
+    "n_points": 147,
+    "bands": {
+      "g": 72,
+      "r": 75,
+      "u": 0
+    },
+    "span_days": 244.7
+  },
+  "wmx_NGC_3599": {
+    "label": "TDE",
+    "n_points": 78,
+    "bands": {
+      "g": 41,
+      "r": 37,
+      "u": 0
+    },
+    "span_days": 224.7
+  },
+  "wmx_NGC_5905": {
+    "label": "TDE",
+    "n_points": 587,
+    "bands": {
+      "g": 288,
+      "r": 299,
+      "u": 0
+    },
+    "span_days": 251.1
+  },
+  "wmx_PGC_1127938": {
+    "label": "TDE",
+    "n_points": 91,
+    "bands": {
+      "g": 49,
+      "r": 42,
+      "u": 0
+    },
+    "span_days": 223.7
+  },
+  "wmx_PS1-10adi": {
+    "label": "TDE",
+    "n_points": 19,
+    "bands": {
+      "g": 0,
+      "r": 19,
+      "u": 0
+    },
+    "span_days": 8.0
+  },
+  "wmx_PS1-10jh": {
+    "label": "TDE",
+    "n_points": 178,
+    "bands": {
+      "g": 97,
+      "r": 81,
+      "u": 0
+    },
+    "span_days": 249.7
+  },
+  "wmx_PS1-12yp": {
+    "label": "TDE",
+    "n_points": 170,
+    "bands": {
+      "g": 39,
+      "r": 131,
+      "u": 0
+    },
+    "span_days": 271.2
+  },
+  "wmx_PS1-13jw": {
+    "label": "TDE",
+    "n_points": 180,
+    "bands": {
+      "g": 45,
+      "r": 135,
+      "u": 0
+    },
+    "span_days": 298.2
+  },
+  "wmx_PTF09axc": {
+    "label": "TDE",
+    "n_points": 244,
+    "bands": {
+      "g": 92,
+      "r": 152,
+      "u": 0
+    },
+    "span_days": 298.1
+  },
+  "wmx_PTF09djl": {
+    "label": "TDE",
+    "n_points": 175,
+    "bands": {
+      "g": 86,
+      "r": 89,
+      "u": 0
+    },
+    "span_days": 225.7
+  },
+  "wmx_PTF09ge": {
+    "label": "TDE",
+    "n_points": 12,
+    "bands": {
+      "g": 5,
+      "r": 7,
+      "u": 0
+    },
+    "span_days": 158.6
+  },
+  "wmx_PTF10iya": {
+    "label": "TDE",
+    "n_points": 148,
+    "bands": {
+      "g": 82,
+      "r": 66,
+      "u": 0
+    },
+    "span_days": 263.7
+  },
+  "wmx_PTF11glr": {
+    "label": "TDE",
+    "n_points": 463,
+    "bands": {
+      "g": 239,
+      "r": 224,
+      "u": 0
+    },
+    "span_days": 228.7
+  },
+  "wmx_RX_J1420+53": {
+    "label": "TDE",
+    "n_points": 10,
+    "bands": {
+      "g": 7,
+      "r": 3,
+      "u": 0
+    },
+    "span_days": 13.0
+  },
+  "wmx_SDSSJ0748": {
+    "label": "TDE",
+    "n_points": 252,
+    "bands": {
+      "g": 98,
+      "r": 154,
+      "u": 0
+    },
+    "span_days": 277.7
+  },
+  "wmx_SDSSJ0952": {
+    "label": "TDE",
+    "n_points": 169,
+    "bands": {
+      "g": 68,
+      "r": 101,
+      "u": 0
+    },
+    "span_days": 272.7
+  },
+  "wmx_SDSSJ1311": {
+    "label": "TDE",
+    "n_points": 42,
+    "bands": {
+      "g": 20,
+      "r": 22,
+      "u": 0
+    },
+    "span_days": 107.8
+  },
+  "wmx_SDSSJ1323": {
+    "label": "TDE",
+    "n_points": 339,
+    "bands": {
+      "g": 185,
+      "r": 154,
+      "u": 0
+    },
+    "span_days": 160.9
+  },
+  "wmx_SDSSJ1350": {
+    "label": "TDE",
+    "n_points": 277,
+    "bands": {
+      "g": 88,
+      "r": 189,
+      "u": 0
+    },
+    "span_days": 231.2
+  },
+  "wmx_Sw_J1644+57": {
+    "label": "TDE",
+    "n_points": 115,
+    "bands": {
+      "g": 57,
+      "r": 58,
+      "u": 0
+    },
+    "span_days": 292.1
+  },
+  "wmx_TDE1": {
+    "label": "TDE",
+    "n_points": 108,
+    "bands": {
+      "g": 66,
+      "r": 42,
+      "u": 0
+    },
+    "span_days": 297.2
+  },
+  "wmx_TDE2": {
+    "label": "TDE",
+    "n_points": 87,
+    "bands": {
+      "g": 37,
+      "r": 50,
+      "u": 0
+    },
+    "span_days": 239.6
+  },
+  "wmx_TDE_2016fnl": {
+    "label": "TDE",
+    "n_points": 224,
+    "bands": {
+      "g": 98,
+      "r": 126,
+      "u": 0
+    },
+    "span_days": 251.7
+  },
+  "wmx_TDE_2018bsi": {
+    "label": "TDE",
+    "n_points": 68,
+    "bands": {
+      "g": 35,
+      "r": 33,
+      "u": 0
+    },
+    "span_days": 209.3
+  },
+  "wmx_TDE_2018hco": {
+    "label": "TDE",
+    "n_points": 84,
+    "bands": {
+      "g": 36,
+      "r": 48,
+      "u": 0
+    },
+    "span_days": 323.0
+  },
+  "wmx_TDE_2018hyz": {
+    "label": "TDE",
+    "n_points": 40,
+    "bands": {
+      "g": 40,
+      "r": 0,
+      "u": 0
+    },
+    "span_days": 190.8
+  },
+  "wmx_TDE_2018iih": {
+    "label": "TDE",
+    "n_points": 870,
+    "bands": {
+      "g": 449,
+      "r": 421,
+      "u": 0
+    },
+    "span_days": 694.1
+  },
+  "wmx_TDE_2018lna": {
+    "label": "TDE",
+    "n_points": 54,
+    "bands": {
+      "g": 22,
+      "r": 32,
+      "u": 0
+    },
+    "span_days": 167.7
+  },
+  "wmx_TDE_2018meh": {
+    "label": "TDE",
+    "n_points": 40,
+    "bands": {
+      "g": 29,
+      "r": 11,
+      "u": 0
+    },
+    "span_days": 198.7
+  },
+  "wmx_TDE_2018mli": {
+    "label": "TDE",
+    "n_points": 256,
+    "bands": {
+      "g": 131,
+      "r": 125,
+      "u": 0
+    },
+    "span_days": 299.2
+  },
+  "wmx_TDE_2018mqa": {
+    "label": "TDE",
+    "n_points": 231,
+    "bands": {
+      "g": 99,
+      "r": 132,
+      "u": 0
+    },
+    "span_days": 295.0
+  },
+  "wmx_TDE_2018zr": {
+    "label": "TDE",
+    "n_points": 22,
+    "bands": {
+      "g": 13,
+      "r": 9,
+      "u": 0
+    },
+    "span_days": 174.3
+  },
+  "wmx_TDE_2019azh": {
+    "label": "TDE",
+    "n_points": 183,
+    "bands": {
+      "g": 29,
+      "r": 154,
+      "u": 0
+    },
+    "span_days": 295.3
+  },
+  "wmx_TDE_2019bhf": {
+    "label": "TDE",
+    "n_points": 195,
+    "bands": {
+      "g": 76,
+      "r": 119,
+      "u": 0
+    },
+    "span_days": 265.7
+  },
+  "wmx_TDE_2019cmw": {
+    "label": "TDE",
+    "n_points": 279,
+    "bands": {
+      "g": 0,
+      "r": 279,
+      "u": 0
+    },
+    "span_days": 238.6
+  },
+  "wmx_TDE_2019dsg": {
+    "label": "TDE",
+    "n_points": 167,
+    "bands": {
+      "g": 31,
+      "r": 136,
+      "u": 0
+    },
+    "span_days": 340.9
+  },
+  "wmx_TDE_2019ehz": {
+    "label": "TDE",
+    "n_points": 294,
+    "bands": {
+      "g": 148,
+      "r": 146,
+      "u": 0
+    },
+    "span_days": 150.8
+  },
+  "wmx_TDE_2019gte": {
+    "label": "TDE",
+    "n_points": 46,
+    "bands": {
+      "g": 23,
+      "r": 23,
+      "u": 0
+    },
+    "span_days": 292.2
+  },
+  "wmx_TDE_2019lwu": {
+    "label": "TDE",
+    "n_points": 65,
+    "bands": {
+      "g": 24,
+      "r": 41,
+      "u": 0
+    },
+    "span_days": 297.2
+  },
+  "wmx_TDE_2019qiz": {
+    "label": "TDE",
+    "n_points": 115,
+    "bands": {
+      "g": 56,
+      "r": 59,
+      "u": 0
+    },
+    "span_days": 203.7
+  },
+  "wmx_TDE_2019teq": {
+    "label": "TDE",
+    "n_points": 190,
+    "bands": {
+      "g": 101,
+      "r": 89,
+      "u": 0
+    },
+    "span_days": 273.2
+  },
+  "wmx_TDE_2019vcb": {
+    "label": "TDE",
+    "n_points": 218,
+    "bands": {
+      "g": 105,
+      "r": 113,
+      "u": 0
+    },
+    "span_days": 135.9
+  },
+  "wmx_TDE_2020acka": {
+    "label": "TDE",
+    "n_points": 225,
+    "bands": {
+      "g": 85,
+      "r": 140,
+      "u": 0
+    },
+    "span_days": 274.1
+  },
+  "wmx_TDE_2020afhd": {
+    "label": "TDE",
+    "n_points": 85,
+    "bands": {
+      "g": 41,
+      "r": 44,
+      "u": 0
+    },
+    "span_days": 342.1
+  },
+  "wmx_TDE_2020mot": {
+    "label": "TDE",
+    "n_points": 154,
+    "bands": {
+      "g": 73,
+      "r": 81,
+      "u": 0
+    },
+    "span_days": 356.0
+  },
+  "wmx_TDE_2020neh": {
+    "label": "TDE",
+    "n_points": 110,
+    "bands": {
+      "g": 35,
+      "r": 75,
+      "u": 0
+    },
+    "span_days": 133.8
+  },
+  "wmx_TDE_2020nov": {
+    "label": "TDE",
+    "n_points": 359,
+    "bands": {
+      "g": 87,
+      "r": 272,
+      "u": 0
+    },
+    "span_days": 424.0
+  },
+  "wmx_TDE_2020pj": {
+    "label": "TDE",
+    "n_points": 41,
+    "bands": {
+      "g": 21,
+      "r": 20,
+      "u": 0
+    },
+    "span_days": 111.9
+  },
+  "wmx_TDE_2020ukj": {
+    "label": "TDE",
+    "n_points": 487,
+    "bands": {
+      "g": 216,
+      "r": 271,
+      "u": 0
+    },
+    "span_days": 291.7
+  },
+  "wmx_TDE_2020vdq": {
+    "label": "TDE",
+    "n_points": 143,
+    "bands": {
+      "g": 43,
+      "r": 100,
+      "u": 0
+    },
+    "span_days": 250.2
+  },
+  "wmx_TDE_2020vwl": {
+    "label": "TDE",
+    "n_points": 108,
+    "bands": {
+      "g": 41,
+      "r": 67,
+      "u": 0
+    },
+    "span_days": 192.2
+  },
+  "wmx_TDE_2020wey": {
+    "label": "TDE",
+    "n_points": 126,
+    "bands": {
+      "g": 60,
+      "r": 66,
+      "u": 0
+    },
+    "span_days": 78.9
+  },
+  "wmx_TDE_2020yue": {
+    "label": "TDE",
+    "n_points": 202,
+    "bands": {
+      "g": 85,
+      "r": 117,
+      "u": 0
+    },
+    "span_days": 400.0
+  },
+  "wmx_TDE_2020zso": {
+    "label": "TDE",
+    "n_points": 103,
+    "bands": {
+      "g": 31,
+      "r": 72,
+      "u": 0
+    },
+    "span_days": 88.9
+  },
+  "wmx_TDE_2021ack": {
+    "label": "TDE",
+    "n_points": 141,
+    "bands": {
+      "g": 61,
+      "r": 80,
+      "u": 0
+    },
+    "span_days": 164.7
+  },
+  "wmx_TDE_2021axu": {
+    "label": "TDE",
+    "n_points": 353,
+    "bands": {
+      "g": 170,
+      "r": 183,
+      "u": 0
+    },
+    "span_days": 214.8
+  },
+  "wmx_TDE_2021crk": {
+    "label": "TDE",
+    "n_points": 49,
+    "bands": {
+      "g": 49,
+      "r": 0,
+      "u": 0
+    },
+    "span_days": 141.8
+  },
+  "wmx_TDE_2021ehb": {
+    "label": "TDE",
+    "n_points": 204,
+    "bands": {
+      "g": 61,
+      "r": 143,
+      "u": 0
+    },
+    "span_days": 392.0
+  },
+  "wmx_TDE_2021gje": {
+    "label": "TDE",
+    "n_points": 538,
+    "bands": {
+      "g": 270,
+      "r": 268,
+      "u": 0
+    },
+    "span_days": 255.7
+  },
+  "wmx_TDE_2021jjm": {
+    "label": "TDE",
+    "n_points": 88,
+    "bands": {
+      "g": 16,
+      "r": 72,
+      "u": 0
+    },
+    "span_days": 123.8
+  },
+  "wmx_TDE_2021jsg": {
+    "label": "TDE",
+    "n_points": 211,
+    "bands": {
+      "g": 103,
+      "r": 108,
+      "u": 0
+    },
+    "span_days": 178.9
+  },
+  "wmx_TDE_2021lo": {
+    "label": "TDE",
+    "n_points": 105,
+    "bands": {
+      "g": 43,
+      "r": 62,
+      "u": 0
+    },
+    "span_days": 314.1
+  },
+  "wmx_TDE_2021mhg": {
+    "label": "TDE",
+    "n_points": 330,
+    "bands": {
+      "g": 132,
+      "r": 198,
+      "u": 0
+    },
+    "span_days": 268.2
+  },
+  "wmx_TDE_2021nwa": {
+    "label": "TDE",
+    "n_points": 221,
+    "bands": {
+      "g": 111,
+      "r": 110,
+      "u": 0
+    },
+    "span_days": 313.1
+  },
+  "wmx_TDE_2021qth": {
+    "label": "TDE",
+    "n_points": 151,
+    "bands": {
+      "g": 47,
+      "r": 104,
+      "u": 0
+    },
+    "span_days": 412.9
+  },
+  "wmx_TDE_2021qxv": {
+    "label": "TDE",
+    "n_points": 132,
+    "bands": {
+      "g": 33,
+      "r": 99,
+      "u": 0
+    },
+    "span_days": 201.7
+  },
+  "wmx_TDE_2021sdu": {
+    "label": "TDE",
+    "n_points": 80,
+    "bands": {
+      "g": 36,
+      "r": 44,
+      "u": 0
+    },
+    "span_days": 112.9
+  },
+  "wmx_TDE_2021uqv": {
+    "label": "TDE",
+    "n_points": 424,
+    "bands": {
+      "g": 184,
+      "r": 240,
+      "u": 0
+    },
+    "span_days": 333.0
+  },
+  "wmx_TDE_2021utq": {
+    "label": "TDE",
+    "n_points": 74,
+    "bands": {
+      "g": 41,
+      "r": 33,
+      "u": 0
+    },
+    "span_days": 242.1
+  },
+  "wmx_TDE_2021uvz": {
+    "label": "TDE",
+    "n_points": 404,
+    "bands": {
+      "g": 202,
+      "r": 202,
+      "u": 0
+    },
+    "span_days": 268.2
+  },
+  "wmx_TDE_2021yte": {
+    "label": "TDE",
+    "n_points": 64,
+    "bands": {
+      "g": 20,
+      "r": 44,
+      "u": 0
+    },
+    "span_days": 186.7
+  },
+  "wmx_TDE_2021yzv": {
+    "label": "TDE",
+    "n_points": 232,
+    "bands": {
+      "g": 59,
+      "r": 173,
+      "u": 0
+    },
+    "span_days": 429.0
+  },
+  "wmx_TDE_2022adm": {
+    "label": "TDE",
+    "n_points": 102,
+    "bands": {
+      "g": 0,
+      "r": 102,
+      "u": 0
+    },
+    "span_days": 250.6
+  },
+  "wmx_TDE_2022aee": {
+    "label": "TDE",
+    "n_points": 41,
+    "bands": {
+      "g": 18,
+      "r": 23,
+      "u": 0
+    },
+    "span_days": 119.0
+  },
+  "wmx_TDE_2022arb": {
+    "label": "TDE",
+    "n_points": 23,
+    "bands": {
+      "g": 0,
+      "r": 23,
+      "u": 0
+    },
+    "span_days": 223.7
+  },
+  "wmx_TDE_2022bdw": {
+    "label": "TDE",
+    "n_points": 49,
+    "bands": {
+      "g": 23,
+      "r": 26,
+      "u": 0
+    },
+    "span_days": 298.0
+  },
+  "wmx_TDE_2022csn": {
+    "label": "TDE",
+    "n_points": 125,
+    "bands": {
+      "g": 34,
+      "r": 91,
+      "u": 0
+    },
+    "span_days": 344.2
+  },
+  "wmx_TDE_2022dbl": {
+    "label": "TDE",
+    "n_points": 50,
+    "bands": {
+      "g": 42,
+      "r": 8,
+      "u": 0
+    },
+    "span_days": 91.9
+  },
+  "wmx_TDE_2022dsb": {
+    "label": "TDE",
+    "n_points": 61,
+    "bands": {
+      "g": 34,
+      "r": 27,
+      "u": 0
+    },
+    "span_days": 120.7
+  },
+  "wmx_TDE_2022dyt": {
+    "label": "TDE",
+    "n_points": 76,
+    "bands": {
+      "g": 34,
+      "r": 42,
+      "u": 0
+    },
+    "span_days": 252.7
+  },
+  "wmx_TDE_2022emf": {
+    "label": "TDE",
+    "n_points": 179,
+    "bands": {
+      "g": 83,
+      "r": 96,
+      "u": 0
+    },
+    "span_days": 223.7
+  },
+  "wmx_TDE_2022exr": {
+    "label": "TDE",
+    "n_points": 461,
+    "bands": {
+      "g": 220,
+      "r": 241,
+      "u": 0
+    },
+    "span_days": 273.7
+  },
+  "wmx_TDE_2022fpx": {
+    "label": "TDE",
+    "n_points": 693,
+    "bands": {
+      "g": 352,
+      "r": 341,
+      "u": 0
+    },
+    "span_days": 1013.2
+  },
+  "wmx_TDE_2022gdw": {
+    "label": "TDE",
+    "n_points": 193,
+    "bands": {
+      "g": 88,
+      "r": 105,
+      "u": 0
+    },
+    "span_days": 334.2
+  },
+  "wmx_TDE_2022gri": {
+    "label": "TDE",
+    "n_points": 548,
+    "bands": {
+      "g": 179,
+      "r": 369,
+      "u": 0
+    },
+    "span_days": 1436.1
+  },
+  "wmx_TDE_2022hvp": {
+    "label": "TDE",
+    "n_points": 162,
+    "bands": {
+      "g": 70,
+      "r": 92,
+      "u": 0
+    },
+    "span_days": 298.2
+  },
+  "wmx_TDE_2022ibq": {
+    "label": "TDE",
+    "n_points": 133,
+    "bands": {
+      "g": 58,
+      "r": 75,
+      "u": 0
+    },
+    "span_days": 188.6
+  },
+  "wmx_TDE_2022lri": {
+    "label": "TDE",
+    "n_points": 98,
+    "bands": {
+      "g": 52,
+      "r": 46,
+      "u": 0
+    },
+    "span_days": 711.1
+  },
+  "wmx_TDE_2022pna": {
+    "label": "TDE",
+    "n_points": 64,
+    "bands": {
+      "g": 35,
+      "r": 29,
+      "u": 0
+    },
+    "span_days": 140.8
+  },
+  "wmx_TDE_2022rz": {
+    "label": "TDE",
+    "n_points": 229,
+    "bands": {
+      "g": 103,
+      "r": 126,
+      "u": 0
+    },
+    "span_days": 198.8
+  },
+  "wmx_TDE_2022upj": {
+    "label": "TDE",
+    "n_points": 269,
+    "bands": {
+      "g": 164,
+      "r": 105,
+      "u": 0
+    },
+    "span_days": 1260.7
+  },
+  "wmx_TDE_2022wtn": {
+    "label": "TDE",
+    "n_points": 100,
+    "bands": {
+      "g": 52,
+      "r": 48,
+      "u": 0
+    },
+    "span_days": 320.0
+  },
+  "wmx_TDE_2023clx": {
+    "label": "TDE",
+    "n_points": 41,
+    "bands": {
+      "g": 30,
+      "r": 11,
+      "u": 0
+    },
+    "span_days": 198.7
+  },
+  "wmx_TDE_2023cvb": {
+    "label": "TDE",
+    "n_points": 110,
+    "bands": {
+      "g": 55,
+      "r": 55,
+      "u": 0
+    },
+    "span_days": 285.2
+  },
+  "wmx_TDE_2023kvy": {
+    "label": "TDE",
+    "n_points": 117,
+    "bands": {
+      "g": 51,
+      "r": 66,
+      "u": 0
+    },
+    "span_days": 423.9
+  },
+  "wmx_TDE_2023lli": {
+    "label": "TDE",
+    "n_points": 26,
+    "bands": {
+      "g": 5,
+      "r": 21,
+      "u": 0
+    },
+    "span_days": 534.2
+  },
+  "wmx_TDE_2023mfm": {
+    "label": "TDE",
+    "n_points": 98,
+    "bands": {
+      "g": 51,
+      "r": 47,
+      "u": 0
+    },
+    "span_days": 165.7
+  },
+  "wmx_TDE_2023mhs": {
+    "label": "TDE",
+    "n_points": 127,
+    "bands": {
+      "g": 78,
+      "r": 49,
+      "u": 0
+    },
+    "span_days": 288.2
+  },
+  "wmx_TDE_2023rvb": {
+    "label": "TDE",
+    "n_points": 43,
+    "bands": {
+      "g": 20,
+      "r": 23,
+      "u": 0
+    },
+    "span_days": 328.1
+  },
+  "wmx_TDE_2023tmq": {
+    "label": "TDE",
+    "n_points": 67,
+    "bands": {
+      "g": 12,
+      "r": 55,
+      "u": 0
+    },
+    "span_days": 279.2
+  },
+  "wmx_TDE_2023wdb": {
+    "label": "TDE",
+    "n_points": 130,
+    "bands": {
+      "g": 65,
+      "r": 65,
+      "u": 0
+    },
+    "span_days": 299.2
+  },
+  "wmx_TDE_2023xen": {
+    "label": "TDE",
+    "n_points": 67,
+    "bands": {
+      "g": 36,
+      "r": 31,
+      "u": 0
+    },
+    "span_days": 153.8
+  },
+  "wmx_TDE_2024admt": {
+    "label": "TDE",
+    "n_points": 77,
+    "bands": {
+      "g": 42,
+      "r": 35,
+      "u": 0
+    },
+    "span_days": 231.7
+  },
+  "wmx_TDE_2024aepd": {
+    "label": "TDE",
+    "n_points": 85,
+    "bands": {
+      "g": 41,
+      "r": 44,
+      "u": 0
+    },
+    "span_days": 215.7
+  },
+  "wmx_TDE_2024agqx": {
+    "label": "TDE",
+    "n_points": 233,
+    "bands": {
+      "g": 106,
+      "r": 127,
+      "u": 0
+    },
+    "span_days": 293.1
+  },
+  "wmx_TDE_2024as": {
+    "label": "TDE",
+    "n_points": 49,
+    "bands": {
+      "g": 27,
+      "r": 22,
+      "u": 0
+    },
+    "span_days": 164.8
+  },
+  "wmx_TDE_2024bgz": {
+    "label": "TDE",
+    "n_points": 50,
+    "bands": {
+      "g": 19,
+      "r": 31,
+      "u": 0
+    },
+    "span_days": 292.1
+  },
+  "wmx_TDE_2024eqp": {
+    "label": "TDE",
+    "n_points": 47,
+    "bands": {
+      "g": 0,
+      "r": 47,
+      "u": 0
+    },
+    "span_days": 183.7
+  },
+  "wmx_TDE_2024gre": {
+    "label": "TDE",
+    "n_points": 44,
+    "bands": {
+      "g": 24,
+      "r": 20,
+      "u": 0
+    },
+    "span_days": 216.1
+  },
+  "wmx_TDE_2024gxr": {
+    "label": "TDE",
+    "n_points": 71,
+    "bands": {
+      "g": 62,
+      "r": 9,
+      "u": 0
+    },
+    "span_days": 186.7
+  },
+  "wmx_TDE_2024kt": {
+    "label": "TDE",
+    "n_points": 75,
+    "bands": {
+      "g": 40,
+      "r": 35,
+      "u": 0
+    },
+    "span_days": 312.2
+  },
+  "wmx_TDE_2024lhc": {
+    "label": "TDE",
+    "n_points": 432,
+    "bands": {
+      "g": 203,
+      "r": 229,
+      "u": 0
+    },
+    "span_days": 405.9
+  },
+  "wmx_TDE_2024mvz": {
+    "label": "TDE",
+    "n_points": 205,
+    "bands": {
+      "g": 119,
+      "r": 86,
+      "u": 0
+    },
+    "span_days": 745.0
+  },
+  "wmx_TDE_2024pvu": {
+    "label": "TDE",
+    "n_points": 92,
+    "bands": {
+      "g": 46,
+      "r": 46,
+      "u": 0
+    },
+    "span_days": 138.7
+  },
+  "wmx_TDE_2024qab": {
+    "label": "TDE",
+    "n_points": 53,
+    "bands": {
+      "g": 0,
+      "r": 53,
+      "u": 0
+    },
+    "span_days": 176.7
+  },
+  "wmx_TDE_2024rny": {
+    "label": "TDE",
+    "n_points": 107,
+    "bands": {
+      "g": 54,
+      "r": 53,
+      "u": 0
+    },
+    "span_days": 167.8
+  },
+  "wmx_TDE_2024tvd": {
+    "label": "TDE",
+    "n_points": 156,
+    "bands": {
+      "g": 78,
+      "r": 78,
+      "u": 0
+    },
+    "span_days": 197.1
+  },
+  "wmx_TDE_2024ule": {
+    "label": "TDE",
+    "n_points": 15,
+    "bands": {
+      "g": 11,
+      "r": 4,
+      "u": 0
+    },
+    "span_days": 198.7
+  },
+  "wmx_TDE_2024vip": {
+    "label": "TDE",
+    "n_points": 104,
+    "bands": {
+      "g": 50,
+      "r": 54,
+      "u": 0
+    },
+    "span_days": 601.2
+  },
+  "wmx_TDE_2024wsd": {
+    "label": "TDE",
+    "n_points": 71,
+    "bands": {
+      "g": 32,
+      "r": 39,
+      "u": 0
+    },
+    "span_days": 141.8
+  },
+  "wmx_TDE_2024ymu": {
+    "label": "TDE",
+    "n_points": 7,
+    "bands": {
+      "g": 7,
+      "r": 0,
+      "u": 0
+    },
+    "span_days": 94.9
+  },
+  "wmx_TDE_2024yqo": {
+    "label": "TDE",
+    "n_points": 62,
+    "bands": {
+      "g": 33,
+      "r": 29,
+      "u": 0
+    },
+    "span_days": 183.8
+  },
+  "wmx_TDE_2024zau": {
+    "label": "TDE",
+    "n_points": 84,
+    "bands": {
+      "g": 44,
+      "r": 40,
+      "u": 0
+    },
+    "span_days": 194.8
+  },
+  "wmx_TDE_2025aapf": {
+    "label": "TDE",
+    "n_points": 67,
+    "bands": {
+      "g": 30,
+      "r": 37,
+      "u": 0
+    },
+    "span_days": 282.0
+  },
+  "wmx_TDE_2025aarm": {
+    "label": "TDE",
+    "n_points": 70,
+    "bands": {
+      "g": 35,
+      "r": 35,
+      "u": 0
+    },
+    "span_days": 127.9
+  },
+  "wmx_TDE_2025abqg": {
+    "label": "TDE",
+    "n_points": 65,
+    "bands": {
+      "g": 33,
+      "r": 32,
+      "u": 0
+    },
+    "span_days": 128.8
+  },
+  "wmx_TDE_2025aeze": {
+    "label": "TDE",
+    "n_points": 64,
+    "bands": {
+      "g": 32,
+      "r": 32,
+      "u": 0
+    },
+    "span_days": 99.9
+  },
+  "wmx_TDE_2025afvr": {
+    "label": "TDE",
+    "n_points": 42,
+    "bands": {
+      "g": 23,
+      "r": 19,
+      "u": 0
+    },
+    "span_days": 80.9
+  },
+  "wmx_TDE_2025ahbd": {
+    "label": "TDE",
+    "n_points": 39,
+    "bands": {
+      "g": 15,
+      "r": 24,
+      "u": 0
+    },
+    "span_days": 244.3
+  },
+  "wmx_TDE_2025aljd": {
+    "label": "TDE",
+    "n_points": 36,
+    "bands": {
+      "g": 20,
+      "r": 16,
+      "u": 0
+    },
+    "span_days": 65.8
+  },
+  "wmx_TDE_2025alrm": {
+    "label": "TDE",
+    "n_points": 40,
+    "bands": {
+      "g": 19,
+      "r": 21,
+      "u": 0
+    },
+    "span_days": 89.8
+  },
+  "wmx_TDE_2025axp": {
+    "label": "TDE",
+    "n_points": 45,
+    "bands": {
+      "g": 30,
+      "r": 15,
+      "u": 0
+    },
+    "span_days": 294.1
+  },
+  "wmx_TDE_2025bri": {
+    "label": "TDE",
+    "n_points": 79,
+    "bands": {
+      "g": 38,
+      "r": 41,
+      "u": 0
+    },
+    "span_days": 181.7
+  },
+  "wmx_TDE_2025ccg": {
+    "label": "TDE",
+    "n_points": 68,
+    "bands": {
+      "g": 32,
+      "r": 36,
+      "u": 0
+    },
+    "span_days": 162.8
+  },
+  "wmx_TDE_2025chm": {
+    "label": "TDE",
+    "n_points": 42,
+    "bands": {
+      "g": 17,
+      "r": 25,
+      "u": 0
+    },
+    "span_days": 250.3
+  },
+  "wmx_TDE_2025cyh": {
+    "label": "TDE",
+    "n_points": 60,
+    "bands": {
+      "g": 28,
+      "r": 32,
+      "u": 0
+    },
+    "span_days": 142.8
+  },
+  "wmx_TDE_2025cyj": {
+    "label": "TDE",
+    "n_points": 92,
+    "bands": {
+      "g": 49,
+      "r": 43,
+      "u": 0
+    },
+    "span_days": 402.9
+  },
+  "wmx_TDE_2025eve": {
+    "label": "TDE",
+    "n_points": 46,
+    "bands": {
+      "g": 20,
+      "r": 26,
+      "u": 0
+    },
+    "span_days": 296.1
+  },
+  "wmx_TDE_2025fak": {
+    "label": "TDE",
+    "n_points": 71,
+    "bands": {
+      "g": 28,
+      "r": 43,
+      "u": 0
+    },
+    "span_days": 200.7
+  },
+  "wmx_TDE_2025gmz": {
+    "label": "TDE",
+    "n_points": 104,
+    "bands": {
+      "g": 52,
+      "r": 52,
+      "u": 0
+    },
+    "span_days": 267.6
+  },
+  "wmx_TDE_2025hbw": {
+    "label": "TDE",
+    "n_points": 64,
+    "bands": {
+      "g": 37,
+      "r": 27,
+      "u": 0
+    },
+    "span_days": 254.2
+  },
+  "wmx_TDE_2025hee": {
+    "label": "TDE",
+    "n_points": 5,
+    "bands": {
+      "g": 5,
+      "r": 0,
+      "u": 0
+    },
+    "span_days": 149.7
+  },
+  "wmx_TDE_2025kkj": {
+    "label": "TDE",
+    "n_points": 45,
+    "bands": {
+      "g": 0,
+      "r": 45,
+      "u": 0
+    },
+    "span_days": 267.2
+  },
+  "wmx_TDE_2025lxx": {
+    "label": "TDE",
+    "n_points": 84,
+    "bands": {
+      "g": 46,
+      "r": 38,
+      "u": 0
+    },
+    "span_days": 253.7
+  },
+  "wmx_TDE_2025own": {
+    "label": "TDE",
+    "n_points": 116,
+    "bands": {
+      "g": 52,
+      "r": 64,
+      "u": 0
+    },
+    "span_days": 264.7
+  },
+  "wmx_TDE_2025qhf": {
+    "label": "TDE",
+    "n_points": 173,
+    "bands": {
+      "g": 89,
+      "r": 84,
+      "u": 0
+    },
+    "span_days": 210.7
+  },
+  "wmx_TDE_2025spf": {
+    "label": "TDE",
+    "n_points": 108,
+    "bands": {
+      "g": 53,
+      "r": 55,
+      "u": 0
+    },
+    "span_days": 187.7
+  },
+  "wmx_TDE_2025ug": {
+    "label": "TDE",
+    "n_points": 77,
+    "bands": {
+      "g": 40,
+      "r": 37,
+      "u": 0
+    },
+    "span_days": 178.7
+  },
+  "wmx_TDE_2025vjw": {
+    "label": "TDE",
+    "n_points": 164,
+    "bands": {
+      "g": 83,
+      "r": 81,
+      "u": 0
+    },
+    "span_days": 146.7
+  },
+  "wmx_TDE_2025zmb": {
+    "label": "TDE",
+    "n_points": 70,
+    "bands": {
+      "g": 36,
+      "r": 34,
+      "u": 0
+    },
+    "span_days": 143.8
+  },
+  "wmx_TDE_2026amv": {
+    "label": "TDE",
+    "n_points": 230,
+    "bands": {
+      "g": 105,
+      "r": 125,
+      "u": 0
+    },
+    "span_days": 234.7
+  },
+  "wmx_TDE_2026chm": {
+    "label": "TDE",
+    "n_points": 183,
+    "bands": {
+      "g": 83,
+      "r": 100,
+      "u": 0
+    },
+    "span_days": 233.7
+  },
+  "wmx_TDE_2026dmt": {
+    "label": "TDE",
+    "n_points": 237,
+    "bands": {
+      "g": 95,
+      "r": 142,
+      "u": 0
+    },
+    "span_days": 293.2
+  },
+  "wmx_UGC_01791": {
+    "label": "TDE",
+    "n_points": 227,
+    "bands": {
+      "g": 107,
+      "r": 120,
+      "u": 0
+    },
+    "span_days": 292.1
+  },
+  "wmx_VAST_J015856.8-012404": {
+    "label": "TDE",
+    "n_points": 166,
+    "bands": {
+      "g": 84,
+      "r": 82,
+      "u": 0
+    },
+    "span_days": 192.7
+  },
+  "wmx_VAST_J234449.6+015434": {
+    "label": "TDE",
+    "n_points": 128,
+    "bands": {
+      "g": 66,
+      "r": 62,
+      "u": 0
+    },
+    "span_days": 281.3
+  },
+  "wmx_WINGS_J1348": {
+    "label": "TDE",
+    "n_points": 127,
+    "bands": {
+      "g": 63,
+      "r": 64,
+      "u": 0
+    },
+    "span_days": 275.2
+  },
+  "wmx_WTP14acnjbu": {
+    "label": "TDE",
+    "n_points": 207,
+    "bands": {
+      "g": 85,
+      "r": 122,
+      "u": 0
+    },
+    "span_days": 280.6
+  },
+  "wmx_WTP14adbwvs": {
+    "label": "TDE",
+    "n_points": 183,
+    "bands": {
+      "g": 66,
+      "r": 117,
+      "u": 0
+    },
+    "span_days": 207.7
+  },
+  "wmx_WTP17aamzew": {
+    "label": "TDE",
+    "n_points": 124,
+    "bands": {
+      "g": 56,
+      "r": 68,
+      "u": 0
+    },
+    "span_days": 246.7
+  },
+  "wmx_iPTF-15af": {
+    "label": "TDE",
+    "n_points": 99,
+    "bands": {
+      "g": 20,
+      "r": 79,
+      "u": 0
+    },
+    "span_days": 175.8
+  },
+  "wmx_iPTF16axa": {
+    "label": "TDE",
+    "n_points": 109,
+    "bands": {
+      "g": 53,
+      "r": 56,
+      "u": 0
+    },
+    "span_days": 298.1
   }
 }

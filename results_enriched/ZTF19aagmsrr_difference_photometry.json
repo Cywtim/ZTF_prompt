@@ -1,0 +1,137 @@
+{
+  "source_id": "ZTF19aagmsrr_difference_photometry",
+  "timestamp": "2026-07-22T14:24:34.930670+00:00",
+  "model": "qwen3.6-chat",
+  "mode": "text",
+  "tokens": {
+    "prompt": 34752,
+    "completion": 470,
+    "total": 35222
+  },
+  "classification": {
+    "label": "SN",
+    "confidence": "high",
+    "score": 0.85,
+    "unsure_preference": null
+  },
+  "reasoning": {
+    "primary_signal": "Rise morphology and timescale strongly favor SN despite color evolution.",
+    "indicators": [
+      {
+        "name": "Rise Duration",
+        "value": "15 days",
+        "weight": 0.9,
+        "direction": "SN",
+        "note": "Fast rise < 10-20 days is characteristic of shock-cooling in SNe, not TDE fallback."
+      },
+      {
+        "name": "Rise Morphology",
+        "value": "Convex/Accelerating",
+        "weight": 0.8,
+        "direction": "SN",
+        "note": "Flux jumps from ~17 uJy to 1309 uJy in 8 days, then peaks. This accelerating rise is typical of SN shock breakout/cooling, not the decelerating fallback of TDEs."
+      },
+      {
+        "name": "Color Evolution",
+        "value": "delta_g-r = -176 uJy",
+        "weight": 0.6,
+        "direction": "TDE",
+        "note": "Strong red-to-blue evolution is a TDE indicator, but can occur in fast-evolving SNe (e.g., Type Ia or II-P early phases). The high sigma in early color (321 uJy) suggests noisy data."
+      },
+      {
+        "name": "Decline Rate",
+        "value": "-11.9 uJy/d",
+        "weight": 0.5,
+        "direction": "TDE",
+        "note": "Steep decline favors TDE, but fast SNe also decline rapidly initially."
+      },
+      {
+        "name": "Total Span",
+        "value": "151 days",
+        "weight": 0.4,
+        "direction": "TDE",
+        "note": "Short span is consistent with TDE, but also with fast SNe."
+      }
+    ],
+    "summary": "The source exhibits a very fast rise (15 days) with an accelerating (convex) morphology, which is the hallmark of supernova shock cooling. While the color evolution (red-to-blue) and steep decline are TDE-like, the rise shape and duration are physically inconsistent with standard TDE fallback accretion (which is concave and slower). The high noise in early color measurements further weakens the TDE color argument. Therefore, SN is the preferred classification."
+  },
+  "quality": {
+    "flags": [
+      "High color noise in early phase",
+      "Fast rise contradicts TDE fallback physics"
+    ]
+  },
+  "few_shot": [
+    {
+      "id": "ZTF20abnorit_difference_photometry",
+      "label": "TDE"
+    },
+    {
+      "id": "ZTF20acitpfz_difference_photometry",
+      "label": "TDE"
+    },
+    {
+      "id": "ZTF18aagrdcs_difference_photometry",
+      "label": "SN"
+    },
+    {
+      "id": "ZTF19aacypbw_difference_photometry",
+      "label": "SN"
+    }
+  ],
+  "cot": false,
+  "cot_reasoning": "",
+  "_raw_response": "{\"classification\":{\"label\":\"SN\",\"confidence\":\"high\",\"score\":0.85,\"unsure_preference\":null},\"reasoning\":{\"primary_signal\":\"Rise morphology and timescale strongly favor SN despite color evolution.\",\"indicators\":[{\"name\":\"Rise Duration\",\"value\":\"15 days\",\"weight\":0.9,\"direction\":\"SN\",\"note\":\"Fast rise < 10-20 days is characteristic of shock-cooling in SNe, not TDE fallback.\"},{\"name\":\"Rise Morphology\",\"value\":\"Convex/Accelerating\",\"weight\":0.8,\"direction\":\"SN\",\"note\":\"Flux jumps from ~17 uJy to 1309 uJy in 8 days, then peaks. This accelerating rise is typical of SN shock breakout/cooling, not the decelerating fallback of TDEs.\"},{\"name\":\"Color Evolution\",\"value\":\"delta_g-r = -176 uJy\",\"weight\":0.6,\"direction\":\"TDE\",\"note\":\"Strong red-to-blue evolution is a TDE indicator, but can occur in fast-evolving SNe (e.g., Type Ia or II-P early phases). The high sigma in early color (321 uJy) suggests noisy data.\"},{\"name\":\"Decline Rate\",\"value\":\"-11.9 uJy/d\",\"weight\":0.5,\"direction\":\"TDE\",\"note\":\"Steep decline favors TDE, but fast SNe also decline rapidly initially.\"},{\"name\":\"Total Span\",\"value\":\"151 days\",\"weight\":0.4,\"direction\":\"TDE\",\"note\":\"Short span is consistent with TDE, but also with fast SNe.\"}],\"summary\":\"The source exhibits a very fast rise (15 days) with an accelerating (convex) morphology, which is the hallmark of supernova shock cooling. While the color evolution (red-to-blue) and steep decline are TDE-like, the rise shape and duration are physically inconsistent with standard TDE fallback accretion (which is concave and slower). The high noise in early color measurements further weakens the TDE color argument. Therefore, SN is the preferred classification.\"},\"quality\":{\"flags\":[\"High color noise in early phase\",\"Fast rise contradicts TDE fallback physics\"]}}",
+  "physical_context": [
+    {
+      "indicator": "Rise Duration",
+      "value": "15 days",
+      "direction": "SN",
+      "weight": 0.9,
+      "phenomenon": "激波冷却时标 (Shock Cooling Timescale)",
+      "mechanism": "SN 激波 breakout 后包层膨胀冷却，光学波段快速上升 < 10 天即达峰值",
+      "expected": "< 10 天"
+    },
+    {
+      "indicator": "Rise Morphology",
+      "value": "Convex/Accelerating",
+      "direction": "SN",
+      "weight": 0.8,
+      "phenomenon": "激波冷却 (Shock Cooling)",
+      "mechanism": "d²F/dt² > 0，即凸形 (convex)。包层膨胀时温度下降进入光学波段，初期暗、随后加速到峰值",
+      "expected": "凸形 (convex, d²F/dt² > 0)"
+    },
+    {
+      "indicator": "Color Evolution",
+      "value": "delta_g-r = -176 uJy",
+      "direction": "TDE",
+      "weight": 0.6,
+      "phenomenon": "光球层后退 (Photosphere Recession)",
+      "mechanism": "回落吸积使光球层向更热内区后退，辐射峰值从光学向紫外/软X射线偏移，观测到的 g−r 随时间减小（红→蓝）",
+      "wiki_ref": "concepts/tde-overview.md §物理过程",
+      "expected": "δ(g-r) > 峰值流量的5%，方向为红→蓝",
+      "caveat": "SN IIb/IIn/SLSN-I 早期也可显示类似颜色演化，但通常伴随凸上升形态"
+    },
+    {
+      "indicator": "Decline Rate",
+      "value": "-11.9 uJy/d",
+      "direction": "TDE",
+      "weight": 0.5,
+      "phenomenon": "t⁻⁵⸍³ 衰减律",
+      "mechanism": "回落率 Ṁ ∝ t^(-5/3) (Rees 1988)。光变曲线按幂律衰减，无晚期平台。陡衰减 (>1 μJy/d) 是 TDE 强指示",
+      "wiki_ref": "concepts/fallback-rate.md §基本形式",
+      "expected": "> 1 μJy/d 持续衰减",
+      "caveat": "部分 TDE 显示平台或再增亮（可能为吸积盘不稳定性或重复部分瓦解）"
+    },
+    {
+      "indicator": "Total Span",
+      "value": "151 days",
+      "direction": "TDE",
+      "weight": 0.4,
+      "mechanism": "TDE 光变持续数月～年。t^(-5/3) 衰减在数月内降至不可探测。总跨度 < 200 天是典型特征",
+      "expected": "< 200 天",
+      "caveat": "极亮 TDE (如 ASASSN-15oi) 可探测超过 1000 天"
+    }
+  ],
+  "physical_summary": "## 物理诊断：SN (置信度: high, score=0.85)\n\n**Rise Duration**→SN：15 days。 激波冷却时标 (Shock Cooling Timescale)——SN 激波 breakout 后包层膨胀冷却，光学波段快速上升 < 10 天即达峰值 预期范围：< 10 天。\n\n**Rise Morphology**→SN：Convex/Accelerating。 激波冷却 (Shock Cooling)——d²F/dt² > 0，即凸形 (convex)。包层膨胀时温度下降进入光学波段，初期暗、随后加速到峰值 预期范围：凸形 (convex, d²F/dt² > 0)。\n\n**Color Evolution**→TDE：delta_g-r = -176 uJy。 光球层后退 (Photosphere Recession)——回落吸积使光球层向更热内区后退，辐射峰值从光学向紫外/软X射线偏移，观测到的 g−r 随时间减小（红→蓝） 预期范围：δ(g-r) > 峰值流量的5%，方向为红→蓝。 ⚠️ SN IIb/IIn/SLSN-I 早期也可显示类似颜色演化，但通常伴随凸上升形态 (concepts/tde-overview.md §物理过程)\n\n**Decline Rate**→TDE：-11.9 uJy/d。 t⁻⁵⸍³ 衰减律——回落率 Ṁ ∝ t^(-5/3) (Rees 1988)。光变曲线按幂律衰减，无晚期平台。陡衰减 (>1 μJy/d) 是 TDE 强指示 预期范围：> 1 μJy/d 持续衰减。 ⚠️ 部分 TDE 显示平台或再增亮（可能为吸积盘不稳定性或重复部分瓦解） (concepts/fallback-rate.md §基本形式)\n\n**Total Span**→TDE：151 days。 TDE 光变持续数月～年。t^(-5/3) 衰减在数月内降至不可探测。总跨度 < 200 天是典型特征 预期范围：< 200 天。 ⚠️ 极亮 TDE (如 ASASSN-15oi) 可探测超过 1000 天\n\n**综合判断**：The source exhibits a very fast rise (15 days) with an accelerating (convex) morphology, which is the hallmark of supernova shock cooling. While the color evolution (red-to-blue) and steep decline are TDE-like, the rise shape and duration are physically inconsistent with standard TDE fallback accretion (which is concave and slower). The high noise in early color measurements further weakens the TDE color argument. Therefore, SN is the preferred classification.\n\n**注意**：该源有 3 个 TDE 方向指标 (Color Evolution, Decline Rate, Total Span)，但综合判断为 SN。可能为 IIb/IIn/SLSN-I 等显示 TDE-like 颜色演化的 SN 亚型。建议核实光谱分类。"
+}
