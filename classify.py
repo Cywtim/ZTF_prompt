@@ -141,12 +141,39 @@ def _make_system_prompt(cot=False, has_cutout=False):
 
     base = (
         f"You are an astronomical transient classifier specializing in ZTF light curves. "
-        f"Classify each source as one of: {class_list}.\n\n"
+        f"Classify each source as one of: {class_list}.\n"
+        "\n"
+        "Class definitions:\n"
+        "- TDE: tidal disruption event — single burst, rise→peak→power-law decline.\n"
+        "- SN: supernova — variable rise shapes, plateau or slow decline, Ni-56 tail.\n"
+        "- Others: does NOT match TDE or SN physical characteristics — e.g. CVs, "
+        "AGN flares, variable stars, artifacts, or any transient with non-stellar "
+        "light curve morphology. Use this when the source is clearly inconsistent "
+        "with both TDE and SN physics.\n"
+        "- Unsure: genuinely ambiguous between TDE/SN/Others.\n\n"
         "## Physical Discriminators (check in priority order)\n\n"
-        "### 1. Color Evolution (g − r) — STRONGEST signal\n"
-        "- delta_g-r > 10 uJy (strong red→blue evolution): STRONG TDE indicator\n"
-        "- delta_g-r < 5 uJy (flat/mild evolution): typical SN\n"
+        "### 0. Light Curve Completeness — check FIRST\n"
+        "Before applying any discriminator, assess what phases are covered:\n"
+        "- CRITICAL ORDERING CHECK: A TDE MUST rise (brighten) BEFORE it declines.\n"
+        "  If the light curve DECLINES first and then RISES later, this is NOT\n"
+        "  a TDE — the temporal ordering is anti-TDE. Classify as SN or Unsure.\n"
+        "  Check Section 2.1 (Flux by Phase) or the light curve plot: if early-time\n"
+        "  flux is HIGHER than mid/late-time flux (overall down→up shape), it is\n"
+        "  inconsistent with TDE physics (TDE = single burst, rise→peak→decline).\n\n"
+        "- Full coverage (rise + peak + decline): use ALL indicators below.\n"
+        "- Peak + decline only (rise missing or too short, < 5 data points in rise):\n"
+        "  SKIP §2 (Rise Morphology). Rely on §1 (Color Evolution in decline)\n"
+        "  + §3 (Decline Shape) + §4 (Total Span). Use score ~0.1-0.2 lower than full-coverage cases to reflect reduced diagnostic power.\n"
+        "- Decline only (no peak, no rise): few diagnostics available.\n"
+        "  Rely primarily on color in the decline phase. Confidence should be\n"
+        "  LOW — classify as Unsure unless signals are decisive.\n\n"
+        "### 1. Color Evolution (g − r) — FOCUS on DECLINE phase\n"
+        "- AFTER peak: delta_g-r > 10 uJy (red→blue evolution in decline): "
+        "STRONG TDE indicator\n"
+        "- AFTER peak: delta_g-r flat (< 5 uJy) throughout decline: typical SN\n"
         "- Color staying RED throughout: favors steady sources, flag as uncertain\n"
+        "- Rise-phase color is often noisy and less diagnostic. If only rise-phase\n"
+        "  color is available: downgrade color indicator weight to ≤ 0.15.\n"
         "- Caveat: some SN subtypes (IIb, IIn, SLSN-I) can also show red→blue\n"
         "  color evolution, though less common. If color is the ONLY TDE signal\n"
         "  and rise shape / duration point to SN, consider SN with medium confidence.\n\n"
@@ -180,9 +207,18 @@ def _make_system_prompt(cot=False, has_cutout=False):
         "- Steep power-law decline (>1 uJy/d sustained): favors TDE\n"
         "- Plateau or very slow decline (<0.1 uJy/d): favors SN\n\n"
         "### 4. Data Quality\n"
-        "- Total points < 10: inherently LOW confidence\n"
+        "- Total points < 10: sparse data — signals inherently weaker. Use low score (0.3-0.5) rather than defaulting to Unsure\n"
+        "- Total points 10–20: moderate data quality — score typically 0.5-0.7\n"
+        "- Rise phase < 5 points: rise shape is UNRESOLVED — skip §2, do not guess\n"
+        "- Sparse sampling (mean cadence > 5 days): color evolution may be\n"
+        "  undersampled, downgrade weight of color indicator by 0.1\n"
         "- Single-band only: no color information, be cautious\n"
-        "- If quality is poor and signals are ambiguous, prefer medium/low confidence\n\n" +
+        "- Isolated outlier points far from the main trend: IGNORE them. Extreme\n"
+        "  outliers (>3σ from local trend, or single points jumping far above/below\n"
+        "  the bulk) are likely artifacts (bad subtraction, cosmic rays, etc.).\n"
+        "  Do NOT let a single outlier drive rise/decline shape judgments — assess\n"
+        "  the overall trend, not individual extreme points.\n"
+        "- If quality is poor and signals are ambiguous, reflect this in the score (typically 0.3-0.5)\n\n" +
         (
         "### 5. Host Galaxy Context (from cutout image)\n"
         "The SDSS cutout shows the host galaxy. Use as a SECONDARY check:\n"
@@ -196,11 +232,16 @@ def _make_system_prompt(cot=False, has_cutout=False):
         if has_cutout else ""
         ) +
         "## Decision Logic\n"
-        "1. Check color evolution FIRST. If clear, follow it.\n"
-        "2. Check rise SHAPE: concave = TDE; convex = SN.\n"
-        "   Use rise duration + total span as secondary tiebreakers.\n"
-        "3. If conflicting signals: flag as medium confidence and explain why.\n"
-        "4. WHEN TO USE 'Unsure': if 2+ physical indicators point in opposite\n"
+        "1. Check color evolution in the DECLINE phase. If clear AND uncontradicted\n"
+        "   by shape, follow it with high weight (0.35–0.45).\n"
+        "2. Check rise SHAPE (if enough data): concave = TDE; convex = SN.\n"
+        "   A STRONG shape signal (clearly concave/convex, ≥ 20 points in rise)\n"
+        "   can OVERRIDE a moderate color signal — shape has equal or greater\n"
+        "   weight when well-sampled.\n"
+        "3. If color and shape conflict STRONGLY (not just mildly):\n"
+        "   → classify as Unsure. Do NOT default to color alone.\n"
+        "4. Use rise duration + total span as secondary tiebreakers.\n"
+        "5. WHEN TO USE 'Unsure': if 2+ physical indicators point in opposite\n"
         "   directions (e.g. color=TDE but rise shape=SN), classify as 'Unsure'.\n"
         "   Set 'unsure_preference' to the class you slightly favor.\n"
         "   Unsure is for genuinely torn cases — prefer committing if any\n"
@@ -213,28 +254,36 @@ def _make_system_prompt(cot=False, has_cutout=False):
     )
 
     if cot:
-        cot_section = (
-            "\n## Reasoning Protocol (Chain-of-Thought)\n"
-            "Before outputting the JSON, reason through each step in plain text.\n"
-            "Label each step clearly with 'Step 1:', 'Step 2:', etc.\n\n"
-            "Step 1 — Color Evolution: extract delta_g-r from Section 2.2. "
-            "Compare against thresholds (>10 = TDE, <5 = SN). State your assessment.\n"
-            "Step 2 — Timescale: extract rise time and total span from Section 1. "
-            "Compare against thresholds (<60d rise = TDE, <200d span = TDE).\n"
-            "Step 3 — Decline Shape: extract decline rate from Section 1. "
-            "Compare (>1 uJy/d = TDE, <0.1 = SN).\n" +
-            (
-            "Step 4 — Host Galaxy (from cutout): describe the host. "
-            "Red/smooth/elliptical → favors TDE. Blue/spiral → favors SN. "
-            "No obvious host → skip this step.\n"
-            if has_cutout else ""
-            ) +
-            "Step " + ("5" if has_cutout else "4") + " — Synthesis: weigh all indicators. If they conflict, "
-            "use 'Unsure' with unsure_preference (e.g. Unsure→TDE). "
-            "State final classification with confidence level.\n\n"
-            "Then output the JSON on a new line after your reasoning.\n\n"
-            "## Response Format\n"
-        )
+            cot_section = (
+                "\n## Reasoning Protocol (Chain-of-Thought)\n"
+                "Before outputting the JSON, reason through each step in plain text.\n"
+                "Label each step clearly with 'Step 0:', 'Step 1:', etc.\n\n"
+                "Step 0 — Completeness: assess what phases are covered "
+                "(full / peak+decline / decline only). "
+                "If rise is missing, note that §2 is skipped.\n"
+                "Step 1 — Color Evolution (DECLINE phase): extract delta_g-r from "
+                "Section 2.2. Focus on decline phase color.\n"
+                "Compare against thresholds (>10 = TDE, <5 = SN). "
+                "If only rise-phase color exists, downgrade weight to ≤0.15.\n"
+                "Step 2 — Rise Shape (if ≥5 points in rise, otherwise SKIP): "
+                "concave→TDE, convex→SN. When well-sampled (≥20 points), "
+                "this has EQUAL weight to color.\n"
+                "Step 3 — Timescale: extract rise time and total span from Section 1. "
+                "Compare against thresholds (<60d rise = TDE, <200d span = TDE).\n"
+                "Step 4 — Decline Shape: extract decline rate from Section 1. "
+                "Compare (>1 uJy/d = TDE, <0.1 = SN).\n" +
+                (
+                "Step 5 — Host Galaxy (from cutout): describe the host. "
+                "Red/smooth/elliptical → favors TDE. Blue/spiral → favors SN. "
+                "No obvious host → skip this step.\n"
+                if has_cutout else ""
+                ) +
+                "Step " + ("6" if has_cutout else "5") + " — Synthesis: weigh all indicators. If they conflict, "
+                "use 'Unsure' with unsure_preference (e.g. Unsure→TDE). "
+                "State final classification with confidence level.\n\n"
+                "Then output the JSON on a new line after your reasoning.\n\n"
+                "## Response Format\n"
+            )
     else:
         cot_section = (
             "\n## Response Format\n"
@@ -242,12 +291,28 @@ def _make_system_prompt(cot=False, has_cutout=False):
         )
 
     json_template = (
-        f'{{"classification":{{"label":"{classes_str}","confidence":"high|medium|low",'
-        f'"score":0.0-1.0,"unsure_preference":"{real_str}|null"}},'
-        f'"reasoning":{{"primary_signal":"...","indicators":[{{'
-        f'"name":"...","value":"...","weight":0.0-1.0,"direction":"{real_str}"}}]}},'
-        '"quality":{"flags":[]}}'
-    )
+            '## Score Calibration\n'
+            'Score represents classification certainty, NOT a probability:\n'
+            '- 0.85–1.00: Decisive. Multiple strong indicators converge on same class.\n'
+            '- 0.70–0.84: Strong. Primary indicators agree, minor counter-signals exist.\n'
+            '- 0.55–0.69: Moderate. Signals favor this class but one meaningful counter-indicator.\n'
+            '- 0.40–0.54: Weak/Mixed. Signals ambiguous or sparse; leaning this direction.\n'
+            '- 0.25–0.39: Very weak. Only one indicator; essentially Unsure with a hint.\n'
+            '- 0.00–0.24: Pure Unsure. No clear signal; quality too poor to judge.\n'
+            'DO NOT default to 0.40 for Unsure — use the full range based on signal strength.\n\n'
+            f'{{"classification":{{"label":"{classes_str}","confidence":"high|medium|low",'
+            f'"score":0.0-1.0,"unsure_preference":"{real_str}|null"}},'
+            f'"reasoning":{{"primary_signal":"...","indicators":[{{'
+            f'"name":"...","value":"...","weight":0.0-1.0,"direction":"{real_str}"}}]}},'
+            + (
+            f'"host_galaxy":{{"morphology":"elliptical|spiral|irregular|unclear",'
+            f'"color":"red|blue|unclear","position":"nucleus|disk|unclear",'
+            f'"favors":"TDE|SN|inconclusive","weight":0.0-0.2}},'
+            if has_cutout else
+            f'"host_galaxy":{{"available":false,"note":"no cutout image"}},'
+            ) +
+            '"quality":{"flags":[]}}'
+        )
 
     return base + cot_section + json_template
 
@@ -310,6 +375,19 @@ def build_prompt(target_id, few_shot, mode="text", cot=False):
             f"- Slow decline: < {adj_slow} uJy/d\n\n"
         )
     
+    # Flux-scale reminder for faint sources (e.g. WFST, peak < 100 uJy)
+    if peak and peak < 100:
+        adj_color_faint = max(round(peak * 0.20), 2)
+        target_header += (
+            f"**Flux Scale Note:** this source is FAINT (peak={peak:.0f} uJy). "
+            f"Absolute thresholds in the system prompt (10 uJy, etc.) may be "
+            f"too strict. Use RELATIVE judgments:\\n"
+            f"- Significant color evolution: delta_g-r > {adj_color_faint} uJy "
+            f"({adj_color_faint/peak*100:.0f}% of peak)\\n"
+            f"- Weak signals are expected at low flux — do NOT downgrade "
+            f"confidence solely due to low absolute flux values.\\n\\n"
+        )
+
 
     if cot:
         target_header += (
