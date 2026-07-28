@@ -140,7 +140,7 @@ def _make_system_prompt(cot=False, has_cutout=False):
     real_str = "|".join(real_classes)
 
     base = (
-        f"You are an astronomical transient classifier specializing in ZTF light curves. "
+        f"You are an astronomical transient classifier specializing in TDE/SN light curves. "
         f"Classify each source as one of: {class_list}.\n"
         "\n"
         "Class definitions:\n"

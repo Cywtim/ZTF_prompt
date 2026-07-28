@@ -1,0 +1,12 @@
+{
+    "acpClient.servers": {
+        "hermes": {
+            "command": "/home/cyan/anaconda3/envs/torch_env/bin/hermes",
+            "args": [
+                "acp",
+                "--profile",
+                "tde-bot"
+            ]
+        }
+    }
+}
