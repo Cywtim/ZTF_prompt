@@ -3018,5 +3018,45 @@
       "u": 0
     },
     "span_days": 298.1
+  },
+  "WFST_J073922.03+305935.0_test": {
+    "label": "unknown",
+    "n_points": 19,
+    "bands": {
+      "g": 0,
+      "r": 10,
+      "u": 9
+    },
+    "span_days": 66.1
+  },
+  "WFST_J081300.60+210910.1_test": {
+    "label": "unknown",
+    "n_points": 137,
+    "bands": {
+      "g": 71,
+      "r": 38,
+      "u": 28
+    },
+    "span_days": 113.8
+  },
+  "WFST_J093740.68+200215.1_test": {
+    "label": "unknown",
+    "n_points": 53,
+    "bands": {
+      "g": 23,
+      "r": 18,
+      "u": 12
+    },
+    "span_days": 84.9
+  },
+  "WFST_J101658.97+564228.9_test": {
+    "label": "unknown",
+    "n_points": 106,
+    "bands": {
+      "g": 42,
+      "r": 42,
+      "u": 22
+    },
+    "span_days": 148.9
   }
 }

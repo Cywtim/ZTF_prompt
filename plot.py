@@ -19,6 +19,7 @@ import numpy as np
 from promt import (
     load_npy, load_csv, build_array, auto_convert_units, BAND_STR, BAND_INT,
 )
+from MAD import mad_clip
 
 import config
 
@@ -132,6 +133,7 @@ def plot_one(path, force=False, source_id=None):
 
     arr = auto_convert_units(arr)
     arr = arr[np.isin(arr[:, 1], [1, 2, 3])]
+    arr, _mask, _mad_stats = mad_clip(arr)
     if len(arr) < config.MIN_PTS:
         print(f"  [skip] {source_id} - only {len(arr)} pts after filtering")
         return None

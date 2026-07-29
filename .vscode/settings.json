@@ -1,4 +1,12 @@
 {
+    "acp.agents": {
+        "Hermes Agent": {
+            "command": "/home/cyan/anaconda3/envs/torch_env/bin/hermes",
+            "args": ["acp", "--profile", "tde-bot"],
+            "env": {}
+        }
+    },
+
     "acpClient.servers": {
         "hermes": {
             "command": "/home/cyan/anaconda3/envs/torch_env/bin/hermes",

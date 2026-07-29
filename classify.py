@@ -167,16 +167,25 @@ def _make_system_prompt(cot=False, has_cutout=False):
         "- Decline only (no peak, no rise): few diagnostics available.\n"
         "  Rely primarily on color in the decline phase. Confidence should be\n"
         "  LOW — classify as Unsure unless signals are decisive.\n\n"
-        "### 1. Color Evolution (g − r) — FOCUS on DECLINE phase\n"
-        "- AFTER peak: delta_g-r > 10 uJy (red→blue evolution in decline): "
-        "STRONG TDE indicator\n"
-        "- AFTER peak: delta_g-r flat (< 5 uJy) throughout decline: typical SN\n"
-        "- Color staying RED throughout: favors steady sources, flag as uncertain\n"
-        "- Rise-phase color is often noisy and less diagnostic. If only rise-phase\n"
-        "  color is available: downgrade color indicator weight to ≤ 0.15.\n"
-        "- Caveat: some SN subtypes (IIb, IIn, SLSN-I) can also show red→blue\n"
-        "  color evolution, though less common. If color is the ONLY TDE signal\n"
-        "  and rise shape / duration point to SN, consider SN with medium confidence.\n\n"
+        "### 1. Color Evolution — FOCUS on DECLINE phase\n"
+                "- analysis.md sections 2.2/2.3 provide THREE color pairs: **g−r**, **u−g**, **u−r** (mag).\n"
+                "- Each has a mag column (PRIMARY) and uJy column (fallback). Use mag whenever available.\n"
+                "- TDE color ranges (mag) — CHECK THIS FIRST:\n"
+                "    g−r ∈ (−0.6, +0.1)     →  TDE color zone\n"
+                "    u−g ∈ (−0.5, +0.4)     →  TDE color zone  (use when g−r unavailable)\n"
+                "    u−r ∈ (−0.9, +0.2)     →  TDE color zone  (use when g−r unavailable)\n"
+                "- RANGE RULE (primary): if the mag values stay WITHIN the TDE zone throughout\n"
+                "  the light curve, this is a STRONG TDE indicator REGARDLESS of evolution\n"
+                "  direction. Example: g−r=−0.44→−0.37 (still inside −0.6 to +0.1) = TDE-like.\n"
+                "- EVOLUTION DIRECTION (secondary, only when delta > 0.15 mag):\n"
+                "    Red→Blue (delta negative > 0.15): TDE indicator\n"
+                "    Blue→Red (delta positive > 0.15) AND leaves TDE zone: SN indicator\n"
+                "- Small delta (< 0.15 mag) WITHIN TDE zone: still TDE. Do NOT over-interpret.\n"
+                "- Color outside TDE zone throughout: favors SN or Others.\n"
+                "- Priority: g−r > u−g ≈ u−r. If g−r exists, use it first.\n"
+                "- Rise-phase color is often noisy. Downgrade weight to ≤ 0.15 if only rise-phase\n"
+                "  color is available.\n"
+                "- Caveat: some SN subtypes (IIb, IIn, SLSN-I) can show TDE-like color.\n\n"
         "### 2. Rise Morphology — SHAPE matters more than duration\n"
         "\n"
         "Concave rise (decelerating, d²F/dt² < 0):\n"
@@ -233,7 +242,9 @@ def _make_system_prompt(cot=False, has_cutout=False):
         ) +
         "## Decision Logic\n"
         "1. Check color evolution in the DECLINE phase. If clear AND uncontradicted\n"
-        "   by shape, follow it with high weight (0.35–0.45).\n"
+        "   by shape, follow it. **Sum of ALL color indicator weights ≤ 0.5 total**\n"
+        "   (e.g. g−r=0.3 + u−g=0.2, or single g−r=0.4). Split weight across band\n"
+        "   pairs if multiple available; do NOT exceed 0.5 combined.\n"
         "2. Check rise SHAPE (if enough data): concave = TDE; convex = SN.\n"
         "   A STRONG shape signal (clearly concave/convex, ≥ 20 points in rise)\n"
         "   can OVERRIDE a moderate color signal — shape has equal or greater\n"
@@ -356,36 +367,16 @@ def build_prompt(target_id, few_shot, mode="text", cot=False):
     # Target source
     target_header = "\n---\n\n"
     
-    # Flux-scale threshold adjustment for bright sources (e.g. WFST vs ZTF)
+    # Flux-scale note: color should use mag (scale-independent). Only decline rate
+    # thresholds need scale adjustment since they're still in uJy/d.
     peak = _peak_flux(target_id)
-    if peak and peak > 500:
-        adj_color = max(round(peak * 0.05), 10)
+    if peak and (peak > 500 or peak < 100):
         adj_decline = max(round(peak * 0.005), 1)
-        adj_flat = max(round(peak * 0.02), 5)
         adj_slow = max(round(peak * 0.0005), 0.1)
         target_header += (
-            f"**Flux Scale Note:** this source is bright (peak={peak:.0f} uJy). "
-            f"Use RELATIVE thresholds:\n"
-            f"- Significant color evolution: delta_g-r > {adj_color} uJy "
-            f"({adj_color/peak*100:.0f}% of peak)\n"
-            f"- Flat color: delta_g-r < {adj_flat} uJy "
-            f"({adj_flat/peak*100:.0f}% of peak)\n"
-            f"- Significant decline: > {adj_decline} uJy/d "
-            f"({adj_decline/peak*100:.1f}%/d of peak)\n"
-            f"- Slow decline: < {adj_slow} uJy/d\n\n"
-        )
-    
-    # Flux-scale reminder for faint sources (e.g. WFST, peak < 100 uJy)
-    if peak and peak < 100:
-        adj_color_faint = max(round(peak * 0.20), 2)
-        target_header += (
-            f"**Flux Scale Note:** this source is FAINT (peak={peak:.0f} uJy). "
-            f"Absolute thresholds in the system prompt (10 uJy, etc.) may be "
-            f"too strict. Use RELATIVE judgments:\\n"
-            f"- Significant color evolution: delta_g-r > {adj_color_faint} uJy "
-            f"({adj_color_faint/peak*100:.0f}% of peak)\\n"
-            f"- Weak signals are expected at low flux — do NOT downgrade "
-            f"confidence solely due to low absolute flux values.\\n\\n"
+            f"**Scale Note:** this source has peak={peak:.0f} uJy. "
+            f"Color thresholds are in MAG (scale-independent, see system prompt). "
+            f"For decline rate: steep > {adj_decline} uJy/d, slow < {adj_slow} uJy/d.\n\n"
         )
 
 

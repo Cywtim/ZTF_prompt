@@ -16,6 +16,7 @@ from collections import defaultdict
 import numpy as np
 
 import config
+from MAD import mad_clip
 
 BAND_STR = {1: "g", 2: "r", 3: "u"}
 BAND_INT = {"WFST-g": 1, "WFST-r": 2, "WFST-u": 3}
@@ -66,6 +67,28 @@ def auto_convert_units(arr):
     return arr
 
 
+def _compute_pair_color(n, band, flux, mjd, idx_a, idx_b, b_a, b_b):
+    """Compute mag-based and flux-based color for band pair (b_a - b_b).
+    Returns (color_mag, color_flux) arrays of length n.
+    """
+    color_mag = np.full(n, np.nan)
+    color_flux = np.zeros(n)
+    if len(idx_a) == 0 or len(idx_b) == 0:
+        return color_mag, color_flux
+    for i in range(n):
+        if band[i] == b_a:
+            j = idx_b[np.argmin(np.abs(mjd[idx_b] - mjd[i]))]
+            color_flux[i] = flux[i] - flux[j]
+            if flux[i] > 0 and flux[j] > 0:
+                color_mag[i] = -2.5 * np.log10(flux[i] / flux[j])
+        elif band[i] == b_b:
+            j = idx_a[np.argmin(np.abs(mjd[idx_a] - mjd[i]))]
+            color_flux[i] = flux[j] - flux[i]
+            if flux[j] > 0 and flux[i] > 0:
+                color_mag[i] = -2.5 * np.log10(flux[j] / flux[i])
+    return color_mag, color_flux
+
+
 def compute_features(arr):
     arr = arr.copy()
     t0 = arr[:, 0].min()
@@ -86,18 +109,28 @@ def compute_features(arr):
         slope[idx[o]] = ss
     smean = np.abs(slope).mean() + 1e-6
     phase = np.tanh(-slope / smean)
-    color = np.zeros(n)
+
     gi = np.where(band == 1)[0]
     ri = np.where(band == 2)[0]
-    if len(gi) and len(ri):
-        for i in range(n):
-            if band[i] == 1:
-                j = ri[np.argmin(np.abs(mjd[ri] - mjd[i]))]
-                color[i] = flux[i] - flux[j]
-            elif band[i] == 2:
-                j = gi[np.argmin(np.abs(mjd[gi] - mjd[i]))]
-                color[i] = flux[j] - flux[i]
-    return arr, {"phase": phase, "color": color, "t0": t0}
+    ui = np.where(band == 3)[0]
+
+    # g-r
+    gr_mag, gr_flux = _compute_pair_color(n, band, flux, mjd, gi, ri, 1, 2)
+    # u-g
+    ug_mag, ug_flux = _compute_pair_color(n, band, flux, mjd, ui, gi, 3, 1)
+    # u-r
+    ur_mag, ur_flux = _compute_pair_color(n, band, flux, mjd, ui, ri, 3, 2)
+
+    return arr, {
+        "phase": phase,
+        "color_gr_mag": gr_mag,
+        "color_gr_flux": gr_flux,
+        "color_ug_mag": ug_mag,
+        "color_ug_flux": ug_flux,
+        "color_ur_mag": ur_mag,
+        "color_ur_flux": ur_flux,
+        "t0": t0,
+    }
 
 
 def phase_trend(p):
@@ -112,7 +145,7 @@ def phase_trend(p):
 def ctrend(c):
     if len(c) == 0:
         return "---"
-    return "Red" if np.mean(c) > 0 else "Blue"
+    return "Red" if np.nanmean(c) > 0 else "Blue"
 
 
 def clevel(n):
@@ -121,6 +154,64 @@ def clevel(n):
     elif n >= 4:
         return "MEDIUM"
     return "LOW"
+
+
+def _mag_or_dash(val):
+    """Format mag value or '--' if NaN."""
+    if np.isnan(val):
+        return "--"
+    return f"{val:+.3f}"
+
+
+def _color_subtable(label, band_pair, color_mag, color_flux, arr, span):
+    """Generate a color sub-table for one band pair (e.g. g-r, u-g, u-r).
+    Returns list of markdown lines, or empty list if no valid color data.
+    """
+    color_arr = color_mag
+    ec = color_arr[arr[:, 0] <= span * 0.3]
+    mc = color_arr[(arr[:, 0] > span * 0.3) & (arr[:, 0] < span * 0.7)]
+    lc = color_arr[arr[:, 0] >= span * 0.7]
+    ec_valid = ec[~np.isnan(ec)]
+    mc_valid = mc[~np.isnan(mc)]
+    lc_valid = lc[~np.isnan(lc)]
+
+    if len(ec_valid) + len(mc_valid) + len(lc_valid) == 0:
+        return []
+
+    lines = []
+    lines.append(f"#### {label}\n")
+    lines.append(f"| Phase | N pairs | {band_pair} (mag) | sigma | {band_pair} (uJy) | Trend |")
+    lines.append("|-------|:-------:|:---------:|:-----:|:---------:|:-----:|")
+
+    for clabel, c_arr in [("Early (0-30 pct)", ec), ("Mid (30-70 pct)", mc), ("Late (70-100 pct)", lc)]:
+        valid = c_arr[~np.isnan(c_arr)]
+        if len(valid) == 0:
+            lines.append(f"| {clabel} | 0 | -- | -- | -- | -- |")
+        else:
+            if clabel.startswith("Early"):
+                farr = color_flux[arr[:, 0] <= span * 0.3]
+            elif clabel.startswith("Mid"):
+                farr = color_flux[(arr[:, 0] > span * 0.3) & (arr[:, 0] < span * 0.7)]
+            else:
+                farr = color_flux[arr[:, 0] >= span * 0.7]
+            lines.append(
+                f"| {clabel} | {len(valid)} | {np.nanmean(c_arr):+.3f} | "
+                f"{np.nanstd(c_arr):.3f} | {np.mean(farr):+.1f} | {ctrend(valid)} |"
+            )
+
+    if len(ec_valid) and len(lc_valid):
+        dc = np.nanmean(lc) - np.nanmean(ec)
+        if abs(dc) < 0.05:
+            evo = "Flat (no clear evolution)"
+        elif np.nanmean(ec) > np.nanmean(lc):
+            evo = "Red to Blue (TDE-like)"
+        else:
+            evo = "Blue to Red (SN-like)"
+        lines.append(
+            f"| **Evolution** | -- | delta = {dc:+.3f} mag | -- | -- | **{evo}** |"
+        )
+    lines.append("")
+    return lines
 
 
 def generate_md(source_id, arr, f, label="unknown"):
@@ -138,9 +229,11 @@ def generate_md(source_id, arr, f, label="unknown"):
     post = arr[arr[:, 0] >= pk_day]
     drate = (post[-1, 2] - post[0, 2]) / (post[-1, 0] - post[0, 0] + 1e-6) if len(post) >= 2 else 0.0
     rise_rate = (arr[pi, 2] - arr[0, 2]) / max(rise_t, 1)
-    ec = f["color"][arr[:, 0] <= span * 0.3]
-    mc = f["color"][(arr[:, 0] > span * 0.3) & (arr[:, 0] < span * 0.7)]
-    lc = f["color"][arr[:, 0] >= span * 0.7]
+
+    # Count valid color pairs for each band combination
+    gr_valid = (~np.isnan(f["color_gr_mag"])).sum()
+    ug_valid = (~np.isnan(f["color_ug_mag"])).sum()
+    ur_valid = (~np.isnan(f["color_ur_mag"])).sum()
 
     L = []
     L.append(f"# {source_id} -- Light Curve Analysis\n")
@@ -167,44 +260,74 @@ def generate_md(source_id, arr, f, label="unknown"):
     L.append(f"| Decline | {drate:+.3f} uJy/d | {dec_hint} |")
     L.append("")
 
-    L.append("### 2.2 Color (g minus r)\n")
-    L.append("| Phase | N pairs | g-r (uJy) | sigma | Trend |")
-    L.append("|-------|:-------:|:---------:|:-----:|:-----:|")
-    for clabel, c_arr in [("Early (0-30 pct)", ec), ("Mid (30-70 pct)", mc), ("Late (70-100 pct)", lc)]:
-        if len(c_arr) == 0:
-            L.append(f"| {clabel} | 0 | -- | -- | -- |")
-        else:
-            L.append(f"| {clabel} | {len(c_arr)} | {np.mean(c_arr):+.1f} | {np.std(c_arr):.1f} | {ctrend(c_arr)} |")
-    if len(ec) and len(lc):
-        dc = np.mean(lc) - np.mean(ec)
-        if abs(dc) < 2.0:
-            evo = "Flat (no clear evolution)"
-        elif np.mean(ec) > np.mean(lc):
-            evo = "Red to Blue (TDE-like)"
-        else:
-            evo = "Blue to Red (SN-like)"
-        L.append(f"| **Evolution** | -- | delta = {dc:+.1f} | -- | **{evo}** |")
+    L.append("### 2.2 Color Evolution (mag)\n")
+    L.append("> TDE color zones: g−r ∈ (−0.6, +0.1), u−g ∈ (−0.5, +0.4), u−r ∈ (−0.9, +0.2)\n")
+    L.append("> Range-first: if values stay within TDE zone → TDE-like regardless of delta direction.\n")
+    L.append("> Evolution (secondary): Red→Blue (Δ<−0.15) = TDE; Blue→Red (Δ>+0.15) outside zone = SN.\n")
     L.append("")
 
+    # g-r subtable
+    gr_lines = _color_subtable("g − r", "g-r", f["color_gr_mag"], f["color_gr_flux"], arr, span)
+    if gr_lines:
+        L.extend(gr_lines)
+
+    # u-g subtable
+    ug_lines = _color_subtable("u − g", "u-g", f["color_ug_mag"], f["color_ug_flux"], arr, span)
+    if ug_lines:
+        L.extend(ug_lines)
+
+    # u-r subtable
+    ur_lines = _color_subtable("u − r", "u-r", f["color_ur_mag"], f["color_ur_flux"], arr, span)
+    if ur_lines:
+        L.extend(ur_lines)
+
+    if not (gr_lines or ug_lines or ur_lines):
+        L.append("*No color data available (single-band source).*\n")
+
     L.append("### 2.3 Per-Phase Summary\n")
-    L.append("| Cutoff | N pts | Bands (g/r/u) | Phase | g-r (uJy) | Trend |")
-    L.append("|--------|:-----:|:-------------:|:-----:|:---------:|:-----:|")
+    # Build header dynamically based on available colors
+    color_cols = "g-r (mag)"
+    if ug_valid > 0:
+        color_cols += " | u-g (mag)"
+    if ur_valid > 0:
+        color_cols += " | u-r (mag)"
+    L.append(f"| Cutoff | N pts | Bands (g/r/u) | Phase | {color_cols} | Trend |")
+    L.append(f"|--------|:-----:|:-------------:|:-----:|{':---------:|' * max(1, (ug_valid > 0) + (ur_valid > 0) + 1)}:-----:|")
     for pct in [0.10, 0.20, 0.30, 0.40, 0.50, 0.70, 1.0]:
         mask = arr[:, 0] <= span * pct
         n_mask = int(mask.sum())
         if n_mask < 2:
             continue
         p = f["phase"][mask]
-        c = f["color"][mask]
         b = arr[mask, 1]
         tn = min(5, n_mask)
         pm = np.mean(p[-tn:])
-        cm = np.mean(c[-tn:]) if tn > 0 else 0
-        cs = np.std(c[-tn:]) if tn > 1 else 0
         bg = int((b == 1).sum())
         br = int((b == 2).sum())
         bu = int((b == 3).sum())
-        L.append(f"| {int(pct * 100)}% | {n_mask} | {bg}/{br}/{bu} | {pm:+.3f} | {cm:+.1f} +/- {cs:.1f} | {phase_trend(p[-tn:])} |")
+
+        # g-r
+        c_gr = f["color_gr_mag"][mask]
+        cm_gr = np.nanmean(c_gr[-tn:]) if tn > 0 else np.nan
+        cs_gr = np.nanstd(c_gr[-tn:]) if tn > 1 else 0
+        gr_str = f"{_mag_or_dash(cm_gr)} +/- {cs_gr:.3f}"
+
+        row = f"| {int(pct * 100)}% | {n_mask} | {bg}/{br}/{bu} | {pm:+.3f} | {gr_str}"
+
+        if ug_valid > 0:
+            c_ug = f["color_ug_mag"][mask]
+            cm_ug = np.nanmean(c_ug[-tn:]) if tn > 0 else np.nan
+            cs_ug = np.nanstd(c_ug[-tn:]) if tn > 1 else 0
+            row += f" | {_mag_or_dash(cm_ug)} +/- {cs_ug:.3f}"
+
+        if ur_valid > 0:
+            c_ur = f["color_ur_mag"][mask]
+            cm_ur = np.nanmean(c_ur[-tn:]) if tn > 0 else np.nan
+            cs_ur = np.nanstd(c_ur[-tn:]) if tn > 1 else 0
+            row += f" | {_mag_or_dash(cm_ur)} +/- {cs_ur:.3f}"
+
+        row += f" | {phase_trend(p[-tn:])} |"
+        L.append(row)
     L.append("")
 
     L.append("### 2.4 Data Quality Flags\n")
@@ -212,21 +335,48 @@ def generate_md(source_id, arr, f, label="unknown"):
     L.append("|---------|:----------:|--------|")
     early_n = int((arr[:, 0] <= span * 0.1).sum()) if span > 0 else 0
     L.append(f"| Rise phase | {clevel(early_n)} | {early_n} pts in 10% window |")
-    ec_info = f"{len(ec)} g-r pairs" + (f", sigma={np.std(ec):.1f}" if len(ec) else "")
-    L.append(f"| Color (early) | {clevel(len(ec))} | {ec_info} |")
-    lc_info = f"{len(lc)} pairs" + (f", sigma={np.std(lc):.1f}" if len(lc) else "")
-    L.append(f"| Color (late) | {clevel(len(lc))} | {lc_info} |")
+    gr_ec = f["color_gr_mag"][arr[:, 0] <= span * 0.3]
+    gr_ec_n = (~np.isnan(gr_ec)).sum()
+    gr_lc = f["color_gr_mag"][arr[:, 0] >= span * 0.7]
+    gr_lc_n = (~np.isnan(gr_lc)).sum()
+    color_detail = f"{gr_ec_n} g-r pairs" if gr_valid > 0 else ""
+    if ug_valid and ur_valid:
+        color_detail += f", {ug_valid} u-g, {ur_valid} u-r"
+    elif ur_valid:
+        color_detail += f", {ur_valid} u-r"
+    L.append(f"| Color coverage | {clevel(max(gr_ec_n, gr_lc_n))} | {color_detail} |")
     L.append(f"| Decline | {clevel(len(post))} | {len(post)} post-peak pts |")
     L.append("")
 
 
     L.append("## Section 3: Raw Light Curve\n")
-    L.append(f"> Flux in uJy. Day = MJD - {t0:.1f}. Phase: -1=rising, +1=falling. g-r: positive=red.\n")
-    L.append("| Num | Day | B | Flux | Err | Phase | g-r |")
-    L.append("|-----|-----|---|:----:|:---:|:-----:|:---:|")
+    # Build header dynamically
+    raw_header = "| Num | Day | B | Flux | Err | Phase | g-r (mag) | g-r (uJy)"
+    if ug_valid > 0:
+        raw_header += " | u-g (mag) | u-g (uJy)"
+    if ur_valid > 0:
+        raw_header += " | u-r (mag) | u-r (uJy)"
+    raw_header += " |"
+    L.append(f"> Flux in uJy. Day = MJD - {t0:.1f}. Phase: -1=rising, +1=falling.\n")
+    L.append(raw_header)
+    sep = "|-----|-----|---|:----:|:---:|:-----:|:---------:|:---------:"
+    if ug_valid > 0:
+        sep += "|:---------:|:---------:"
+    if ur_valid > 0:
+        sep += "|:---------:|:---------:"
+    sep += "|"
+    L.append(sep)
     for i in range(n):
         bs = BAND_STR[int(arr[i, 1])]
-        L.append(f"| {i + 1} | {arr[i, 0]:.1f} | {bs} | {arr[i, 2]:.1f} | {arr[i, 3]:.2f} | {f['phase'][i]:+.3f} | {f['color'][i]:+.1f} |")
+        row = (f"| {i + 1} | {arr[i, 0]:.1f} | {bs} | {arr[i, 2]:.1f} | "
+               f"{arr[i, 3]:.2f} | {f['phase'][i]:+.3f} | "
+               f"{_mag_or_dash(f['color_gr_mag'][i])} | {f['color_gr_flux'][i]:+.1f}")
+        if ug_valid > 0:
+            row += f" | {_mag_or_dash(f['color_ug_mag'][i])} | {f['color_ug_flux'][i]:+.1f}"
+        if ur_valid > 0:
+            row += f" | {_mag_or_dash(f['color_ur_mag'][i])} | {f['color_ur_flux'][i]:+.1f}"
+        row += " |"
+        L.append(row)
     L.append("")
 
     L.append("## Section 4: Classification Protocol\n")
@@ -286,6 +436,7 @@ def process_one(path, label="unknown", force=False, source_id=None):
         return None
     arr = auto_convert_units(arr)
     arr = arr[np.isin(arr[:, 1], [1, 2, 3])]
+    arr, _mask, _mad_stats = mad_clip(arr)
     if len(arr) < config.MIN_PTS:
         print(f"  [skip] {source_id} - only {len(arr)} pts after filtering")
         return None
@@ -313,7 +464,6 @@ def process_batch(dir_path, label, max_files=None):
         print(f"Error: directory not found: {dir_path}")
         return
     files = sorted(dir_path.glob("*.npy")) + sorted(dir_path.glob("*.csv"))
-    # Filter out synth_flux_* files
     files = [f for f in files if not f.stem.startswith("synth_flux_")]
     if not files:
         print(f"No npy/csv files found in {dir_path}")
