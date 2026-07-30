@@ -4,6 +4,12 @@
   原始数据 (npy/csv)
   /data/TS/Flux/{TDE,SN,...}/
   │
+  │ 
+  ▼
+┌────────────────┐
+│    Mapfilter   │
+└────────────────┘
+  │
   │  python promt.py --batch <dir> --label TDE
   ▼
 ┌──────────────────────┐

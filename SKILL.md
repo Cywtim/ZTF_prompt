@@ -71,6 +71,8 @@ npy/csv data  →  promt.py  →  sources/{id}/analysis.md  →  classify.py  �
 
 > **Section 3 (Predictive Features) was removed** (Jul 2026): its auto-generated hints were physically wrong and conflicted with the authoritative system prompt. The LLM now relies entirely on the physics rules in `_make_system_prompt()`. `read_md()` strips §3 by splitting on `"## Section 3:"` and keeping only §4 (now renumbered as §3).
 
+> **⚠️ RA/Dec, Gaia Sep, WISE are NOT in the prompt by default.** `generate_md()` only includes light-curve-derived features. Registry metadata (`gaia_sep`, `w1mag`, `w2mag`, `w1_w2`) must be injected via the standalone `enrich_analysis.py` script. See `references/enrich-analysis-registry-md.md`.
+
 ### Weight control mechanism
 
 The prompt balances derived features vs raw data via:

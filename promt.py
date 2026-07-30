@@ -381,7 +381,7 @@ def generate_md(source_id, arr, f, label="unknown"):
 
     L.append("## Section 4: Classification Protocol\n")
     L.append("### System Instruction")
-    L.append("Classify this transient light curve as **TDE / SN / Others / AGN**.\n")
+    L.append("Classify this transient light curve as **TDE / SN / AGN / Others**.\n")
     L.append("### Knowledge Base")
     L.append("- **TDE:** fast rise (t^-5/3), red-to-blue color reversal, power-law decay, no late plateau")
     L.append("- **SN:** diverse rise times, Ni-56 decay tail. SLSNe: long plateaus. SN IIn: fast rise.")
