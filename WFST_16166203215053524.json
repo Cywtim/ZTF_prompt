@@ -1,0 +1,120 @@
+{
+  "source_id": "WFST_16166203215053524",
+  "timestamp": "2026-07-30T22:59:10.508592+00:00",
+  "model": "qwen3.6-chat",
+  "mode": "multimodal",
+  "tokens": {
+    "prompt": 60422,
+    "completion": 658,
+    "total": 61080
+  },
+  "classification": {
+    "label": "TDE",
+    "confidence": "high",
+    "score": 0.92,
+    "unsure_preference": null
+  },
+  "reasoning": {
+    "primary_signal": "Strong TDE indicators: Nuclear position, IR-bluish WISE color, TDE-zone optical colors, and characteristic rise/decline morphology.",
+    "indicators": [
+      {
+        "name": "WISE W1-W2",
+        "value": "-0.103",
+        "weight": 0.25,
+        "direction": "TDE",
+        "note": "IR-bluish color (< 0.5) strongly favors TDE over AGN, ruling out dust torus emission."
+      },
+      {
+        "name": "Gaia Separation",
+        "value": "0.075 arcsec",
+        "weight": 0.15,
+        "direction": "TDE",
+        "note": "Source is coincident with the galaxy nucleus, consistent with TDE physics."
+      },
+      {
+        "name": "Optical Color (g-r)",
+        "value": "-0.224 to -0.180 mag",
+        "weight": 0.2,
+        "direction": "TDE",
+        "note": "Colors remain within the TDE zone (-0.6 to +0.1) throughout the light curve. No significant blue-to-red evolution."
+      },
+      {
+        "name": "Rise Morphology",
+        "value": "Concave",
+        "weight": 0.2,
+        "direction": "TDE",
+        "note": "Light curve shows a decelerating rise (concave shape) typical of fallback accretion, rather than the accelerating rise of shock-cooling SNe."
+      },
+      {
+        "name": "Rise Duration",
+        "value": "45 days",
+        "weight": 0.1,
+        "direction": "TDE",
+        "note": "Rise time is consistent with typical TDE fallback timescales (10-60 days)."
+      },
+      {
+        "name": "Decline Shape",
+        "value": "Power-law",
+        "weight": 0.1,
+        "direction": "TDE",
+        "note": "Steady decline without a plateau, consistent with t^(-5/3) decay."
+      }
+    ]
+  },
+  "quality": {
+    "flags": []
+  },
+  "few_shot": [
+    {
+      "id": "WFST_J081300.60+210910.1_test",
+      "label": "TDE"
+    },
+    {
+      "id": "ZTF19aaapnxn_difference_photometry",
+      "label": "SN"
+    },
+    {
+      "id": "WFST_J073922.03+305935.0_test",
+      "label": "SN"
+    },
+    {
+      "id": "WFST_21081982263886345",
+      "label": "SN"
+    },
+    {
+      "id": "WFST_10644045650985559",
+      "label": "AGN"
+    },
+    {
+      "id": "WFST_8527659713692013",
+      "label": "AGN"
+    },
+    {
+      "id": "WFST_12972452648846295",
+      "label": "Others"
+    },
+    {
+      "id": "WFST_12205006417560235",
+      "label": "Others"
+    },
+    {
+      "id": "WFST_15545176713855582",
+      "label": "Others"
+    },
+    {
+      "id": "WFST_17292998622577237",
+      "label": "Others"
+    },
+    {
+      "id": "WFST_17293153241399704",
+      "label": "Others"
+    },
+    {
+      "id": "WFST_19874797953482967",
+      "label": "Others"
+    }
+  ],
+  "cot": false,
+  "cot_reasoning": "```json",
+  "_raw_response": "```json\n{\n  \"classification\": {\n    \"label\": \"TDE\",\n    \"confidence\": \"high\",\n    \"score\": 0.92,\n    \"unsure_preference\": null\n  },\n  \"reasoning\": {\n    \"primary_signal\": \"Strong TDE indicators: Nuclear position, IR-bluish WISE color, TDE-zone optical colors, and characteristic rise/decline morphology.\",\n    \"indicators\": [\n      {\n        \"name\": \"WISE W1-W2\",\n        \"value\": \"-0.103\",\n        \"weight\": 0.25,\n        \"direction\": \"TDE\",\n        \"note\": \"IR-bluish color (< 0.5) strongly favors TDE over AGN, ruling out dust torus emission.\"\n      },\n      {\n        \"name\": \"Gaia Separation\",\n        \"value\": \"0.075 arcsec\",\n        \"weight\": 0.15,\n        \"direction\": \"TDE\",\n        \"note\": \"Source is coincident with the galaxy nucleus, consistent with TDE physics.\"\n      },\n      {\n        \"name\": \"Optical Color (g-r)\",\n        \"value\": \"-0.224 to -0.180 mag\",\n        \"weight\": 0.2,\n        \"direction\": \"TDE\",\n        \"note\": \"Colors remain within the TDE zone (-0.6 to +0.1) throughout the light curve. No significant blue-to-red evolution.\"\n      },\n      {\n        \"name\": \"Rise Morphology\",\n        \"value\": \"Concave\",\n        \"weight\": 0.2,\n        \"direction\": \"TDE\",\n        \"note\": \"Light curve shows a decelerating rise (concave shape) typical of fallback accretion, rather than the accelerating rise of shock-cooling SNe.\"\n      },\n      {\n        \"name\": \"Rise Duration\",\n        \"value\": \"45 days\",\n        \"weight\": 0.1,\n        \"direction\": \"TDE\",\n        \"note\": \"Rise time is consistent with typical TDE fallback timescales (10-60 days).\"\n      },\n      {\n        \"name\": \"Decline Shape\",\n        \"value\": \"Power-law\",\n        \"weight\": 0.1,\n        \"direction\": \"TDE\",\n        \"note\": \"Steady decline without a plateau, consistent with t^(-5/3) decay.\"\n      }\n    ]\n  },\n  \"host_galaxy\": {\n    \"morphology\": \"unclear\",\n    \"color\": \"unclear\",\n    \"position\": \"nucleus\",\n    \"favors\": \"TDE\",\n    \"weight\": 0.15\n  },\n  \"quality\": {\n    \"flags\": []\n  }\n}\n```"
+}

@@ -1,8 +1,17 @@
 {
-  "_comment": "Default curated few-shot exemplars for ZTF_prompt classification.",
-  "_usage": "Each class lists source IDs. List length controls n_shot per class (ignores --n-shot flag). Delete or rename this file to revert to random sampling from index.json.",
-  "_selection": "TDE: wmx_TDE_2024lhc — strong Red→Blue (Δ=-8.7), 432 pts, dense sampling, concave rise, cutout available. SN: ZTF19aaapnxn — Blue→Red (+6.2), 444 pts, balanced g/r, cutout available, slow Ni-decay tail.",
+  "_comment": "Curated few-shot exemplars for ZTF_prompt classification.",
+  "_usage": "Each class lists source IDs. All sources must exist in index.json.",
+  "_updated": "2026-07-30",
 
-  "TDE": ["wmx_TDE_2024lhc"],
-  "SN": ["ZTF19aaapnxn_difference_photometry"]
+  "TDE": ["WFST_J081300.60+210910.1_test", "WFST_16166203215053524"],
+  "SN": ["ZTF19aaapnxn_difference_photometry", "WFST_J073922.03+305935.0_test", "WFST_21081982263886345"],
+  "AGN": ["WFST_10644045650985559", "WFST_8527659713692013"],
+  "Others": [
+    "WFST_12972452648846295",
+    "WFST_12205006417560235",
+    "WFST_15545176713855582",
+    "WFST_17292998622577237",
+    "WFST_17293153241399704",
+    "WFST_19874797953482967"
+  ]
 }

@@ -63,3 +63,36 @@
 │  Confusion Matrix    │
 │  Token 消耗统计       │
 └──────────────────────┘
+
+
+
+
+Step 0: Shape Gate
+  ├─ 平台期 > 50d       → SN（不管颜色）
+  ├─ 多峰               → 不是单次 TDE
+  ├─ 对称爆发           → 不是 TDE
+  └─ 无结构             → Others
+       ↓ 未触发
+Step 1: 颜色 × WISE × 形状 矩阵
+ 光学颜色    W1-W2          形状        → 结果
+──────────────────────────────────────────────────────
+ TDE zone    < 0.5          concave     TDE (strong)
+ TDE zone    < 0.5          convex      Unsure→TDE
+ TDE zone    ≥ 0.8          any         AGN (strong)
+ TDE zone    [0.5, 0.8)     concave     TDE (weak)
+ TDE zone    [0.5, 0.8)     convex      SN (shape wins)
+ TDE zone    N/A            concave     TDE (moderate)
+ TDE zone    N/A            convex      Unsure→TDE
+ SN          < 0.5          any         Unsure (IR-TDE vs opt-SN)
+ SN          ≥ 0.8          any         AGN (weak)
+ SN          [0.5,0.8)/N/A  convex      SN (strong)
+ SN          [0.5,0.8)/N/A  concave     Unsure→SN
+ None        ≥ 0.8          concave     AGN
+ None        ≥ 0.8          convex      Others
+ None        < 0.5          concave     TDE (weak)
+ None        < 0.5          convex      SN (weak)
+ None        [0.5,0.8)/N/A  concave     TDE? (very weak)
+ None        [0.5,0.8)/N/A  convex      SN? (very weak)
+ None        [0.5,0.8)/N/A  unclear     Unsure
+ None        N/A            unclear     Unsure
+Step 2: Tiebreakers (Gaia, 时标, host)

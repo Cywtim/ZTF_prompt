@@ -3058,5 +3058,95 @@
       "u": 22
     },
     "span_days": 148.9
+  },
+  "WFST_16166203215053524": {
+    "label": "TDE",
+    "n_points": 59,
+    "bands": {
+      "g": 26,
+      "r": 19,
+      "u": 14
+    },
+    "span_days": 149
+  },
+  "WFST_8527659713692013": {
+    "label": "AGN",
+    "n_points": 360,
+    "bands": {
+      "g": 140,
+      "r": 117,
+      "u": 103
+    },
+    "span_days": 496.0
+  },
+  "WFST_12972452648846295": {
+    "label": "Others",
+    "n_points": 19,
+    "bands": {
+      "g": 8,
+      "r": 11,
+      "u": 0
+    },
+    "span_days": 368.0
+  },
+  "WFST_12205006417560235": {
+    "label": "Others",
+    "n_points": 13,
+    "bands": {
+      "g": 6,
+      "r": 6,
+      "u": 1
+    },
+    "span_days": 398.0
+  },
+  "WFST_15545176713855582": {
+    "label": "Others",
+    "n_points": 50,
+    "bands": {
+      "g": 24,
+      "r": 19,
+      "u": 7
+    },
+    "span_days": 168.0
+  },
+  "WFST_17292998622577237": {
+    "label": "Others",
+    "n_points": 18,
+    "bands": {
+      "g": 13,
+      "r": 3,
+      "u": 2
+    },
+    "span_days": 188.0
+  },
+  "WFST_17293153241399704": {
+    "label": "Others",
+    "n_points": 28,
+    "bands": {
+      "g": 21,
+      "r": 6,
+      "u": 1
+    },
+    "span_days": 188.0
+  },
+  "WFST_19874797953482967": {
+    "label": "Others",
+    "n_points": 21,
+    "bands": {
+      "g": 14,
+      "r": 7,
+      "u": 0
+    },
+    "span_days": 130.0
+  },
+  "WFST_21081982263886345": {
+    "label": "SN",
+    "n_points": 39,
+    "bands": {
+      "g": 19,
+      "r": 20,
+      "u": 0
+    },
+    "span_days": 31.0
   }
 }
