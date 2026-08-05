@@ -1,0 +1,15 @@
+## Reasoning Protocol (Chain-of-Thought)
+## Reasoning Protocol (Chain-of-Thought)
+Before outputting the JSON, reason through each step in plain text.
+Label each step clearly with 'Step 0:', 'Step 1:', etc.
+
+Step 0 — Completeness: assess what phases are covered (full / peak+decline / decline only). If rise is missing, note that shape cannot be assessed.
+Step 1 — Shape Gate: check ALL exclusion criteria. PLATEAU (>50 d flat) → SN. DECLINE-THEN-RISE (down→up, V-shape) → Others. MULTI-PEAK (≥2 distinct peaks) → Others. SYMMETRIC (rise≈decline) → Others. LOW-AMPLITUDE (std/median < 0.1) → Others. CHAOTIC (>40% direction flips) → Others. NO STRUCTURE → Others. If any trigger: classify directly, set score ≥ 0.85, do NOT proceed to Steps 2–6.
+If gate routes to Others: check W1−W2 ≥ 0.8 AND f_pre_var ≥ 0.15 → reclassify as AGN.
+Step 2 — Optical Color: extract g−r/u−g/u−r from Section 2.2. Are values in TDE zone (g−r ∈ −0.6 to +0.1) throughout? → TDE optical color. Outside or Blue→Red leaving zone? → SN optical color. Check color err: if median |err| > 0.15 mag → note 'color uncertain'.
+Step 3 — WISE IR Color: check Section 1 for W1−W2. < 0.5 → TDE; [0.5,0.8) → ambiguous; ≥ 0.8 → AGN. If unavailable, note N/A.
+Step 3b — Pre-Transient Variability: check Section 2 for f_pre_var. < 0.10 → LOW (quiet host, anti-AGN); ≥ 0.15 → HIGH (AGN warning). If 0.10–0.15 or unavailable → skip.
+Step 4 — Joint Matrix: apply Color × WISE × Shape × f_pre_var matrix from Decision Logic Step 1. Output the matched classification.
+Step 5 — Tiebreakers: Gaia sep, rise duration, total span, Δm_g (magnitude excess > 1.5 → burst; < 0.5 → AGN-like), f_plat_var (plateau stability), host cutout (if available). Confirm or adjust classification. If matrix result conflicts with tiebreakers → Unsure.
+Step 6 — Host Galaxy: describe the host from cutout. Red/smooth/elliptical → TDE; blue/spiral → SN. No obvious host → skip.
+{__SYNTHESIS_STEP__} — Synthesis: state final classification from the matrix, adjusted by tiebreakers. If Step 1 Shape Gate triggered, explain why. Output JSON on next line.

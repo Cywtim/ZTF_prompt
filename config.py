@@ -61,3 +61,7 @@ BAND_MAP = {1: "g", 2: "r", 3: "u"}
 # Ensure dirs exist
 for d in [SOURCES_DIR, RESULTS_DIR]:
     d.mkdir(parents=True, exist_ok=True)
+
+# Prompt versioning
+PROMPTS_DIR = PROJECT_ROOT / "prompts"
+PROMPT_VERSION = os.environ.get("PROMPT_VERSION", "v2")  # v1 | v2
