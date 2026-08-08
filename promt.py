@@ -67,25 +67,67 @@ def auto_convert_units(arr):
     return arr
 
 
+def _interp_flux(target_mjd, ref_mjd, ref_flux):
+    """Linearly interpolate ref flux to target_mjd using two nearest ref points.
+    Falls back to nearest-neighbor if only 1 ref point or ref points at same MJD.
+    Returns interpolated flux, or None if ref array is empty.
+    """
+    n_ref = len(ref_mjd)
+    if n_ref == 0:
+        return None
+    if n_ref == 1:
+        return float(ref_flux[0])
+
+    # ref_mjd is sorted; find where target_mjd would be inserted
+    ir = np.searchsorted(ref_mjd, target_mjd)
+
+    if ir == 0:
+        j0, j1 = 0, 1          # extrapolate forward from first two
+    elif ir >= n_ref:
+        j0, j1 = n_ref - 2, n_ref - 1  # extrapolate backward from last two
+    else:
+        j0, j1 = ir - 1, ir    # interpolate between bracketing points
+
+    dt = ref_mjd[j1] - ref_mjd[j0]
+    if dt < 1e-9:
+        return float(ref_flux[j0])
+
+    frac = (target_mjd - ref_mjd[j0]) / dt
+    return float(ref_flux[j0] + frac * (ref_flux[j1] - ref_flux[j0]))
+
+
 def _compute_pair_color(n, band, flux, mjd, idx_a, idx_b, b_a, b_b):
     """Compute mag-based and flux-based color for band pair (b_a - b_b).
+    Uses linear interpolation to estimate the other band's flux at exactly
+    the same MJD, then computes color at that moment.
     Returns (color_mag, color_flux) arrays of length n.
     """
     color_mag = np.full(n, np.nan)
     color_flux = np.zeros(n)
     if len(idx_a) == 0 or len(idx_b) == 0:
         return color_mag, color_flux
+
+    # Pre-extract sorted MJD/flux arrays for each band (idx_a, idx_b are in MJD order)
+    mjd_a, flux_a = mjd[idx_a], flux[idx_a]
+    mjd_b, flux_b = mjd[idx_b], flux[idx_b]
+
     for i in range(n):
         if band[i] == b_a:
-            j = idx_b[np.argmin(np.abs(mjd[idx_b] - mjd[i]))]
-            color_flux[i] = flux[i] - flux[j]
-            if flux[i] > 0 and flux[j] > 0:
-                color_mag[i] = -2.5 * np.log10(flux[i] / flux[j])
+            # Point is in band A → interpolate band B flux to this MJD
+            interp = _interp_flux(mjd[i], mjd_b, flux_b)
+            if interp is None:
+                continue
+            color_flux[i] = flux[i] - interp
+            if flux[i] > 0 and interp > 0:
+                color_mag[i] = -2.5 * np.log10(flux[i] / interp)
         elif band[i] == b_b:
-            j = idx_a[np.argmin(np.abs(mjd[idx_a] - mjd[i]))]
-            color_flux[i] = flux[j] - flux[i]
-            if flux[j] > 0 and flux[i] > 0:
-                color_mag[i] = -2.5 * np.log10(flux[j] / flux[i])
+            # Point is in band B → interpolate band A flux to this MJD
+            interp = _interp_flux(mjd[i], mjd_a, flux_a)
+            if interp is None:
+                continue
+            color_flux[i] = interp - flux[i]
+            if interp > 0 and flux[i] > 0:
+                color_mag[i] = -2.5 * np.log10(interp / flux[i])
     return color_mag, color_flux
 
 

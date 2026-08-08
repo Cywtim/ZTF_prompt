@@ -259,7 +259,11 @@ def main():
     parser.add_argument("--model", help="model override")
     parser.add_argument("--verbose", action="store_true", help="show detailed per-source results")
     parser.add_argument("--cot", action="store_true", help="enable Chain-of-Thought reasoning")
+    parser.add_argument("--seed", type=int, default=None, help="random seed for reproducible test sets")
     args = parser.parse_args()
+
+    if args.seed is not None:
+        random.seed(args.seed)
 
     classes = [c.strip() for c in args.classes.split(",")]
     evaluate(

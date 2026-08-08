@@ -3148,5 +3148,200 @@
       "u": 0
     },
     "span_days": 31.0
+  },
+  "ZTF21aaaokyp_PRF": {
+    "label": "TDE",
+    "n_points": 235,
+    "source": "PRF paper v3"
+  },
+  "ZTF20achpcvt_PRF": {
+    "label": "TDE",
+    "n_points": 143,
+    "source": "PRF paper v3"
+  },
+  "ZTF20abnorit_PRF": {
+    "label": "TDE",
+    "n_points": 135,
+    "source": "PRF paper v3"
+  },
+  "ZTF19aapreis_PRF": {
+    "label": "TDE",
+    "n_points": 82,
+    "source": "PRF paper v3"
+  },
+  "ZTF19aakiwze_PRF": {
+    "label": "TDE",
+    "n_points": 46,
+    "source": "PRF paper v3"
+  },
+  "ZTF19aakswrb_PRF": {
+    "label": "TDE",
+    "n_points": 44,
+    "source": "PRF paper v3"
+  },
+  "ZTF22abkfhua_PRF": {
+    "label": "TDE",
+    "n_points": 163,
+    "source": "PRF paper v3"
+  },
+  "ZTF20abjwvae_PRF": {
+    "label": "TDE",
+    "n_points": 47,
+    "source": "PRF paper v3"
+  },
+  "ZTF21acafvhf_PRF": {
+    "label": "TDE",
+    "n_points": 49,
+    "source": "PRF paper v3"
+  },
+  "ZTF22aaaedas_PRF": {
+    "label": "TDE",
+    "n_points": 40,
+    "source": "PRF paper v3"
+  },
+  "ZTF20abowque_PRF": {
+    "label": "TDE",
+    "n_points": 115,
+    "source": "PRF paper v3"
+  },
+  "ZTF22aaabovl_PRF": {
+    "label": "TDE",
+    "n_points": 37,
+    "source": "PRF paper v3"
+  },
+  "ZTF19abhhjcc_PRF": {
+    "label": "TDE",
+    "n_points": 121,
+    "source": "PRF paper v3"
+  },
+  "ZTF20abfcszi_PRF": {
+    "label": "TDE",
+    "n_points": 381,
+    "source": "PRF paper v3"
+  },
+  "ZTF19aabbnzo_PRF": {
+    "label": "TDE",
+    "n_points": 41,
+    "source": "PRF paper v3"
+  },
+  "ZTF21abcgnqn_PRF": {
+    "label": "TDE",
+    "n_points": 132,
+    "source": "PRF paper v3"
+  },
+  "ZTF20acnznms_PRF": {
+    "label": "TDE",
+    "n_points": 139,
+    "source": "PRF paper v3"
+  },
+  "ZTF22aaahtqz_PRF": {
+    "label": "TDE",
+    "n_points": 32,
+    "source": "PRF paper v3"
+  },
+  "ZTF18abxftqm_PRF": {
+    "label": "TDE",
+    "n_points": 95,
+    "source": "PRF paper v3"
+  },
+  "ZTF21abxngcz_PRF": {
+    "label": "TDE",
+    "n_points": 93,
+    "source": "PRF paper v3"
+  },
+  "ZTF20aamqmfk_PRF": {
+    "label": "TDE",
+    "n_points": 102,
+    "source": "PRF paper v3"
+  },
+  "ZTF19aarioci_PRF": {
+    "label": "TDE",
+    "n_points": 89,
+    "source": "PRF paper v3"
+  },
+  "ZTF19acspeuw_PRF": {
+    "label": "TDE",
+    "n_points": 36,
+    "source": "PRF paper v3"
+  },
+  "ZTF20abefeab_PRF": {
+    "label": "TDE",
+    "n_points": 57,
+    "source": "PRF paper v3"
+  },
+  "ZTF22abajudi_PRF": {
+    "label": "TDE",
+    "n_points": 68,
+    "source": "PRF paper v3"
+  },
+  "ZTF18acaqdaa_PRF": {
+    "label": "TDE",
+    "n_points": 296,
+    "source": "PRF paper v3"
+  },
+  "ZTF20acitpfz_PRF": {
+    "label": "TDE",
+    "n_points": 39,
+    "source": "PRF paper v3"
+  },
+  "ZTF21abjrysr_PRF": {
+    "label": "TDE",
+    "n_points": 95,
+    "source": "PRF paper v3"
+  },
+  "ZTF22aagvrlq_PRF": {
+    "label": "TDE",
+    "n_points": 58,
+    "source": "PRF paper v3"
+  },
+  "ZTF20acqoiyt_PRF": {
+    "label": "TDE",
+    "n_points": 47,
+    "source": "PRF paper v3"
+  },
+  "ZTF19abzrhgq_PRF": {
+    "label": "TDE",
+    "n_points": 138,
+    "source": "PRF paper v3"
+  },
+  "ZTF19abidbya_PRF": {
+    "label": "TDE",
+    "n_points": 30,
+    "source": "PRF paper v3"
+  },
+  "ZTF22abegjtx_PRF": {
+    "label": "TDE",
+    "n_points": 181,
+    "source": "PRF paper v3"
+  },
+  "ZTF22aacgcwv_PRF": {
+    "label": "TDE",
+    "n_points": 37,
+    "source": "PRF paper v3"
+  },
+  "ZTF20abgwfek_PRF": {
+    "label": "TDE",
+    "n_points": 38,
+    "source": "PRF paper v3"
+  },
+  "ZTF20aabqihu_PRF": {
+    "label": "TDE",
+    "n_points": 36,
+    "source": "PRF paper v3"
+  },
+  "ZTF21abhrchb_PRF": {
+    "label": "TDE",
+    "n_points": 58,
+    "source": "PRF paper v3"
+  },
+  "ZTF19accmaxo_PRF": {
+    "label": "TDE",
+    "n_points": 47,
+    "source": "PRF paper v3"
+  },
+  "ZTF21aanxhjv_PRF": {
+    "label": "TDE",
+    "n_points": 461,
+    "source": "PRF paper v3"
   }
 }

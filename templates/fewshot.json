@@ -4,7 +4,7 @@
   "_updated": "2026-07-30",
 
   "TDE": ["WFST_J081300.60+210910.1_test", "WFST_16166203215053524"],
-  "SN": ["ZTF19aaapnxn_difference_photometry", "WFST_J073922.03+305935.0_test", "WFST_21081982263886345"],
+  "SN": ["ZTF19aaapnxn_difference_photometry"],
   "AGN": ["WFST_10644045650985559", "WFST_8527659713692013"],
   "Others": [
     "WFST_12972452648846295",

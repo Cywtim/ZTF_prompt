@@ -297,7 +297,7 @@ def call_api(messages, model=None):
                 model=model,
                 temperature=config.TEMPERATURE,
                 messages=messages,
-                max_tokens=3000,
+                max_tokens=6000,
             )
             msg = response.choices[0].message
             # Handle USTC API proxy: content may be None, fall back to reasoning_content
@@ -333,7 +333,16 @@ def parse_response(raw_text):
             end = text.index("```", start)
             text = text[start:end].strip()
         except ValueError:
-            text = text[start:].strip()
+            # Single ``` → check if it's a trailing closer
+            # If text before ``` is valid JSON, use that
+            before = text[:text.index("```")].strip()
+            if before.endswith("}") or before.endswith("]"):
+                text = before
+            else:
+                text = text[start:].strip()
+    # Strip trailing ``` if present (LLM sometimes adds closing backticks without opening)
+    if text.endswith("```"):
+        text = text[:-3].strip()
     try:
         return json.loads(text)
     except json.JSONDecodeError:
