@@ -50,24 +50,46 @@ Git repo: `https://github.com/Cywtim/ZTF_prompt.git`
 
 ## Architecture
 
+Two parallel prompt generators produce `analysis.md` — use the right one for the data source:
+
 ```
-npy/csv data  →  promt.py  →  sources/{id}/analysis.md  →  classify.py  →  LLM API  →  results/{id}.json
-                     ↓                                          ↓                        ↓
-                index.json                           _make_system_prompt()      (label, confidence,
-                                                    reads config.CLASSES →      reasoning, indicators)
-                                                    injects physics rules
+WFST npy/csv  →  promt.py        ─┐
+ZTF Lasair    →  ztf_adapter.py  ─┤
+                                   ├→  sources/{id}/analysis.md  →  classify.py  →  LLM API  →  results/{id}.json
+                                   ↓                                          ↓                        ↓
+                              index.json                          _make_system_prompt()      (label, confidence,
+                                                                    reads config.CLASSES →      reasoning, indicators)
+                                                                    injects physics rules
 ```
+
+**`promt.py` vs `ztf_adapter.py`**: Both produce structurally identical `analysis.md` (4 sections), but differ in features:
+
+| Feature | promt.py (WFST) | ztf_adapter.py (ZTF) |
+|---------|:---:|:---:|
+| Bands | g, r, u (3-band) | g, r (2-band) |
+| Colors | g−r, u−g, u−r | g−r only |
+| MAD outlier clipping | ✅ | ❌ |
+| Baseline detection | ✅ per-band (§2.5) | ✅ all-band mixed |
+| Burst trimming | ❌ | ✅ (Lasair artifact) |
+| SDSS cutout | ❌ | ✅ |
+| Light curve plot | ❌ | ✅ |
+| source suffix | none | `_PRF` |
+
+**`enrich.py`** is a parallel post-processing step: reads `results/{id}.json`, matches each LLM indicator against `INDICATOR_WIKI_MAP.json`, adds `physical_context` + `physical_summary` (Chinese diagnostic paragraph), writes `results_enriched/{id}.json`. Run AFTER classification.
 
 **System prompt is dynamically generated** by `_make_system_prompt()` which reads `config.CLASSES` to auto-sync class names, then injects physics rules (color evolution, timescale, decline shape, data quality, decision logic). Adding a class = editing `config.py` + adding rules in `_make_system_prompt()`.
 
-### Analysis.md structure (4 sections)
+### Analysis.md structure (5 sections, promt.py; ztf_adapter.py adds §2.5-2.6)
 
 | Section | Content | Used by LLM? |
 |---------|---------|:------------:|
 | 1. Metadata | Source ID, MJD range, N pts, bands, peak | Yes |
 | 2. Derived Features | Morphology, color evolution, per-phase summary, quality flags | Yes (primary) |
+| 2.5 Baseline (promt.py) | Per-band pre/post-peak quiet zone detection | Yes (new) |
 | 3. Raw Light Curve | Full data table (MJD, band, flux, err, phase, g-r) | No (stripped for API) |
-| 4. Classification Protocol | LLM instructions, TDE/SN knowledge, output format | Yes (system prompt) |
+| 4. Classification Protocol | LLM instructions, TDE/SN/AGN knowledge, output format | Yes (system prompt) |
+
+> **§2.5 Baseline Detection** (Jul 2026): Per-band independent detection of quiescent periods. Each band uses its own peak flux to compute threshold. Pre-peak baseline → quiescent host; post-peak return → event may have ended (favors SN). No post-peak baseline → still declining (TDE-like). AGN cannot have clean quiescent baseline. The §4 prompt includes this as a key discriminator. Full algorithm in `references/promt-baseline-detection.md`.
 
 > **Section 3 (Predictive Features) was removed** (Jul 2026): its auto-generated hints were physically wrong and conflicted with the authoritative system prompt. The LLM now relies entirely on the physics rules in `_make_system_prompt()`. `read_md()` strips §3 by splitting on `"## Section 3:"` and keeping only §4 (now renumbered as §3).
 
@@ -124,7 +146,9 @@ python promt.py --relabel WFST_J101658 TDE
 | File | Role |
 |------|------|
 | `config.py` | API config, paths, classification params |
-| `promt.py` | npy/csv → analysis.md + index.json |
+| `promt.py` | npy/csv → analysis.md + index.json (WFST: 3-band, per-band baseline) |
+| `ztf_adapter.py` | ZTF Lasair npy → sources/{id}_PRF/analysis.md (2-band, baseline + burst trimming) |
+| `enrich.py` | results/{id}.json → results_enriched/{id}.json (physics context from INDICATOR_WIKI_MAP) |
 | `classify.py` | MD → few-shot prompt → LLM API → results JSON |
 | `plot.py` | npy/csv → sources/{id}/lightcurve.png (u=blue, g=green, r=red) |
 | `cutout.py` | radec.txt → sources/{id}/cutout.png (SDSS/DSS survey cutout) |
@@ -411,6 +435,7 @@ python plot.py --all
 14. **TNS CSV has header-column mismatch**: `TNS_TDE_search_results.csv` has an unnamed extra column between `class` and `ra` (possibly sub-class or reps-count). `csv.DictReader` will misalign all columns after it. Parse by column index: col5=ra, col6=decl. The IAU name is `col1 + col2` (e.g., "TDE" + "2022czy" → "TDE2022czy").
 15. **Multimodal without cutout → conditional prompt**: When `cutout.png` is absent, system prompt must NOT mention cutouts or host galaxies. Use `_make_system_prompt(has_cutout=False)` to auto-strip the Host Galaxy section. Otherwise the model looks for an image that isn't there and performance degrades (40% Unsure rate observed).
 16. **Section 3 (Predictive Features) removed**: Its auto-generated hints were physically wrong (timescale mismatches) and conflicted with the system prompt. The LLM now relies entirely on physics rules in the system prompt, not on pre-computed hints.
+17. **Baseline detection must be per-band**: `ztf_adapter.py`'s original `detect_baseline()` mixes all bands together when computing quiet threshold (`|flux| < 0.1 × global_peak`). Different bands have different noise floors — a quiet g-band point may be above the r-band threshold or below the u-band threshold. `promt.py` now uses `detect_baseline_per_band()` with independent per-band thresholds. The old `ztf_adapter.py` implementation has NOT been updated yet.
 
 ## Results JSON Schema
 

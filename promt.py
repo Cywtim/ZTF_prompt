@@ -21,6 +21,14 @@ from MAD import mad_clip
 BAND_STR = {1: "g", 2: "r", 3: "u"}
 BAND_INT = {"WFST-g": 1, "WFST-r": 2, "WFST-u": 3}
 
+# ── Baseline detection params ──────────────────────
+BASELINE_FRAC = 0.10          # |flux| < FRAC × per-band peak_flux = quiet
+BASELINE_ABS_FLOOR = 30.0     # absolute floor (μJy)
+BASELINE_MIN_CONSEC = 3       # minimum consecutive quiet points
+BASELINE_MIN_SPAN = 5.0       # minimum MJD span for quiet block (days)
+BASELINE_TAIL_FRAC = 0.20     # fraction of post-peak points for tail check
+BASELINE_TAIL_MED_THRESH = 0.15  # tail median < THRESH × peak → quiet
+
 
 def load_npy(path):
     arr = np.load(path)
@@ -129,6 +137,148 @@ def _compute_pair_color(n, band, flux, mjd, idx_a, idx_b, b_a, b_b):
             if interp > 0 and flux[i] > 0:
                 color_mag[i] = -2.5 * np.log10(interp / flux[i])
     return color_mag, color_flux
+
+
+# ═══════════════════════════════════════════════════
+# Per-band baseline detection
+# ═══════════════════════════════════════════════════
+
+def detect_baseline_per_band(arr):
+    """Detect quiet baseline periods per-band independently.
+
+    Each band has its own peak flux → own threshold. Quiet blocks are found
+    independently per band (pre-peak and post-peak), then reported per band.
+
+    Returns dict with per-band results, usable directly in analysis.md §2.5.
+    """
+    mjd = arr[:, 0]
+    band = arr[:, 1].astype(int)
+    flux = arr[:, 2]
+    bands_present = sorted(np.unique(band))
+
+    result = {
+        "bands": {},
+        "warnings": [],
+    }
+
+    for b_int in bands_present:
+        b_mask = band == b_int
+        b_mjd = mjd[b_mask]
+        b_flux = flux[b_mask]
+        b_idx = np.where(b_mask)[0]  # indices in original arr
+
+        if len(b_flux) < BASELINE_MIN_CONSEC + 2:
+            result["bands"][b_int] = {
+                "pre_detected": False, "pre_mjd_start": None, "pre_mjd_end": None,
+                "pre_n_pts": 0, "pre_mean_flux": 0,
+                "post_detected": False, "post_mjd_start": None, "post_mjd_end": None,
+                "post_n_pts": 0, "post_mean_flux": 0,
+                "peak_flux": float(b_flux.max()), "peak_mjd": float(b_mjd[np.argmax(b_flux)]),
+                "threshold": 0, "n_pts": len(b_flux),
+                "warnings": [f"Too few points ({len(b_flux)}) for baseline detection"],
+            }
+            continue
+
+        peak_idx = int(np.argmax(b_flux))
+        peak_flux_b = float(b_flux[peak_idx])
+        peak_mjd_b = float(b_mjd[peak_idx])
+
+        threshold = max(BASELINE_FRAC * peak_flux_b, BASELINE_ABS_FLOOR)
+        quiet = np.abs(b_flux) < threshold
+
+        band_result = {
+            "pre_detected": False, "pre_mjd_start": None, "pre_mjd_end": None,
+            "pre_n_pts": 0, "pre_mean_flux": 0,
+            "post_detected": False, "post_mjd_start": None, "post_mjd_end": None,
+            "post_n_pts": 0, "post_mean_flux": 0,
+            "peak_flux": peak_flux_b, "peak_mjd": peak_mjd_b,
+            "threshold": threshold, "n_pts": len(b_flux),
+            "warnings": [],
+        }
+
+        # ── Pre-peak ──
+        pre_mask = b_mjd < peak_mjd_b
+        if pre_mask.sum() >= BASELINE_MIN_CONSEC:
+            pre_indices = b_idx[pre_mask]
+            blocks = _find_quiet_blocks(pre_indices, quiet[pre_mask])
+            if blocks:
+                last_block = blocks[-1]
+                block_mjd_vals = mjd[last_block]
+                if (len(last_block) >= BASELINE_MIN_CONSEC and
+                        (block_mjd_vals.max() - block_mjd_vals.min()) >= BASELINE_MIN_SPAN):
+                    band_result["pre_detected"] = True
+                    band_result["pre_mjd_start"] = float(block_mjd_vals.min())
+                    band_result["pre_mjd_end"] = float(block_mjd_vals.max())
+                    band_result["pre_n_pts"] = len(last_block)
+                    band_result["pre_mean_flux"] = float(np.mean(flux[last_block]))
+                elif len(last_block) >= BASELINE_MIN_CONSEC:
+                    band_result["warnings"].append(
+                        f"Pre-peak quiet block ({len(last_block)} pts, "
+                        f"{block_mjd_vals.max() - block_mjd_vals.min():.0f}d) too short"
+                    )
+        else:
+            band_result["warnings"].append("Insufficient pre-peak data")
+
+        # ── Post-peak ──
+        post_mask = b_mjd > peak_mjd_b
+        if post_mask.sum() >= BASELINE_MIN_CONSEC:
+            post_indices = b_idx[post_mask]
+            blocks = _find_quiet_blocks(post_indices, quiet[post_mask])
+            if blocks:
+                last_block = blocks[-1]
+                block_mjd_vals = mjd[last_block]
+                if (len(last_block) >= BASELINE_MIN_CONSEC and
+                        (block_mjd_vals.max() - block_mjd_vals.min()) >= BASELINE_MIN_SPAN):
+                    band_result["post_detected"] = True
+                    band_result["post_mjd_start"] = float(block_mjd_vals.min())
+                    band_result["post_mjd_end"] = float(block_mjd_vals.max())
+                    band_result["post_n_pts"] = len(last_block)
+                    band_result["post_mean_flux"] = float(np.mean(flux[last_block]))
+            if not band_result["post_detected"]:
+                post_flux_vals = np.abs(b_flux[post_mask])
+                tail_n = max(BASELINE_MIN_CONSEC, int(len(post_flux_vals) * BASELINE_TAIL_FRAC))
+                if tail_n > 0 and len(post_flux_vals) >= 10:
+                    tail_flux = post_flux_vals[-tail_n:]
+                    tail_median = np.median(tail_flux)
+                    if tail_median < BASELINE_TAIL_MED_THRESH * peak_flux_b:
+                        band_result["post_detected"] = True
+                        post_mjd_vals = b_mjd[post_mask]
+                        tail_mjd = post_mjd_vals[-tail_n:]
+                        band_result["post_mjd_start"] = float(tail_mjd.min())
+                        band_result["post_mjd_end"] = float(tail_mjd.max())
+                        band_result["post_n_pts"] = tail_n
+                        band_result["post_mean_flux"] = float(tail_median)
+        else:
+            band_result["warnings"].append("Insufficient post-peak data")
+
+        # ── Pre-peak activity check ──
+        if band_result["pre_detected"] and pre_mask.sum() > band_result["pre_n_pts"]:
+            pre_flux_outside = b_flux[pre_mask][~quiet[pre_mask]]
+            if len(pre_flux_outside) > 0 and np.max(pre_flux_outside) > 0.3 * peak_flux_b:
+                band_result["warnings"].append(
+                    f"Pre-peak activity: max outside baseline = "
+                    f"{np.max(pre_flux_outside):.0f} μJy ({np.max(pre_flux_outside) / peak_flux_b * 100:.0f}% of peak)"
+                )
+
+        result["bands"][b_int] = band_result
+
+    return result
+
+
+def _find_quiet_blocks(indices, quiet_flags):
+    """Find consecutive blocks of quiet indices."""
+    blocks = []
+    current = []
+    for i, q in zip(indices, quiet_flags):
+        if q:
+            current.append(i)
+        else:
+            if len(current) >= BASELINE_MIN_CONSEC:
+                blocks.append(np.array(current))
+            current = []
+    if len(current) >= BASELINE_MIN_CONSEC:
+        blocks.append(np.array(current))
+    return blocks
 
 
 def compute_features(arr):
@@ -256,7 +406,7 @@ def _color_subtable(label, band_pair, color_mag, color_flux, arr, span):
     return lines
 
 
-def generate_md(source_id, arr, f, label="unknown"):
+def generate_md(source_id, arr, f, label="unknown", baseline=None):
     n = len(arr)
     span = arr[:, 0].max()
     t0 = f["t0"]
@@ -390,6 +540,40 @@ def generate_md(source_id, arr, f, label="unknown"):
     L.append(f"| Decline | {clevel(len(post))} | {len(post)} post-peak pts |")
     L.append("")
 
+    # ── 2.5 Baseline Detection ──
+    if baseline is not None:
+        L.append("### 2.5 Baseline Detection\n")
+        L.append(f"> Quiet = |flux| < max({BASELINE_FRAC} × peak_flux_band, {BASELINE_ABS_FLOOR} μJy). Per-band independent.\n")
+        L.append(f"> **Interpretation:** Pre-peak baseline → transient rises from quiescence (TDE/SN). Post-peak return → event may have ended (favors SN Ni-decay tail). No return → still declining (TDE-like).\n")
+        L.append("")
+        L.append("| Zone | Band | Detected | N pts | Mean Flux | MJD Range | Peak Flux | Threshold |")
+        L.append("|------|------|:--------:|:-----:|:---------:|-----------|:---------:|:---------:|")
+        for b_int in sorted(baseline["bands"].keys()):
+            br = baseline["bands"][b_int]
+            b_name = BAND_STR.get(b_int, str(b_int))
+            # Pre-peak row
+            if br["pre_detected"]:
+                L.append(f"| Pre-peak | {b_name} | ✅ YES | {br['pre_n_pts']} | {br['pre_mean_flux']:.1f} μJy | {br['pre_mjd_start']:.1f} – {br['pre_mjd_end']:.1f} | {br['peak_flux']:.1f} | {br['threshold']:.1f} |")
+            else:
+                L.append(f"| Pre-peak | {b_name} | ❌ NO | — | — | — | {br['peak_flux']:.1f} | {br['threshold']:.1f} |")
+            # Post-peak row
+            if br["post_detected"]:
+                L.append(f"| Post-peak | {b_name} | ✅ YES | {br['post_n_pts']} | {br['post_mean_flux']:.1f} μJy | {br['post_mjd_start']:.1f} – {br['post_mjd_end']:.1f} | — | — |")
+            else:
+                L.append(f"| Post-peak | {b_name} | ❌ NO | — | — | — | — | — |")
+        L.append("")
+        # Per-band warnings
+        all_warnings = []
+        for b_int in sorted(baseline["bands"].keys()):
+            for w in baseline["bands"][b_int].get("warnings", []):
+                b_name = BAND_STR.get(b_int, str(b_int))
+                all_warnings.append(f"- [{b_name}] {w}")
+        if all_warnings:
+            L.append("**⚠️ Warnings:**")
+            for w in all_warnings:
+                L.append(w)
+            L.append("")
+
 
     L.append("## Section 3: Raw Light Curve\n")
     # Build header dynamically
@@ -425,9 +609,10 @@ def generate_md(source_id, arr, f, label="unknown"):
     L.append("### System Instruction")
     L.append("Classify this transient light curve as **TDE / SN / AGN / Others**.\n")
     L.append("### Knowledge Base")
-    L.append("- **TDE:** fast rise (t^-5/3), red-to-blue color reversal, power-law decay, no late plateau")
-    L.append("- **SN:** diverse rise times, Ni-56 decay tail. SLSNe: long plateaus. SN IIn: fast rise.")
-    L.append("- **Key:** color reversal direction; plateau presence; decline power-law slope\n")
+    L.append("- **TDE:** fast rise (t^-5/3), g−r ∈ (−0.6, +0.1) mag, red-to-blue color evolution, power-law decay, no late plateau. Pre-peak baseline → quiescent host (E+A galaxy). No post-peak baseline → still declining.")
+    L.append("- **SN:** diverse rise times, diverse colors, Ni-56 decay tail. SLSNe: long plateaus. SN IIn: fast rise. Post-peak return to baseline favors SN.")
+    L.append("- **AGN:** stochastic variability, pre-transient activity (no clean baseline), red WISE colors (W1−W2 > 0.8). Cannot have clean pre-peak quiescent baseline.")
+    L.append("- **Key discriminators:** color range within TDE zone (range-first), color evolution direction (Δg−r < −0.15 = Red→Blue = TDE), plateau presence, decline rate, baseline recovery.\n")
     L.append("### Evidence Weighting")
     L.append("1. Form hypothesis from Derived Features (Sections 2-3)")
     L.append("2. Verify against Raw Data (Section 4)")
@@ -483,7 +668,8 @@ def process_one(path, label="unknown", force=False, source_id=None):
         print(f"  [skip] {source_id} - only {len(arr)} pts after filtering")
         return None
     arr_rel, f = compute_features(arr)
-    md = generate_md(source_id, arr_rel, f, label)
+    baseline = detect_baseline_per_band(arr)
+    md = generate_md(source_id, arr_rel, f, label, baseline=baseline)
     src_dir.mkdir(parents=True, exist_ok=True)
     with open(src_dir / "analysis.md", "w") as fh:
         fh.write(md)
