@@ -245,8 +245,7 @@ def build_prompt(target_id, few_shot, mode="text", cot=False):
         target_header += (
             "## Reasoning Task\n"
             "Reason through each physical discriminator step by step "
-            "(Step 1: Shape Gate → Step 2: Optical Color → "
-            "Step 3: WISE → Step 4: Joint Matrix → Step 5: Tiebreakers),\n"
+            "following the Reasoning Protocol in the system prompt, "
             "then output the classification as JSON.\n\n"
         )
 
@@ -286,7 +285,7 @@ def build_prompt(target_id, few_shot, mode="text", cot=False):
 
 MAX_RETRIES = 3
 
-def call_api(messages, model=None):
+def call_api(messages, model=None, max_tokens=6000):
     """Call the LLM API and return response text."""
     if model is None:
         model = config.MODEL
@@ -297,7 +296,7 @@ def call_api(messages, model=None):
                 model=model,
                 temperature=config.TEMPERATURE,
                 messages=messages,
-                max_tokens=6000,
+                max_tokens=max_tokens,
             )
             msg = response.choices[0].message
             # Handle USTC API proxy: content may be None, fall back to reasoning_content
@@ -523,6 +522,45 @@ def promt_load_index():
     if config.INDEX_FILE.exists():
         return json.loads(config.INDEX_FILE.read_text())
     return {}
+
+
+# ═══════════════════════════════════════════════════
+# Pipeline entry point for external callers (TDEweb)
+# ═══════════════════════════════════════════════════
+
+def classify_pipeline(source_id, model="qwen3.6-chat", cot=False):
+    """One-shot LLM classification for external callers (TDEweb).
+
+    Assumes analysis.md already exists for the source (caller handles
+    promt→generate_md + plot→draw_lightcurve + cutout→download_cutout).
+
+    Returns dict with keys: label, confidence, score, unsure_preference,
+    primary_signal, indicators, flags, tokens, cot_reasoning.
+    """
+    idx = promt_load_index()
+    few_shot = sample_few_shot(idx, n_per_class=1, exclude={source_id})
+    messages = build_prompt(source_id, few_shot, mode="multimodal", cot=cot)
+    raw_text, usage = call_api(
+        messages, model=model,
+        max_tokens=8000 if cot else 3000,
+    )
+    parsed = parse_response(raw_text)
+    if "error" in parsed:
+        return {"error": parsed["error"]}
+    result = save_result(source_id, parsed, raw_text, usage,
+                         mode="multimodal", model=model,
+                         few_shot=few_shot, cot=cot)
+    return {
+        "label": result["classification"].get("label", "?"),
+        "confidence": result["classification"].get("confidence", "?"),
+        "score": result["classification"].get("score", 0),
+        "unsure_preference": result["classification"].get("unsure_preference"),
+        "primary_signal": result["reasoning"].get("primary_signal", ""),
+        "indicators": result["reasoning"].get("indicators", []),
+        "flags": result["quality"].get("flags", []),
+        "tokens": result["tokens"],
+        "cot_reasoning": result.get("cot_reasoning", ""),
+    }
 
 
 # ═══════════════════════════════════════════════════

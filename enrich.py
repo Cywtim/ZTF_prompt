@@ -15,14 +15,11 @@ Usage:
 import sys, os, json, argparse
 from pathlib import Path
 
-PROJECT = Path(__file__).parent
-RESULTS_DIR = PROJECT / "results"
-ENRICHED_DIR = PROJECT / "results_enriched"
-MAP_FILE = PROJECT / "INDICATOR_WIKI_MAP.json"
+import config
 
 
 def load_map():
-    with open(MAP_FILE) as f:
+    with open(config.INDICATOR_WIKI_MAP) as f:
         return json.load(f)
 
 
@@ -172,12 +169,12 @@ def _generate_summary(result, physical_context, effective_label):
 
 
 def process_one(source_id, indicator_map, force=False, dry_run=False):
-    src = RESULTS_DIR / f"{source_id}.json"
+    src = config.RESULTS_DIR / f"{source_id}.json"
     if not src.exists():
         print(f"  [skip] {source_id} - no result file")
         return False
 
-    dst = ENRICHED_DIR / f"{source_id}.json"
+    dst = config.ENRICHED_DIR / f"{source_id}.json"
     if dst.exists() and not force:
         print(f"  [skip] {source_id} - already enriched (use --force)")
         return None
@@ -195,7 +192,7 @@ def process_one(source_id, indicator_map, force=False, dry_run=False):
             print(f"    - {ctx.get('indicator','?')}: {ctx.get('phenomenon','') or ctx.get('mechanism','')[:80]}")
         return True
 
-    ENRICHED_DIR.mkdir(parents=True, exist_ok=True)
+    config.ENRICHED_DIR.mkdir(parents=True, exist_ok=True)
     with open(dst, "w") as f:
         json.dump(result, f, indent=2, ensure_ascii=False)
 
@@ -205,7 +202,7 @@ def process_one(source_id, indicator_map, force=False, dry_run=False):
 
 
 def process_all(indicator_map, force=False, dry_run=False, max_files=None):
-    files = sorted(RESULTS_DIR.glob("*.json"))
+    files = sorted(config.RESULTS_DIR.glob("*.json"))
     if max_files:
         files = files[:max_files]
 

@@ -83,14 +83,14 @@ def draw_lightcurve(source_id, arr, out_path):
     # ── Labels ──
     n_total = len(arr)
     span = day.max()
-    ax.set_title(f"{source_id}  (N={n_total}, span={span:.0f} d)", fontsize=11, weight="bold")
-    ax.set_xlabel(f"Day (MJD − {t0:.1f})", fontsize=10)
-    ax.set_ylabel("Flux (μJy)", fontsize=10)
-    ax.legend(fontsize=8, loc="upper right", framealpha=0.8,
+    ax.set_title(f"{source_id}  (N={n_total}, span={span:.0f} d)", fontsize=15, weight="bold")
+    ax.set_xlabel(f"Day (MJD − {t0:.1f})", fontsize=15)
+    ax.set_ylabel("Flux (μJy)", fontsize=15)
+    ax.legend(fontsize=15, loc="upper right", framealpha=0.8,
               ncol=3, columnspacing=0.8).set_zorder(10)
     ax.grid(True, alpha=0.25, lw=0.5)
     ax.xaxis.set_major_locator(MaxNLocator(8))
-    ax.tick_params(labelsize=8)
+    ax.tick_params(labelsize=15)
 
     fig.tight_layout(pad=1.2)
     fig.savefig(out_path, dpi=150, bbox_inches="tight")

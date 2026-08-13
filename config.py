@@ -58,8 +58,11 @@ MAX_LEN = 100
 MIN_PTS = 5
 BAND_MAP = {1: "g", 2: "r", 3: "u"}
 
+ENRICHED_DIR = PROJECT_ROOT / "results_enriched"
+INDICATOR_WIKI_MAP = PROJECT_ROOT / "INDICATOR_WIKI_MAP.json"
+
 # Ensure dirs exist
-for d in [SOURCES_DIR, RESULTS_DIR]:
+for d in [SOURCES_DIR, RESULTS_DIR, ENRICHED_DIR]:
     d.mkdir(parents=True, exist_ok=True)
 
 # Prompt versioning

@@ -3030,7 +3030,7 @@
     "span_days": 66.1
   },
   "WFST_J081300.60+210910.1_test": {
-    "label": "TDE",
+    "label": "unknown",
     "n_points": 137,
     "bands": {
       "g": 71,
