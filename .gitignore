@@ -1,5 +1,10 @@
 # API key - never commit
 .env
+.env.swp
+*.swp
+
+# Test scripts (contained a hardcoded key historically)
+test_api.py
 
 # Generated files (large, can regenerate)
 sources/
