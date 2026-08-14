@@ -14,3 +14,7 @@ eval_report.json
 
 # System
 .DS_Store
+
+# ZTF
+ztf_adapter.py
+download_agn.py

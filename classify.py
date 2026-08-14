@@ -18,7 +18,15 @@ import config
 
 
 def _get_client():
-    """Create a fresh API client (avoids SSL session caching issues)."""
+    """Create a fresh OpenAI client per call.
+
+    Historically, reusing a single httpx session across calls caused
+    SSLEOFError / SSL session reuse failures with the USTC API proxy.
+    Creating a new client each time avoids cached SSL sessions that
+    the proxy rejects.  If the upstream API or httpx version changes,
+    test with a module-level singleton — revert to this pattern only
+    if the SSL errors return.
+    """
     return OpenAI(base_url=config.API_BASE_URL, api_key=config.API_KEY, timeout=300)
 
 
@@ -27,20 +35,24 @@ def _get_client():
 # ═══════════════════════════════════════════════════
 
 def read_md(source_id, include_raw=False):
-    """Read analysis.md. If include_raw=False, strip Section 4 (raw data) to save tokens."""
+    """Read analysis.md. If include_raw=False, strip Section 3 (Raw Light Curve data table) to save tokens.
+    
+    Keeps: Section 1 (Metadata), Section 2 (Derived Features), Section 4 (Classification Protocol).
+    Drops: Section 3 (Raw Light Curve) — the dense per-point data table.
+    """
     path = config.SOURCES_DIR / source_id / "analysis.md"
     if not path.exists():
         return f"[analysis.md not found for {source_id}]"
     content = path.read_text()
     if not include_raw:
-        # Keep Sections 1-2 + 4 (drop raw data Section 3)
+        # Keep Sections 1-2 + 4 (drop Section 3 raw data table)
         parts = content.split("## Section 3:")
         if len(parts) >= 2:
-            # Remove Section 4, keep Section 5
-            after_s4 = parts[1]
-            sec5_start = after_s4.find("## Section 4:")
-            if sec5_start >= 0:
-                content = parts[0] + after_s4[sec5_start:]
+            # parts[1] = Section 3 body + Section 4
+            after_sec3 = parts[1]
+            sec4_start = after_sec3.find("## Section 4:")
+            if sec4_start >= 0:
+                content = parts[0] + after_sec3[sec4_start:]
             else:
                 content = parts[0]
     return content
