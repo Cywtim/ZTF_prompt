@@ -23,3 +23,5 @@ eval_report.json
 # ZTF
 ztf_adapter.py
 download_agn.py
+tns_search_AGN_n.csv
+tde_compare.html

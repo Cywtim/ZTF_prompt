@@ -17,6 +17,23 @@ ZTF_prompt/
 ├── summary.py           ← 汇总已有结果 + 出图（零 API 成本）
 ├── run.sh               ← 一键全流程脚本
 ├── diag.py              ← 网络诊断工具
+├── MAD.py               ← 中位数绝对偏差（MAD）特征计算
+├── enrich.py            ← 补充宿主星系 Gaia/WISE 信息
+├── enrich_analysis.py   ← 丰富 analysis.md（颜色区间/AGN/baseline）
+├── cutout.py            ← SDSS/DSS 宿主星系 cutout 下载
+├── download_cutouts.py  ← 批量下载 cutout
+├── extract_radec.py     ← 从元数据提取 ra/dec
+├── eval_cutout.py       ← cutout 质量评估
+├── promt_old.py         ← promt.py 旧版（备查，勿用）
+│
+├── prompts/             ← System Prompt 外部文件
+│   ├── system_v1.txt        ← Prompt v1
+│   ├── system_v2.txt        ← Prompt v2（当前默认）
+│   └── cot.txt              ← Chain-of-Thought 附加指令
+├── templates/           ← Few-shot exemplar 配置文件
+│   ├── fewshot.json          ← 默认 exemplar（TDE+SN 各 1 个）
+│   ├── fewshot_text.json     ← text mode 3-shot（TDE+SN 各 3 个）
+│   └── fewshot_boundary.json ← 边界样本（冲突信号，锚定决策边界）
 │
 ├── sources/             ← 生成文件（每个源一个子目录）
 │   └── {id}/
@@ -25,11 +42,10 @@ ZTF_prompt/
 │       └── cutout.png       ← SDSS 宿主星系 cutout（可选）
 ├── index.json           ← 所有源的标签索引
 ├── results/             ← 分类结果 JSON
-└── templates/           ← Few-shot exemplar 配置文件
-    ├── fewshot.json          ← 默认 exemplar（TDE+SN 各 1 个）
-    ├── fewshot_text.json     ← text mode 3-shot（TDE+SN 各 3 个）
-    └── fewshot_boundary.json ← 边界样本（冲突信号，锚定决策边界）
-    summary/                  ← 汇总 JSON + 混淆矩阵/分布图 PNG
+├── results_enriched/    ← enrich 后的结果 JSON
+├── data/                ← 下载的原始数据（如 AGN flux）
+├── WFSTtest/            ← WFST 测试数据
+└── summary/             ← 汇总 JSON + 混淆矩阵/分布图 PNG
 ```
 
 ---
