@@ -297,7 +297,7 @@ def build_prompt(target_id, few_shot, mode="text", cot=False):
 
 MAX_RETRIES = 3
 
-def call_api(messages, model=None, max_tokens=6000):
+def call_api(messages, model=None, max_tokens=12000):
     """Call the LLM API and return response text."""
     if model is None:
         model = config.MODEL
@@ -461,7 +461,7 @@ def classify_one(source_id, mode="text", n_shot=None, model=None, force=False, c
     messages = build_prompt(source_id, few_shot, mode, cot=cot)
 
     # Call API
-    raw_text, usage = call_api(messages, model=model)
+    raw_text, usage = call_api(messages, model=model, max_tokens=12000)
 
     # Parse
     parsed = parse_response(raw_text)
@@ -540,7 +540,7 @@ def promt_load_index():
 # Pipeline entry point for external callers (TDEweb)
 # ═══════════════════════════════════════════════════
 
-def classify_pipeline(source_id, model="qwen3.6-chat", cot=False):
+def classify_pipeline(source_id, model=None, cot=False):
     """One-shot LLM classification for external callers (TDEweb).
 
     Assumes analysis.md already exists for the source (caller handles
@@ -549,12 +549,14 @@ def classify_pipeline(source_id, model="qwen3.6-chat", cot=False):
     Returns dict with keys: label, confidence, score, unsure_preference,
     primary_signal, indicators, flags, tokens, cot_reasoning.
     """
+    if model is None:
+        model = config.MODEL
     idx = promt_load_index()
     few_shot = sample_few_shot(idx, n_per_class=1, exclude={source_id})
     messages = build_prompt(source_id, few_shot, mode="multimodal", cot=cot)
     raw_text, usage = call_api(
         messages, model=model,
-        max_tokens=8000 if cot else 3000,
+        max_tokens=12000,
     )
     parsed = parse_response(raw_text)
     if "error" in parsed:

@@ -25,3 +25,10 @@ ztf_adapter.py
 download_agn.py
 tns_search_AGN_n.csv
 tde_compare.html
+
+# One-off paper plotting helpers (not for git)
+plot_fewshot_grid.py
+fewshot_grid.png
+fewshot_grid.pdf
+plot_cot_turnover.py
+cot_turnover.pdf

@@ -21,17 +21,18 @@ A prompt-engineering approach to astronomical transient classification. Instead 
 | **Few-Shot** | `--n-shot N` | N labeled examples per class prepended to prompt (0 = zero-shot) |
 | **CoT** | `--cot` | LLM must reason through physical discriminators step-by-step before outputting JSON |
 
-All four combinations are valid and independently testable:
+The two-stage design uses standard prompting as the default and CoT as an optional reasoning pathway for Unsure sources:
 
 ```
-              n_shot=0              n_shot=2
-          (zero-shot)            (few-shot)
-         ┌──────────────┬──────────────────────┐
-cot=False│ 纯物理规则     │ 物理规则 + 范例        │  ← original default
-         ├──────────────┼──────────────────────┤
-cot=True │ 物理规则 + CoT │ 物理规则 + 范例 + CoT  │  ← strongest
-         └──────────────┴──────────────────────┘
+  Stage 1 (default):  All sources → standard prompting → classification
+                                                    ↓
+                                              If label = Unsure?
+                                                    ↓
+  Stage 2 (optional): Unsure sources → CoT prompting → step-by-step reasoning
+                                                    → assist human review
 ```
+
+CoT is NOT a universal "strongest" mode. It is a targeted tool for ambiguous cases, producing auditable reasoning chains for human reviewers. Using CoT on all sources amplifies overconfidence and creates high-score misclassifications.
 
 ## Project Location
 
@@ -94,6 +95,8 @@ ZTF Lasair    →  ztf_adapter.py  ─┤
 > **Section 3 (Predictive Features) was removed** (Jul 2026): its auto-generated hints were physically wrong and conflicted with the authoritative system prompt. The LLM now relies entirely on the physics rules in `_make_system_prompt()`. `read_md()` strips §3 by splitting on `"## Section 3:"` and keeping only §4 (now renumbered as §3).
 
 > **⚠️ RA/Dec, Gaia Sep, WISE are NOT in the prompt by default.** `generate_md()` only includes light-curve-derived features. Registry metadata (`gaia_sep`, `w1mag`, `w2mag`, `w1_w2`) must be injected via the standalone `enrich_analysis.py` script. See `references/enrich-analysis-registry-md.md`.
+
+> **Re-plotting a source without its original npy/csv**: extract per-point photometry from the analysis.md Raw Light Curve table (handles both §3 and legacy §4 layouts, avoids the §2.3 table-regex collision). See `references/lightcurve-data-from-md.md`.
 
 ### Weight control mechanism
 
@@ -164,10 +167,12 @@ python promt.py --relabel WFST_J101658 TDE
 `.env` file (not committed):
 ```
 LLM_API_KEY=***
-LLM_MODEL=deepseek-v4-pro
+LLM_MODEL=qwen3.6-chat
 ```
 
 API: USTC proxy at `https://api.llm.ustc.edu.cn/v1`, OpenAI-compatible.
+
+Current config (as of Aug 2026): `config.CLASSES = ["TDE", "SN", "AGN", "Others", "Unsure"]` (5 classes), `PROMPT_VERSION = "v2"` (system_v2.txt), model `qwen3.6-chat` (reasoning model — `content` field is the final answer, `reasoning_content` is the chain-of-thought; `call_api()` falls back to `reasoning_content` when `content` is None).
 
 ## Unsure Category with Preference Direction
 
@@ -316,9 +321,13 @@ Refinement history for binary TDE/SN (20 sources, 1-shot multimodal unless noted
 
 **Key insight:** The jump from 60%→75% came from restoring the clean decision tree (removing one-conflict=Unsure) and adding the SN subtype caveat. Remaining errors are short-span SNe (55-95d) that show TDE-like color evolution — a fundamental ambiguity in photometry-only classification.
 
-### CoT (Chain-of-Thought) — HARMFUL for this task
+### CoT (Chain-of-Thought) — Two-Stage Design (revised Aug 2026)
 
-**CoT + multimodal 1-shot produced 60% accuracy with 0% Unsure but 8 errors, including 3 high-confidence (0.90) SN→TDE misclassifications.** CoT reasoning amplifies the LLM's overconfidence — it builds a coherent narrative for a wrong answer instead of admitting uncertainty. **Non-CoT multimodal is the current best configuration.**
+**CoT is NOT a universal improvement.** CoT + multimodal 1-shot on ALL sources produced 60% accuracy with 0% Unsure but 8 errors, including 3 high-confidence (0.90) SN→TDE misclassifications. CoT reasoning amplifies the LLM's overconfidence — it builds a coherent narrative for a wrong answer instead of admitting uncertainty.
+
+**The correct design is two-stage:** Standard prompting as the default for all sources. When a source is classified as Unsure, CoT is applied as an optional second stage to produce step-by-step physical reasoning chains for human review. This turns CoT from a classification booster into an interpretability tool for ambiguous cases.
+
+**Non-CoT multimodal 1-shot is the current best default configuration.** CoT is reserved for Unsure sources where the reasoning chain helps a human reviewer understand why the model is uncertain.
 
 ### Few-Shot Sampling — Strategic (not random)
 
@@ -332,7 +341,7 @@ Refinement history for binary TDE/SN (20 sources, 1-shot multimodal unless noted
 
 The system prompt is dynamically generated by `_make_system_prompt(cot=False)`. When `cot=True`, it injects the `cot.txt` template (Step 0 Completeness → Step 1 Shape Gate → Step 2 Optical Color → Step 3 WISE → Step 3b f_pre_var → Step 4 Joint Matrix → Step 5 Tiebreakers → Step 6 Host Galaxy → Step 7 Synthesis). The user message simply says "following the Reasoning Protocol in the system prompt" — no hardcoded step numbers that could drift out of sync.
 
-**⚠️ CoT is NOT recommended.** See Accuracy Evolution above: CoT eliminates Unsure but creates high-confidence misclassifications. The LLM builds a coherent wrong narrative rather than admitting uncertainty. Current best config: multimodal 1-shot, non-CoT.
+**⚠️ CoT is NOT a universal mode.** See the two-stage design above: CoT is reserved for Unsure sources where the reasoning chain assists human review. Using CoT on all sources amplifies overconfidence and creates high-score misclassifications. Current best default: multimodal 1-shot, non-CoT.
 
 The prompt structure for `--cot --n-shot 2`:
 ```
