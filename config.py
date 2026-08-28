@@ -14,8 +14,22 @@ API_BASE_URL = os.environ.get("LLM_BASE_URL", "https://api.llm.ustc.edu.cn/v1")
 MODEL = os.environ.get("LLM_MODEL", "qwen3.6-reasoner")
 TEMPERATURE = 0.0
 
+# 服务端思考链开关（server_cot），默认 False（关闭）。
+# 与提示词的 cot 正交：cot 是提示词内 CoT 协议（推理写在 content 里），
+# server_cot 是 Qwen 服务端 reasoning_content 内部思考通道。
+# 分类任务里 server_cot 是负资产——烧 max_tokens/拖慢/引入 JSON 截断失败。
+# 关掉后单源 198s→25s、失败率 50%→0（实测 7/7）。
+# 想启用：LLM_SERVER_COT=true
+SERVER_COT = os.environ.get("LLM_SERVER_COT", "false").lower() in ("true", "1", "yes", "on")
+
 if not API_KEY:
     raise RuntimeError("Set LLM_API_KEY in ZTF_prompt/.env")
+
+# 多 API key 池：LLM_API_KEY_LIST 逗号分隔（如 sk-a,sk-b,sk-c），去重保序。
+# 无 LIST 时回落单 key（向后兼容）。classify._get_client 内部 round-robin 轮询，
+# 使 CLI 与 TDEweb 自动获得多 key 并发能力。
+_API_KEY_LIST = [k.strip() for k in os.environ.get("LLM_API_KEY_LIST", "").split(",") if k.strip()]
+API_KEYS = [_k for _k in _API_KEY_LIST if _k] if _API_KEY_LIST else [API_KEY]
 
 # Paths
 PROJECT_ROOT = Path(__file__).parent

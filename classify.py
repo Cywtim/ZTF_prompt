@@ -8,13 +8,17 @@ Usage:
   python classify.py WFST_J101658 --n-shot 3 --mode text
 """
 
-import sys, os, json, random, argparse, base64, re
+import sys, os, json, random, argparse, base64, re, itertools, threading
 from pathlib import Path
 from datetime import datetime, timezone
 
 from openai import OpenAI
 
 import config
+
+
+_KEY_POOL = itertools.cycle(config.API_KEYS)
+_KEY_LOCK = threading.Lock()
 
 
 def _get_client():
@@ -26,8 +30,14 @@ def _get_client():
     the proxy rejects.  If the upstream API or httpx version changes,
     test with a module-level singleton — revert to this pattern only
     if the SSL errors return.
+
+    Round-robin over config.API_KEYS so concurrent callers (ThreadPoolExecutor
+    in TDEweb, or parallel CLI shards) spread load across keys; USTC counts
+    concurrency slots per-key, so multiple keys = more parallel slots.
     """
-    return OpenAI(base_url=config.API_BASE_URL, api_key=config.API_KEY, timeout=300)
+    with _KEY_LOCK:
+        key = next(_KEY_POOL)
+    return OpenAI(base_url=config.API_BASE_URL, api_key=key, timeout=300)
 
 
 # ═══════════════════════════════════════════════════
@@ -304,11 +314,17 @@ def call_api(messages, model=None, max_tokens=12000):
     last_error = None
     for attempt in range(MAX_RETRIES):
         try:
+            extra_body = {}
+            if not config.SERVER_COT:
+                # 关服务端思考链：让模型直接输出 JSON，跳过 reasoning_content 噪音。
+                # USTC 网关(LiteLLM)只认这两个姿势之一，think_budget 类参数被过滤。
+                extra_body["chat_template_kwargs"] = {"enable_thinking": False}
             response = _get_client().chat.completions.create(
                 model=model,
                 temperature=config.TEMPERATURE,
                 messages=messages,
                 max_tokens=max_tokens,
+                extra_body=extra_body or None,
             )
             msg = response.choices[0].message
             # Handle USTC API proxy: content may be None, fall back to reasoning_content
