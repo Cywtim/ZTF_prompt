@@ -2,9 +2,9 @@
 """对已下载的 19 个 AGN 批量生成 analysis.md + 分类"""
 import sys, os, subprocess, csv, json
 
-PROJECT = "/home/cyan/AppData/VScode/TDeck/ZTF_prompt"
-FLUX_DIR = f"{PROJECT}/data/downloaded_AGN/flux"
-AGN_DIR = "/home/cyan/AppData/VScode/TDeck/ZTF_TDE/data/TS/Flux/AGN"
+PROJECT = os.path.dirname(os.path.abspath(__file__))
+FLUX_DIR = os.path.join(PROJECT, "data", "downloaded_AGN", "flux")
+AGN_DIR = os.path.join(os.path.dirname(PROJECT), "ZTF_TDE", "data", "TS", "Flux", "AGN")
 
 # 从 CSV 读取所有坐标
 coords = {}

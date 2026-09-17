@@ -218,6 +218,10 @@ Unsure rate: 3/20 (15%)
 
 ### Connection Errors — Root Cause & Fix
 
+> **Server-side CoT vs prompt-level CoT (two different "thinking chains")**: `--cot` = prompt engineering (cot.txt injected into system prompt, reasoning written into content). `SERVER_COT` (config.py, reads `LLM_SERVER_COT`, default **false**) = server-side `reasoning_content` channel (qwen thinking mode). A/B testing (2026-08-31, 3 ground-truth sources) proved server-side CoT is a pure negative for classification: 10-15× slower (13s→122-294s), lowers confidence, causes `json_parse_failed` (completion burns the entire max_tokens budget on thinking), zero accuracy gain. USTC/LiteLLM gateway only supports on/off (no budget knobs — `thinking_budget`/`max_thoughts` etc. all 400 or silently ignored). Valid off switches: `extra_body={"chat_template_kwargs":{"enable_thinking":False}}` (1.3s) or `extra_body={"thinking":False}` (2.0s). Keep `LLM_SERVER_COT=false` in `.env`.
+>
+> **Multi-key round-robin (in classify.py since 2026-08-31)**: `config.API_KEYS` (reads `LLM_API_KEY_LIST`, dedup, falls back to single key) + `_get_client()` round-robin via `itertools.cycle` + lock. Worker count = 2×key count (3 keys → 6 concurrent). Verified throughput: 20 sources/99-107s (~28× serial), 100 sources (already prepped) = 526s = 0.19 obj/s. External callers (TDEweb Prompt All) share the same `classify_pipeline()` chain and inherit both automatically.
+
 **The real cause of `APIConnectionError` is the local HTTP proxy (`127.0.0.1:7890`) intercepting USTC API's SSL traffic.** USTC's HTTP/2 implementation has a bug (ALPN negotiation triggers `SSL: UNEXPECTED_EOF_WHILE_READING`). The proxy routes the request through itself, the TLS handshake breaks, and OpenAI's httpx client reports "Connection error."
 
 **Fix:** Bypass the proxy for USTC API:
@@ -328,6 +332,98 @@ Refinement history for binary TDE/SN (20 sources, 1-shot multimodal unless noted
 **The correct design is two-stage:** Standard prompting as the default for all sources. When a source is classified as Unsure, CoT is applied as an optional second stage to produce step-by-step physical reasoning chains for human review. This turns CoT from a classification booster into an interpretability tool for ambiguous cases.
 
 **Non-CoT multimodal 1-shot is the current best default configuration.** CoT is reserved for Unsure sources where the reasoning chain helps a human reviewer understand why the model is uncertain.
+
+### Batch classification of a registered sample (proven on 4,043 SN_PRF, 2026-08-31)
+
+Running `classify.py` once per source by hand does not scale. Two pieces make a
+multi-thousand-source batch a one-command job:
+
+**1. Register the batch in `index.json` (classification only reads index + sources/).**
+For a directory of npy already in `ZTF_TDE/data/TS/Flux/{CAT}/`, register each
+source with real metadata (label + n_points + bands + span) in one pass — do
+NOT insert placeholder zeros:
+
+```python
+import json, glob, os, numpy as np
+idx_path = '/home/cyan/AppData/VScode/TDeck/ZTF_prompt/index.json'
+idx = json.load(open(idx_path))
+flux_dir = '/home/cyan/AppData/VScode/TDeck/ZTF_TDE/data/TS/Flux/SN'
+for d in sorted(os.path.basename(p) for p in glob.glob('.../sources/*_SN_PRF')):
+    if d in idx: continue
+    arr = np.load(f"{flux_dir}/{d[:-len('_SN_PRF')]}_difference_photometry_flux.npy", allow_pickle=True)
+    arr = arr[np.isin(arr[:, 1], [1, 2, 3])]
+    idx[d] = {"label": "SN", "n_points": len(arr),
+              "bands": {"g": int((arr[:, 1]==1).sum()), "r": int((arr[:, 1]==2).sum()), "u": 0},
+              "span_days": round(float(arr[:, 0].max()-arr[:, 0].min()), 1)}
+json.dump(idx, open(idx_path, 'w'), indent=1, ensure_ascii=False)
+```
+
+**2. Batch-run via `scripts/classify_batch.py`** (in this skill) — selects all
+index IDs ending with a suffix, runs `classify_one` with a ThreadPoolExecutor,
+skips already-classified (classify_one returns None for existing results),
+prints ok/skip/fail + ETA every 25. Verified: serial 25s/src; 6 workers ≈ 5×;
+20-source smoke test 19/20 ok in 8.3min before releasing the full batch.
+
+```bash
+python3 scripts/classify_batch.py --suffix _SN_PRF --workers 6   # full batch
+python3 scripts/classify_batch.py --suffix _SN_PRF --limit 20    # smoke test first
+```
+
+Thread-safety justification: `classify.py` uses no matplotlib (safe in
+threads); key round-robin (`config.API_KEYS` + `_KEY_LOCK`) is locked.
+
+**Results filename convention (2026-08-31):** `classify.py` routes all
+result paths through `_result_filename(source_id)` (`save_result`,
+`classify_one` skip-check, `show_result`). Sources whose ID already ends in
+the sample suffix (e.g. `ZTFxxx_SN_PRF`) therefore produce
+`results/ZTFxxx_SN_PRF.json` — the suffix IS the filename ending; never
+append it twice. If you add a new per-sample suffix convention, extend
+`_result_filename()` in one place, not grep-and-replace across call sites.
+
+**Label-distribution sanity check after a batch** (Others/Unsure flood →
+`references/others-flood-diagnosis.md` — usually data quality, not the prompt):
+
+```python
+import json, glob
+from collections import Counter
+files = glob.glob('results/*_SN_PRF.json')
+print(Counter(json.load(open(f))['classification'].get('label','?') for f in files))
+```
+
+### Screening a quality tier before batch ops (2026-09-01)
+
+The 4,043 SN_PRF pool splits into quality tiers (dual-band g/r ≥15 pts each +
+≥50 total + burst segment detected = premium 980→975). **User directive:
+small-sample first** — screen the tier, retrim, smoke-test ~20 sources,
+verify label distribution, THEN release the full batch. A one-pass tier
+screen reads each npy once:
+
+```python
+import sys; sys.path.insert(0, '/home/cyan/AppData/VScode/TDeck/ZTF_prompt')
+from ztf_adapter import load_ztf_npy
+sys.path.insert(0, '/tmp')  # or the skill's scripts/ dir
+from retrim_sn import burst_window_v3  # or scripts/retrim_burst_window.py
+gn = (arr[:,1]==1).sum(); rn = (arr[:,1]==2).sum()   # band col=1: 1=g, 2=r
+strong = [n for n in names if gn>=15 and rn>=15 and len(arr)>=50
+          and burst_window_v3(load_ztf_npy(n, category="SN")) is not None]
+```
+
+Also used: `--list <file>` support in batch scripts to restrict a run to a
+tier subset (filters against `config.INDEX_FILE`), and `--limit N` for the
+smoke test.
+
+### Untrimmed multi-year photometry poisons classification
+
+Lasair diff-photometry npy downloaded **without a discovery-date window**
+cover 6–7 years (SN burst + years of baseline/neighbor residue). Impact:
+`ztf_adapter.py`'s burst trim logs `Trim: ABORTED — Pre-peak baseline not
+detected` (it only fires when a pre-peak quiet block exists — flat
+multi-year curves have none), and the LLM sees "anti-TDE shape /
+non-physical timescale" → Others. In the 4,043-source SN_PRF smoke test,
+30% (Others 6 + Unsure 2 of 27) traced to this. When downloading new SN
+batches, trim to `[disc_mjd-50, disc_mjd+200]` at download time, or accept
+the flood as robustness data. Full signatures + evidence:
+`references/others-flood-diagnosis.md`.
 
 ### Few-Shot Sampling — Strategic (not random)
 
@@ -502,6 +598,15 @@ TDEweb (`app_rlhl.py`) uses ZTF_prompt for Remote Classification. Key integratio
 - `call_api()` — accepts `max_tokens` kwarg (default 6000)
 
 See `references/tdeweb-integration-pitfalls.md` for full audit.
+
+## References
+
+- `references/others-flood-diagnosis.md` — mass Others/Unsure root-cause diagnosis: npy quality metrics (span/peak-position/peak-median), failure signatures, evidence table
+- `references/quiet-period-cutting.md` — quiet-period (平静期) cutting: user requires CUTTING quiescence, NOT keeping N-day windows; failed per-band percentile & global peak-fraction approaches; final burst_window_v3 (max(0.5×peak, 50μJy) threshold + peak-containing segment); lightcurve shape census & quality tiers of the 4,043 SN pool; 975-source retrim results
+- `references/prf-cadence-measurement.md` — measured PRF native cadence (~2 d per-band median, from raw npy; pool counts TDE 754/SN 4043/AGN 20; npy column layout 0=MJD/1=band/2=flux/3=err; relation of 5/10-day min-gap experiments to native sampling)
+- `references/prompt-v2-criteria-mapping.md` — verified paper-vs-prompt decision-criteria mapping (Shape Gate routes, AGN rescue, Joint Matrix 4 dims, three pending paper discrepancies) + landed `tab:physical`/`tab:decision` LaTeX + criteria-edit workflow
+- `scripts/retrim_burst_window.py` — static re-runnable quiet-period cutter (burst_window_v3 + stock trim/features/analysis.md regeneration, `--suffix _SN_PRF`), overwrites source analysis.md + lightcurve.png
+- `scripts/classify_batch.py` — batch classifier for registered index samples (suffix select, ThreadPool, skip-done, resume, ETA)
 
 ## Verification Checklist
 

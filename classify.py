@@ -406,6 +406,11 @@ def _extract_reasoning(raw_text, parsed):
 # Result saving
 # ═══════════════════════════════════════════════════
 
+def _result_filename(source_id):
+    """结果 JSON 文件名：_SN_PRF 源保持原 ID（已含 SN_PRF 后缀），其他源原样。"""
+    return f"{source_id}.json"
+
+
 def save_result(source_id, parsed, raw_response, usage, mode, model, few_shot, cot=False):
     result = {
         "source_id": source_id,
@@ -425,7 +430,7 @@ def save_result(source_id, parsed, raw_response, usage, mode, model, few_shot, c
         "cot_reasoning": _extract_reasoning(raw_response, parsed),
         "_raw_response": raw_response,
     }
-    out_path = config.RESULTS_DIR / f"{source_id}.json"
+    out_path = config.RESULTS_DIR / _result_filename(source_id)
     with open(out_path, "w") as f:
         json.dump(result, f, indent=2, ensure_ascii=False)
     return result
@@ -445,7 +450,7 @@ def classify_one(source_id, mode="text", n_shot=None, model=None, force=False, c
                       Loads templates/fewshot_{exemplar_set}.json.
     """
     # Check if already done
-    result_path = config.RESULTS_DIR / f"{source_id}.json"
+    result_path = config.RESULTS_DIR / _result_filename(source_id)
     if result_path.exists() and not force:
         print(f"  [skip] {source_id} -- result already exists (use --force to redo)")
         return None
@@ -516,7 +521,7 @@ def classify_all_unlabeled(mode="text", n_shot=None, model=None, force=False, co
 
 
 def show_result(source_id):
-    path = config.RESULTS_DIR / f"{source_id}.json"
+    path = config.RESULTS_DIR / _result_filename(source_id)
     if not path.exists():
         print(f"No result found for {source_id}")
         return

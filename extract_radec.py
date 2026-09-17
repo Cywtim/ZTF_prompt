@@ -5,8 +5,8 @@ V2: Fixed TNS CSV parsing and ZTF18 naming."""
 import json, os, re, csv, glob
 from pathlib import Path
 
-PROJECT = Path("/home/cyan/AppData/VScode/TDeck/ZTF_prompt")
-ZTF_DATA = Path("/home/cyan/AppData/VScode/TDeck/ZTF_TDE/data")
+PROJECT = Path(__file__).resolve().parent
+ZTF_DATA = PROJECT.parent / "ZTF_TDE" / "data"
 
 INDEX_FILE = PROJECT / "index.json"
 SOURCES_DIR = PROJECT / "sources"

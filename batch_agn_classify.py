@@ -2,9 +2,9 @@
 """批量：download → ztf_adapter → classify，每个源跑完输出结果"""
 import sys, os, subprocess, time, csv
 
-PROJECT = "/home/cyan/AppData/VScode/TDeck/ZTF_prompt"
-FLUX_DIR = f"{PROJECT}/data/downloaded_AGN/flux"
-AGN_DIR = "/home/cyan/AppData/VScode/TDeck/ZTF_TDE/data/TS/Flux/AGN"
+PROJECT = os.path.dirname(os.path.abspath(__file__))
+FLUX_DIR = os.path.join(PROJECT, "data", "downloaded_AGN", "flux")
+AGN_DIR = os.path.join(os.path.dirname(PROJECT), "ZTF_TDE", "data", "TS", "Flux", "AGN")
 
 # 读取目标列表
 targets = []

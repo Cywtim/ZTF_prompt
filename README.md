@@ -1,191 +1,192 @@
-# ZTF_prompt 使用教程
+# ZTF_prompt
 
-基于 LLM 的天文光变曲线分类工具。将 `npy`/`csv` 光变曲线数据转换为结构化 Markdown 分析报告，再通过 few-shot prompting 调用大模型进行分类。
+An LLM-based astronomical light-curve classification tool. It converts `npy`/`csv` light-curve data into a structured Markdown analysis report, then calls a large model via few-shot prompting to classify the source.
 
 ---
 
-## 目录结构
+## Directory Structure
 
 ```
 ZTF_prompt/
-├── .env                 ← API 密钥配置
-├── config.py            ← 全局配置
-├── promt.py             ← 数据 → MD 分析报告
-├── plot.py              ← 数据 → 光变曲线 PNG（用于多模态分类）
-├── classify.py          ← MD → LLM → 分类结果
-├── eval.py              ← 评估准确率（主动跑 API）
-├── summary.py           ← 汇总已有结果 + 出图（零 API 成本）
-├── run.sh               ← 一键全流程脚本
-├── diag.py              ← 网络诊断工具
-├── MAD.py               ← 中位数绝对偏差（MAD）特征计算
-├── enrich.py            ← 补充宿主星系 Gaia/WISE 信息
-├── enrich_analysis.py   ← 丰富 analysis.md（颜色区间/AGN/baseline）
-├── cutout.py            ← SDSS/DSS 宿主星系 cutout 下载
-├── download_cutouts.py  ← 批量下载 cutout
-├── extract_radec.py     ← 从元数据提取 ra/dec
-├── eval_cutout.py       ← cutout 质量评估
-├── promt_old.py         ← promt.py 旧版（备查，勿用）
+├── .env                 ← API key configuration
+├── config.py            ← global configuration
+├── promt.py             ← data → MD analysis report
+├── plot.py              ← data → light-curve PNG (for multimodal classification)
+├── classify.py          ← MD → LLM → classification result
+├── eval.py              ← evaluate accuracy (actively calls the API)
+├── summary.py           ← aggregate existing results + produce plots (zero API cost)
+├── run.sh               ← one-shot full workflow script
+├── diag.py              ← network diagnostic tool
+├── MAD.py               ← median absolute deviation (MAD) feature computation
+├── enrich.py            ← enrich with host-galaxy Gaia/WISE info
+├── enrich_analysis.py   ← enrich analysis.md (color ranges/AGN/baseline)
+├── cutout.py            ← SDSS/DSS host-galaxy cutout download
+├── download_cutouts.py  ← batch cutout download
+├── extract_radec.py     ← extract ra/dec from metadata
+├── eval_cutout.py       ← cutout quality assessment
+├── promt_old.py         ← legacy version of promt.py (reference only, do not use)
 │
-├── prompts/             ← System Prompt 外部文件
+├── prompts/             ← external System Prompt files
 │   ├── system_v1.txt        ← Prompt v1
-│   ├── system_v2.txt        ← Prompt v2（当前默认）
-│   └── cot.txt              ← Chain-of-Thought 附加指令
-├── templates/           ← Few-shot exemplar 配置文件
-│   ├── fewshot.json          ← 默认 exemplar（TDE+SN 各 1 个）
-│   ├── fewshot_text.json     ← text mode 3-shot（TDE+SN 各 3 个）
-│   └── fewshot_boundary.json ← 边界样本（冲突信号，锚定决策边界）
+│   ├── system_v2.txt        ← Prompt v2
+│   ├── system_v3.txt        ← Prompt v3 (current default)
+│   └── cot.txt              ← Chain-of-Thought additional instructions
+├── templates/           ← Few-shot exemplar configuration files
+│   ├── fewshot.json          ← default exemplars (TDE+SN each ×1)
+│   ├── fewshot_text.json     ← text mode 3-shot (TDE+SN each ×3)
+│   └── fewshot_boundary.json ← boundary samples (conflicting signals, anchors decision boundary)
 │
-├── sources/             ← 生成文件（每个源一个子目录）
+├── sources/             ← generated files (one subdirectory per source)
 │   └── {id}/
-│       ├── analysis.md      ← 结构化分析报告
-│       ├── lightcurve.png   ← 光变曲线图（u=蓝, g=绿, r=红）
-│       └── cutout.png       ← SDSS 宿主星系 cutout（可选）
-├── index.json           ← 所有源的标签索引
-├── results/             ← 分类结果 JSON
-├── results_enriched/    ← enrich 后的结果 JSON
-├── data/                ← 下载的原始数据（如 AGN flux）
-├── WFSTtest/            ← WFST 测试数据
-└── summary/             ← 汇总 JSON + 混淆矩阵/分布图 PNG
+│       ├── analysis.md      ← structured analysis report
+│       ├── lightcurve.png   ← light-curve plot (u=blue, g=green, r=red)
+│       └── cutout.png       ← SDSS host-galaxy cutout (optional)
+├── index.json           ← label index of all sources
+├── results/             ← classification result JSON
+├── results_enriched/    ← enriched result JSON
+├── data/                ← downloaded raw data (e.g. AGN flux)
+├── WFSTtest/            ← WFST test data
+└── summary/             ← summary JSON + confusion-matrix/distribution plot PNG
 ```
 
 ---
 
-## 第一步：配置
+## Step 1: Configuration
 
-编辑 `.env` 文件，填入 API 密钥：
+Edit the `.env` file and fill in the API key:
 
 ```
 LLM_API_KEY=***  LLM_MODEL=deepseek-v4-pro
 ```
 
-- `LLM_API_KEY`：API 密钥（必需）
-- `LLM_MODEL`：模型名称（默认 `deepseek-v4-pro`）
+- `LLM_API_KEY`: API key (required)
+- `LLM_MODEL`: model name (default `deepseek-v4-pro`)
 
 ---
 
-## 第二步：生成标注数据（few-shot 池）
+## Step 2: Generate labeled data (few-shot pool)
 
-分类需要已知标签的源作为示例。先生成 TDE 和 SN 的 MD 文件：
+Classification needs sources with known labels as examples. First generate MD files for TDE and SN:
 
 ```bash
-# TDE（真实源，不含 synth mock）
+# TDE (real sources, no synth mocks)
 python promt.py --batch /home/cyan/AppData/VScode/TDeck/ZTF_TDE/data/TS/Flux/TDE/ --label TDE
 
 # SN
 python promt.py --batch /home/cyan/AppData/VScode/TDeck/ZTF_TDE/data/TS/Flux/SN/ --label SN
 ```
 
-> 注意：`--batch` 会处理目录下所有 `.npy` 和 `.csv` 文件。如果只想处理少量，用单文件模式。
+> Note: `--batch` processes all `.npy` and `.csv` files in the directory. To process just a few, use single-file mode.
 
 ---
 
-## 第三步：生成光变曲线图（多模态模式）
+## Step 3: Generate light-curve plots (multimodal mode)
 
 ```bash
-# 单个源
+# Single source
 python plot.py /path/to/source_flux.npy --source-id WFST_J101658
 
-# 批量处理
+# Batch
 python plot.py --batch /home/.../Flux/TDE/ --max 50
 
-# 为 index.json 中所有源生成
+# Generate for all sources in index.json
 python plot.py --all
 ```
 
-输出 `sources/{id}/lightcurve.png`：u 波段蓝色、g 波段绿色、r 波段红色，带误差棒和峰值标注。
+Output is written to `sources/{id}/lightcurve.png`: u band in blue, g band in green, r band in red, with error bars and peak annotation.
 
-> 多模态分类需要 PNG 文件。`classify.py --mode multimodal` 会自动读取，无 PNG 时降级为 text。
+> Multimodal classification needs the PNG file. `classify.py --mode multimodal` reads it automatically, and degrades to text mode if the PNG is missing.
 
 ---
 
-## Few-Shot Exemplar 管理
+## Few-Shot Exemplar Management
 
-分类时使用的 few-shot 示例可通过 `templates/fewshot*.json` 精确控制，替代默认的随机采样。
+The few-shot examples used during classification can be precisely controlled via `templates/fewshot*.json`, replacing the default random sampling.
 
-### 三种预设
+### Three presets
 
-| 文件 | 用途 | TDE 示例 | SN 示例 |
-|------|------|---------|---------|
-| `fewshot.json` | **默认** multimodal (1-shot) | `wmx_TDE_2024lhc`<br>Δ=-8.7, 432pts, 强 TDE | `ZTF19aaapnxn`<br>Δ=+6.2, 444pts, 教科书 SN |
-| `fewshot_text.json` | text mode (3-shot) | 3 个：lhc / pvu / uvz | 3 个：aaapnxn / aagrdcs / aajxwnz |
-| `fewshot_boundary.json` | 边界样本 | `wmx_TDE_2022arb`<br>Δ=**0.0 Flat**（无颜色信号） | `ZTF19aagmsrr`<br>Δ=**-176 Red→Blue**（颜色像 TDE） |
+| File | Use | TDE examples | SN examples |
+|------|-----|-------------|-------------|
+| `fewshot.json` | **default** multimodal (1-shot) | `wmx_TDE_2024lhc`<br>Δ=-8.7, 432pts, strong TDE | `ZTF19aaapnxn`<br>Δ=+6.2, 444pts, textbook SN |
+| `fewshot_text.json` | text mode (3-shot) | 3: lhc / pvu / uvz | 3: aaapnxn / aagrdcs / aajxwnz |
+| `fewshot_boundary.json` | boundary samples | `wmx_TDE_2022arb`<br>Δ=**0.0 Flat** (no color signal) | `ZTF19aagmsrr`<br>Δ=**-176 Red→Blue** (color looks TDE) |
 
-### 原理
+### Principle
 
-- **教科书 exemplar**（default/text）：信号全覆盖，教会模型"长什么样"
-- **Boundary exemplar**：信号冲突——2022arb 的 TDE 没有颜色演化，aagmsrr 的 SN 却有极端 Red→Blue。迫使模型做**信号权重推理**而非简单模式匹配，锚定决策边界
+- **Textbook exemplars** (default/text): full signal coverage, teaches the model "what it should look like".
+- **Boundary exemplars**: conflicting signals — the 2022arb TDE has no color evolution, while the aagmsrr SN has extreme Red→Blue. This forces the model to do **signal-weight reasoning** rather than simple pattern matching, anchoring the decision boundary.
 
-### 加载逻辑
+### Loading logic
 
 ```
 --exemplar-set boundary  →  templates/fewshot_boundary.json
 --exemplar-set text      →  templates/fewshot_text.json
-(无 flag)                →  templates/fewshot.json
-(文件不存在/空)           →  回退随机采样（旧行为）
+(no flag)                →  templates/fewshot.json
+(file missing/empty)     →  fallback to random sampling (legacy behavior)
 ```
 
-### 自定义
+### Customization
 
 ```bash
-# 编辑 exemplar 列表（增删改 ID 即可，列表长度即 n_shot）
+# Edit the exemplar list (add/remove/change IDs; list length = n_shot)
 vim templates/fewshot.json
 
-# 创建新 set
+# Create a new set
 cp templates/fewshot.json templates/fewshot_my_custom.json
 python classify.py WFST_J101658 --exemplar-set my_custom
 
-# 回退随机采样
+# Fall back to random sampling
 mv templates/fewshot.json templates/fewshot.json.bak
 ```
 
 ---
 
-## 第四步：分类
+## Step 4: Classification
 
 ```bash
-# 分类单个源（默认：3-shot，no CoT，text 模式）
+# Classify a single source (default: 3-shot, no CoT, text mode)
 python classify.py WFST_J101658
 
-# 多模态模式（需要 lightcurve.png）
+# Multimodal mode (needs lightcurve.png)
 python classify.py WFST_J101658 --mode multimodal --model qwen3.6-chat
 
-# 分类所有 unknown 源
+# Classify all unknown sources
 python classify.py --all-unlabeled
 
-# 强制重新分类（覆盖已有结果）
+# Force re-classification (overwrite existing result)
 python classify.py WFST_J101658 --force
 
-# 调整 few-shot 数量
+# Adjust few-shot count
 python classify.py WFST_J101658 --n-shot 2          # 2-shot
 python classify.py WFST_J101658 --n-shot 0           # zero-shot
 
-# 启用 Chain-of-Thought（逐步推理）
+# Enable Chain-of-Thought (step-by-step reasoning)
 python classify.py WFST_J101658 --cot
 
-# CoT + few-shot 组合
+# CoT + few-shot combination
 python classify.py WFST_J101658 --cot --n-shot 2
 
-# 换模型
+# Switch model
 python classify.py WFST_J101658 --model qwen3.6-reasoner
 
-# 切换 exemplar set
-python classify.py WFST_J101658 --exemplar-set boundary    # 边界样本
+# Switch exemplar set
+python classify.py WFST_J101658 --exemplar-set boundary    # boundary samples
 python classify.py WFST_J101658 --exemplar-set text        # text 3-shot
 ```
 
 ---
 
-## 第五步：查看结果
+## Step 5: View results
 
 ```bash
-# 查看完整结果（分类 + 置信度 + 每个判断指标）
+# View full result (classification + confidence + each decision indicator)
 python classify.py --results WFST_J101658
 
-# 直接读 JSON
+# Read the JSON directly
 cat results/WFST_J101658.json
 ```
 
-结果 JSON 结构：
+Result JSON structure:
 
 ```json
 {
@@ -210,167 +211,168 @@ cat results/WFST_J101658.json
 }
 ```
 
-> CoT 模式下，`cot_reasoning` 字段会保存 LLM 的逐步推理原文（Step 1-4）。
+> In CoT mode, the `cot_reasoning` field stores the LLM's step-by-step reasoning text (Steps 1-4).
 
 ---
 
-## 评估准确率
+## Evaluating accuracy
 
 ```bash
-# 默认：每类抽 30 条测试，3-shot
+# Default: 30 test samples per class, 3-shot
 python eval.py
 
-# 自定义参数
+# Custom parameters
 python eval.py --test-size 10 --n-shot 2 --classes TDE,SN
 
-# 四种 Few-Shot × CoT 组合
-python eval.py --n-shot 0                   --test-size 10 --classes TDE,SN   # 纯物理规则
-python eval.py --n-shot 2                   --test-size 10 --classes TDE,SN   # 物理 + 范例
-python eval.py --n-shot 0  --cot            --test-size 10 --classes TDE,SN   # 物理 + CoT
-python eval.py --n-shot 2  --cot            --test-size 10 --classes TDE,SN   # 物理 + 范例 + CoT
+# Four Few-Shot × CoT combinations
+python eval.py --n-shot 0                   --test-size 10 --classes TDE,SN   # physics rules only
+python eval.py --n-shot 2                   --test-size 10 --classes TDE,SN   # physics + exemplars
+python eval.py --n-shot 0  --cot            --test-size 10 --classes TDE,SN   # physics + CoT
+python eval.py --n-shot 2  --cot            --test-size 10 --classes TDE,SN   # physics + exemplars + CoT
 
-# 详细输出（显示每条源的预测）
+# Detailed output (shows per-source predictions)
 python eval.py --verbose
 ```
 
-输出包括：混淆矩阵、每类 Precision/Recall/F1、错误案例、低置信度案例。
+Output includes: confusion matrix, per-class Precision/Recall/F1, misclassified cases, and low-confidence cases.
 
 ---
 
-## 结果汇总
+## Result summary
 
-`summary.py` 直接读取 `results/*.json`，**不调 API**，零 token 成本。
+`summary.py` reads `results/*.json` directly and does **not** call the API — zero token cost.
 
 ```bash
-# 完整汇总（已知准确率 + 未知分布）
+# Full summary (known accuracy + unknown distribution)
 python summary.py
 
-# 只看未知源分布
+# Unknown sources only
 python summary.py --unknown-only
 
-# 只看已知源准确率
+# Known sources accuracy only
 python summary.py --known-only
 
-# 详细列出每条
+# List every entry in detail
 python summary.py --verbose
 
-# 只看低置信度结果
+# Low-confidence results only
 python summary.py --min-conf low
 ```
 
-输出包含三部分：
-- **Overview**：总数、类别分布、置信度分布
-- **Known Sources**：混淆矩阵、Precision/Recall/F1、Unsure 率、错误案例
-- **Unknown Sources**：TDE/SN/Unsure 分布（带柱状图）、置信度分层
+Output has three parts:
+- **Overview**: total count, class distribution, confidence distribution
+- **Known Sources**: confusion matrix, Precision/Recall/F1, Unsure rate, misclassified cases
+- **Unknown Sources**: TDE/SN/Unsure distribution (with bar chart), confidence stratification
 
-加 `--plot` 自动生成两张图：
-- `{name}.png` — Known 混淆矩阵热力图（蓝阶，学术白底）
-- `{name}_unknown.png` — Unknown 分类分布柱状图（按置信度分层）
+Add `--plot` to automatically generate two plots:
+- `{name}.png` — Known-source confusion-matrix heatmap (blue scale, academic white background)
+- `{name}_unknown.png` — Unknown classification distribution bar chart (stratified by confidence)
+
 ```bash
-python summary.py --plot                # 出图
-python summary.py --exemplar-set boundary --plot  # boundary set 的图
+python summary.py --plot                # produce plots
+python summary.py --exemplar-set boundary --plot  # boundary-set plots
 ```
 
 ---
 
-## 一键全流程
+## One-shot full workflow
 
 ```bash
-# 默认：multimodal，default exemplar set
+# Default: multimodal, default exemplar set
 bash run.sh
 
-# 换 exemplar set
+# Switch exemplar set
 bash run.sh --set boundary
 bash run.sh --set text --mode text
 
-# 只汇总已有结果（不跑分类）
+# Only summarize existing results (no classification)
 bash run.sh --summary-only
 
-# 跳过出图
+# Skip plotting
 bash run.sh --skip-plot
 ```
 
-等价于手动执行：
+Equivalent to running manually:
 1. `python plot.py --all`
 2. `python classify.py --all-unlabeled --mode multimodal --model qwen3.6-chat`
 3. `python summary.py --plot`
 
 ---
 
-## 管理标签
+## Managing labels
 
 ```bash
-# 查看统计
+# View statistics
 python promt.py --stats
 
-# 列出某类所有源
+# List all sources of a class
 python promt.py --list TDE
 
-# 改标签
+# Change a label
 python promt.py --relabel WFST_J101658 TDE
 ```
 
 ---
 
-## 完整工作流示例
+## Complete workflow example
 
 ```bash
-# 1. 配置
-vim .env    # 填入 API key
+# 1. Configure
+vim .env    # fill in API key
 
-# 2. 生成 few-shot 池（只需做一次）
+# 2. Generate few-shot pool (only needs to be done once)
 python promt.py --batch .../Flux/TDE/ --label TDE
 python promt.py --batch .../Flux/SN/  --label SN
 
-# 3. 生成新数据
+# 3. Generate new data
 python promt.py data/my_new_source.csv --label unknown
 
-# 4. 分类
+# 4. Classify
 python classify.py --all-unlabeled
 
-# 5. 查看
+# 5. View
 python classify.py --results my_new_source
 ```
 
 ---
 
-## MD 分析报告结构
+## MD analysis report structure
 
-每个源生成的分析报告包含 4 个部分：
+Each source's analysis report has several sections:
 
-| 章节 | 内容 |
-|------|------|
-| §1 Source Metadata | 基本信息（点数、波段、峰值等） |
-| §2 Derived Features | 计算特征（形态、颜色演化、分阶段统计、数据质量） |
+| Section | Content |
+|---------|---------|
+| §1 Source Metadata | Basic info (point count, bands, peak, etc.) |
+| §2 Derived Features | Computed features (morphology, color evolution, per-phase statistics, data quality) |
+| §3 Raw Light Curve | Full raw data table |
+| §4 Classification Protocol | Classification instructions for the LLM |
 
-| §4 Raw Light Curve | 完整原始数据表 |
-| §5 Classification Protocol | 给 LLM 的分类指令 |
-
-> 注意：调用 API 时默认去掉 §3（原始数据表）以节省 token。System Prompt 以**颜色演化**和**上升形态**（凹形= TDE, 凸形= SN）为主要判据，上升时长和总跨度作为辅助参考。
-
----
-
-## 输出文件
-
-| 文件 | 内容 |
-|------|------|
-| `sources/{id}/analysis.md` | 完整分析报告 |
-| `sources/{id}/lightcurve.png` | 光变曲线图（多模态用） |
-| `results/{id}.json` | 分类结果（含置信度和推理链） |
-| `eval_report.json` | 评估报告（运行 `eval.py` 后生成） |
-| `index.json` | 所有源的标签和元信息索引 |
-| `templates/fewshot*.json` | Few-shot exemplar 配置文件 |
-| `summary/*.json` | 汇总数据（Overview + Known + Unknown） |
-| `summary/*.png` | 混淆矩阵热力图 + 未知源分布图 |
-| `run.sh` | 一键全流程脚本 |
+> Note: When calling the API, §3 (the raw data table) is dropped by default to save tokens. The System Prompt uses **color evolution** and **rise morphology** (concave = TDE, convex = SN) as the primary discriminators; rise duration and total span are secondary references.
+> In Prompt v3, a new §0.5 Source Morphology / Stellar-Contamination Gate runs before §1: it uses the cutout to detect foreground/field stars and excludes them (classified as `Others` with `"star_like": true` in `reasoning`).
 
 ---
 
-## 注意事项
+## Output files
 
-1. **API 调用较慢**：USTC 代理每次约 25-60 秒，分类一条源约 1 分钟。
-2. **不要用后台模式**：`classify.py` 必须前台运行（后台进程 SSL 连接有问题）。
-3. **mock 源不参与 few-shot**：`synth_flux_*` 是合成数据，已从 `index.json` 移除。
-4. **多模态模式**：需要 `sources/{id}/lightcurve.png`（用 `plot.py` 生成）。USTC 代理的 deepseek 模型不支持视觉，需指定 `--model qwen3.6-chat`。
-5. **System Prompt 物理判据**：① 颜色演化 (g−r) → ② 上升形态 (凹/凸) → ③ 衰减形状 → ④ 数据质量。TDE 凹形上升（回落驱动），SN 凸形上升（激波冷却）。
-6. **图层颜色**：u=蓝 ▲、g=绿 ●、r=红 ■。
+| File | Content |
+|------|---------|
+| `sources/{id}/analysis.md` | Full analysis report |
+| `sources/{id}/lightcurve.png` | Light-curve plot (multimodal use) |
+| `results/{id}.json` | Classification result (confidence + reasoning chain) |
+| `eval_report.json` | Evaluation report (generated after running `eval.py`) |
+| `index.json` | Label and metadata index of all sources |
+| `templates/fewshot*.json` | Few-shot exemplar configuration files |
+| `summary/*.json` | Summary data (Overview + Known + Unknown) |
+| `summary/*.png` | Confusion-matrix heatmap + unknown-source distribution plot |
+| `run.sh` | One-shot full workflow script |
+
+---
+
+## Notes
+
+1. **API calls are slow**: the USTC proxy takes roughly 25-60 s per call, so classifying one source takes about 1 minute.
+2. **Do not run in background**: `classify.py` must run in the foreground (background-process SSL connections have issues).
+3. **Mock sources are excluded from few-shot**: `synth_flux_*` are synthetic data and have been removed from `index.json`.
+4. **Multimodal mode**: needs `sources/{id}/lightcurve.png` (generated with `plot.py`). The USTC proxy's deepseek model does not support vision, so specify `--model qwen3.6-chat`.
+5. **System Prompt physical discriminators**: ① color evolution (g−r) → ② rise morphology (concave/convex) → ③ decline shape → ④ data quality. TDE has concave rise (fallback-driven), SN has convex rise (shock cooling).
+6. **Plot colors**: u=blue ▲, g=green ●, r=red ■.

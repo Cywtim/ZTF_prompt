@@ -4,7 +4,7 @@
 import os, re, time, urllib.request
 from pathlib import Path
 
-SOURCES_DIR = Path("/home/cyan/AppData/VScode/TDeck/ZTF_prompt/sources")
+SOURCES_DIR = Path(__file__).resolve().parent / "sources"
 SDSS_URL = "https://skyserver.sdss.org/dr16/SkyServerWS/ImgCutout/getjpeg"
 
 
