@@ -47,3 +47,11 @@ batch_prf_v4.py
 batch_agn_classify.py
 batch_agn_classify2.py
 Evaluation 10 test sources.txt
+scripts_cadence_batch.py
+fetch_sn_lasair.py
+fetch_sn_lasair_parallel.py
+batch_prf.py
+README.md.bak_zh_20260917_225148
+WFST_16166203215053524.json
+INDICATOR_WIKI_MAP.json
+data/
