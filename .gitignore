@@ -32,3 +32,18 @@ fewshot_grid.png
 fewshot_grid.pdf
 plot_cot_turnover.py
 cot_turnover.pdf
+# Local-only files (kept on disk, removed from git 2026-09-18)
+run.sh
+scripts_cadence.py
+scripts_cadence_refill.py
+simbad_fetch.py
+sn_list.txt
+tns_search_SN_n.csv
+ztf_quality_selection.csv
+config.py.bak_promptv2_20260917_163937
+batch_prf_v2.py
+batch_prf_v3.py
+batch_prf_v4.py
+batch_agn_classify.py
+batch_agn_classify2.py
+Evaluation 10 test sources.txt
