@@ -57,3 +57,4 @@ INDICATOR_WIKI_MAP.json
 data/
 results_enriched/
 .vscode/
+download_sn.py
