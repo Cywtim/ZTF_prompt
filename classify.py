@@ -561,20 +561,44 @@ def promt_load_index():
 # Pipeline entry point for external callers (TDEweb)
 # ═══════════════════════════════════════════════════
 
-def classify_pipeline(source_id, model=None, cot=False):
+def classify_pipeline(source_id, model=None, cot=False, temporary_collection=None):
     """One-shot LLM classification for external callers (TDEweb).
 
     Assumes analysis.md already exists for the source (caller handles
     promt→generate_md + plot→draw_lightcurve + cutout→download_cutout).
 
+    Args:
+        temporary_collection: optional remote WFST collection name. If given
+            and that collection has temporary labels registered, a
+            temporary-classes section + temporary few-shot are layered onto the
+            base prompt and "temporary_label" is preserved in the returned dict
+            and written into the saved result. If empty/None, the pipeline
+            runs exactly as the base version (no temporary layer).
+
     Returns dict with keys: label, confidence, score, unsure_preference,
-    primary_signal, indicators, flags, tokens, cot_reasoning.
+    primary_signal, indicators, flags, tokens, cot_reasoning[, temporary_label].
     """
     if model is None:
         model = config.MODEL
     idx = promt_load_index()
     few_shot = sample_few_shot(idx, n_per_class=1, exclude={source_id})
+
+    # Optional temporary layer: merge temporary few-shot before building prompt.
+    temp_section = ""
+    temp_few = []
+    if temporary_collection:
+        from temporary import build_system_section, build_temporary_few_shot
+        temp_section = build_system_section(temporary_collection)
+        temp_few = build_temporary_few_shot(temporary_collection,
+                                            exclude={source_id, *[s for s, _ in few_shot]})
+        few_shot = few_shot + temp_few
+
     messages = build_prompt(source_id, few_shot, mode="multimodal", cot=cot)
+
+    # Optional temporary layer: append temporary-classes system section.
+    if temp_section and len(messages) == 2:
+        messages[0]["content"] = messages[0]["content"] + temp_section
+
     raw_text, usage = call_api(
         messages, model=model,
         max_tokens=12000,
@@ -585,7 +609,7 @@ def classify_pipeline(source_id, model=None, cot=False):
     result = save_result(source_id, parsed, raw_text, usage,
                          mode="multimodal", model=model,
                          few_shot=few_shot, cot=cot)
-    return {
+    out = {
         "label": result["classification"].get("label", "?"),
         "confidence": result["classification"].get("confidence", "?"),
         "score": result["classification"].get("score", 0),
@@ -596,6 +620,11 @@ def classify_pipeline(source_id, model=None, cot=False):
         "tokens": result["tokens"],
         "cot_reasoning": result.get("cot_reasoning", ""),
     }
+    # Preserve temporary_label from the parsed output (may be absent → None).
+    temp_label = parsed.get("temporary_label")
+    if temp_label is not None:
+        out["temporary_label"] = temp_label
+    return out
 
 
 # ═══════════════════════════════════════════════════
