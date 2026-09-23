@@ -135,6 +135,31 @@ def remove_temporary_label(label_id):
     return True
 
 
+def update_temporary_label(label_id, name=None, positive_criteria=None,
+                           fewshot=None, collections=None):
+    """Update fields of an existing temporary label (id is immutable).
+
+    Only the fields passed as non-None are updated; omitted fields keep their
+    current values. The label id (the registry key, also referenced by saved
+    classification results) is intentionally NOT changeable.
+    """
+    label_id = _normalise_id(label_id)
+    reg = _load_registry()
+    if label_id not in reg:
+        raise ValueError(f"temporary label '{label_id}' does not exist")
+    entry = reg[label_id]
+    if name is not None:
+        entry["name"] = name
+    if positive_criteria is not None:
+        entry["positive_criteria"] = positive_criteria
+    if fewshot is not None:
+        entry["fewshot"] = list(fewshot)
+    if collections is not None:
+        entry["collections"] = list(collections)
+    _save_registry(reg)
+    return entry
+
+
 # ---------------------------------------------------------------------------
 # The layering core (used by classify_pipeline / CLI / TDEweb)
 # ---------------------------------------------------------------------------
