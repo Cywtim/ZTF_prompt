@@ -425,6 +425,9 @@ def save_result(source_id, parsed, raw_response, usage, mode, model, few_shot, c
         "classification": parsed.get("classification", {}),
         "reasoning": parsed.get("reasoning", {}),
         "quality": parsed.get("quality", {}),
+        # Temporary labels layered on top of the base classification (may be
+        # an empty list / None if the source matched none / no temp config).
+        "temporary_label": parsed.get("temporary_label"),
         "few_shot": [{"id": fs[0], "label": fs[1]} for fs in few_shot],
         "cot": cot,
         "cot_reasoning": _extract_reasoning(raw_response, parsed),
