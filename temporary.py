@@ -247,6 +247,13 @@ if __name__ == "__main__":
     p_rm = sub.add_parser("remove")
     p_rm.add_argument("--id", required=True)
 
+    p_up = sub.add_parser("update")
+    p_up.add_argument("--id", required=True, help="existing label id (read-only key)")
+    p_up.add_argument("--name", default=None)
+    p_up.add_argument("--criteria", default=None)
+    p_up.add_argument("--fewshot", nargs="*", default=None)
+    p_up.add_argument("--collections", nargs="*", default=None)
+
     args = ap.parse_args()
 
     if args.action == "list":
@@ -257,6 +264,14 @@ if __name__ == "__main__":
         e = add_temporary_label(args.id, args.name, args.criteria,
                                 args.fewshot, args.collections, args.overwrite)
         print(f"added: {e['id']}")
+        exit(0)
+    elif args.action == "update":
+        e = update_temporary_label(args.id, name=args.name,
+                                   positive_criteria=args.criteria,
+                                   fewshot=args.fewshot,
+                                   collections=args.collections)
+        print(f"updated: {e['id']} name={e['name']} criteria={e['positive_criteria']}"
+              f" fewshot={e['fewshot']} collections={e['collections']}")
         exit(0)
     elif args.action == "remove":
         ok = remove_temporary_label(args.id)

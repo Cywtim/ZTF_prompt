@@ -444,13 +444,18 @@ def save_result(source_id, parsed, raw_response, usage, mode, model, few_shot, c
 # ═══════════════════════════════════════════════════
 
 def classify_one(source_id, mode="text", n_shot=None, model=None, force=False, cot=False,
-                exemplar_set=None):
+                exemplar_set=None, collection=None):
     """Classify a single source.
-    
+
     Args:
         cot: if True, enable Chain-of-Thought reasoning.
         exemplar_set: name of curated exemplar set (e.g. "boundary", "textbook").
                       Loads templates/fewshot_{exemplar_set}.json.
+        collection: optional remote WFST collection name. If given and that
+                    collection has temporary labels registered, a temporary
+                    section + temporary few-shot are layered onto the base
+                    prompt (same additive behaviour as classify_pipeline). If
+                    empty/None, runs exactly as the base version.
     """
     # Check if already done
     result_path = config.RESULTS_DIR / _result_filename(source_id)
@@ -477,12 +482,31 @@ def classify_one(source_id, mode="text", n_shot=None, model=None, force=False, c
         print(f"  [error] {source_id} -- no labeled examples available in index.json")
         return None
 
+    # Optional temporary layer: merge temporary few-shot before building prompt.
+    temp_section = ""
+    if collection:
+        try:
+            from temporary import build_system_section, build_temporary_few_shot
+        except ImportError:
+            temp_section, temp_few = "", []
+        else:
+            temp_section = build_system_section(collection)
+            temp_few = build_temporary_few_shot(
+                collection, exclude={source_id, *[s for s, _ in few_shot]})
+            few_shot = few_shot + temp_few
+
     # Build prompt
     mode_str = f"{mode}, {len(few_shot)}-shot"
     if cot:
         mode_str += ", CoT"
+    if collection:
+        mode_str += f", temp({collection})"
     print(f"  {source_id}: building prompt ({mode_str})")
     messages = build_prompt(source_id, few_shot, mode, cot=cot)
+
+    # Optional temporary layer: append temporary-classes system section.
+    if temp_section and len(messages) == 2:
+        messages[0]["content"] = messages[0]["content"] + temp_section
 
     # Call API
     raw_text, usage = call_api(messages, model=model, max_tokens=12000)
@@ -645,6 +669,7 @@ def main():
     parser.add_argument("--force", action="store_true", help="reclassify even if result exists")
     parser.add_argument("--cot", action="store_true", help="enable Chain-of-Thought reasoning")
     parser.add_argument("--exemplar-set", help="curated exemplar set name (loads templates/fewshot_NAME.json)")
+    parser.add_argument("--collection", help="remote WFST collection name whose temporary labels to layer on (additive; empty = base)")
     args = parser.parse_args()
 
     if args.all_unlabeled:
@@ -656,7 +681,7 @@ def main():
     elif args.source_id:
         classify_one(args.source_id, mode=args.mode, n_shot=args.n_shot, model=args.model,
                      force=args.force, cot=args.cot,
-                     exemplar_set=args.exemplar_set)
+                     exemplar_set=args.exemplar_set, collection=args.collection)
     else:
         parser.print_help()
 

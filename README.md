@@ -174,6 +174,71 @@ python classify.py WFST_J101658 --exemplar-set boundary    # boundary samples
 python classify.py WFST_J101658 --exemplar-set text        # text 3-shot
 ```
 
+### Temporary Labels (CLI)
+
+Temporary labels are **optional additive** extra categories layered on top of the
+base classification. Each temporary label uses a **positive criterion**, so a source
+may match zero/one/many at once — independently of its base class. Labels are
+managed via `temporary.py` and stored in `temporary_registry.json`.
+
+**Global vs collection — who cares about what:**
+
+- **The prompt layer / CLI cares ONLY about global labels.** A temporary label added
+  *without* a `collections` binding is **global**: it applies to **every** classification
+  run by default, with no flag needed. For plain prompt / CLI usage you just add global
+  labels and they take effect everywhere — the CLI does not need to think about
+  collections at all.
+- **Collections are a web (TDEweb RLHL) concept only.** In the web UI you pick a
+  collection (e.g. `wangyb`) and only that collection's temporary labels get layered on,
+  letting you scope labels per person / per observing run. The CLI does **not** manage
+  collections and normally never needs to pass one from the prompt layer.
+
+```bash
+# Global temp labels apply automatically — no flag needed (this is the CLI norm)
+python classify.py WFST_J101658
+
+# Optional / advanced: scope to one collection's bound labels (mainly a web concern)
+python classify.py WFST_J101658 --collection wangyb
+```
+
+When temporary labels apply (globally by default, or scoped via `--collection`):
+- a **Temporary Classes** system-prompt section is appended (lists each label's positive criterion),
+- their **temporary few-shot** examples are merged into the prompt,
+- the LLM is asked to output an extra `temporary_label` field (a list of matched
+  `temporary_*` ids; may be empty).
+
+The matched temporary labels are saved into the result JSON under `temporary_label`
+(e.g. `["temporary_OVI"]`, or `null` if none / no temp config). Note the base class
+(`class`) is unchanged — temporary labels never replace the main classification.
+
+#### Managing temporary labels (CLI)
+
+```bash
+# List all labels (or just those effective for a collection)
+python temporary.py list
+python temporary.py list --collection wangyb
+
+# The CLI norm: add a GLOBAL label (no --collections ⇒ applies to every run)
+python temporary.py add --id OVI --criteria "OVI emission line present" \
+    --fewshot ZTF20accagnf_SN_PRF
+
+# Collections are scoped per person / observing run in the web UI.
+# Only needed if you deliberately bind a label away from global — the CLI normally never does.
+python temporary.py add --id OVI --criteria "..." --collections wangyb wumx
+
+# Edit an existing label (id is immutable; only provided fields update).
+# NOTE: multiple values use space separation — do NOT quote them as one string.
+python temporary.py update --id OVI --criteria "New criterion"
+
+# Remove a label
+python temporary.py remove --id OVI
+```
+
+> **Few-shot source IDs** must be the full directory name under `sources/` (the
+> `source_id`), including any prefix — e.g. `WFST_10644045650985559`,
+> `ZTF20accagnf_SN_PRF`, `wmx_ASASSN-14li`. Bare WFST numbers without the `WFST_`
+> prefix are NOT auto-completed and would silently fail to load.
+
 ---
 
 ## Step 5: View results
@@ -206,6 +271,7 @@ Result JSON structure:
     "overall": "medium",
     "flags": ["Rise phase sparsely sampled"]
   },
+  "temporary_label": ["temporary_OVI"],
   "cot": false,
   "cot_reasoning": ""
 }

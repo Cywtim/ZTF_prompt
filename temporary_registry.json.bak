@@ -1,0 +1,27 @@
+[
+  {
+    "id": "temporary_GLOBAL",
+    "name": "temporary_GLOBAL",
+    "positive_criteria": "g",
+    "fewshot": [],
+    "collections": []
+  },
+  {
+    "id": "temporary_LOCALW",
+    "name": "temporary_LOCALW",
+    "positive_criteria": "l",
+    "fewshot": [],
+    "collections": [
+      "wangyb"
+    ]
+  },
+  {
+    "id": "temporary_LOCALM",
+    "name": "temporary_LOCALM",
+    "positive_criteria": "m",
+    "fewshot": [],
+    "collections": [
+      "wumx"
+    ]
+  }
+]
